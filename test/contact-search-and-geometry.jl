@@ -5,6 +5,7 @@
 info("#### $(basename(@__FILE__)) ####")
 
 info("Testing interGrainPositionVector(...) and findOverlap(...)")
+sim = Granular.createSimulation("test")
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.addGrainCylindrical!(sim, [18., 0.], 10., 1., verbose=false)

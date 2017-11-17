@@ -47,6 +47,9 @@ function createSimulation(;id::String="unnamed")
                       Nc_max,
                       walls)
 end
+function createSimulation(id::String)
+    createSimulation(id=id)
+end
 
 export run!
 """
