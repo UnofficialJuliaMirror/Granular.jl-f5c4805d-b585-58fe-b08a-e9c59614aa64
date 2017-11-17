@@ -15,7 +15,7 @@ A [Julia](https://julialang.org) package for granular mechanics.
 release can be installed directly from the Julia shell by:
 
 ```julia
-julia> Pkg.add("Granular.jl")
+julia> Pkg.add("Granular")
 ```
 
 If you want to install the latest development version from the Github 
