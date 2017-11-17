@@ -744,7 +744,8 @@ function plotGrainSizeDistribution(simulation::Simulation;
                                      nbins::Int=12,
                                      size_type::String = "contact",
                                      figsize::Tuple = (6,4),
-                                     filetype::String = "png",
+                                     filetype::String = "pdf",
+                                     gnuplot_terminal::String = "pdfcairo",
                                      verbose::Bool = true,
                                      skip_fixed::Bool = true,
                                      log_y::Bool = false,
@@ -772,14 +773,28 @@ function plotGrainSizeDistribution(simulation::Simulation;
     writedlm(datafile, diameters)
     gnuplotscript = Base.Filesystem.tempname()
 
+    #if maximum(diameters) ≈ minimum(diameters)
+        #info("Overriding `nbins = $nbins` -> `nbins = 1`.")
+        #nbins = 1
+    #end
+
     open(gnuplotscript, "w") do f
 
         write(f, """#!/usr/bin/env gnuplot
-              set out "$(filename)"
-              set xlabel "Diameter [m]"
+              set term $gnuplot_terminal size 12 cm,8 cm
+              set out "$(filename)"\n""")
+        if log_y
+            write(f, "set logscale y\n")
+        end
+        write(f, """set xlabel "Diameter [m]"
               set ylabel "Count [-]"
-              set style histogram
-              plot "$(datafile)"
+              binwidth = $((maximum(diameters) - minimum(diameters)+1e-7)/nbins)
+              binstart = $(minimum(diameters))
+              set boxwidth 1.0*binwidth
+              set style fill solid 0.5
+              set key off
+              hist = 'u (binwidth*(floor((\$1-binstart)/binwidth)+0.5)+binstart):(1.0) smooth freq w boxes'
+              plot "$(datafile)" i 0 @hist ls 1
               """)
     end
 
@@ -791,15 +806,6 @@ function plotGrainSizeDistribution(simulation::Simulation;
         end
     end
 
-
-    xlabel = "Diameter [m]"
-    ylabel = "Count [-]"
-    if log_y
-        error("Logarithmic axis scaling isn't yet supported with GR histograms")
-        # try anyway
-        GR.setscale(GR.OPTION_Y_LOG)
-        GR.setscale(GR.OPTION_FLIP_X)
-    end
     if verbose
         info(filename)
     end
