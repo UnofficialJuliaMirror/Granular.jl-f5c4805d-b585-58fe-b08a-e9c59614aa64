@@ -853,7 +853,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.plotGrainSizeDistribution",
     "category": "Method",
-    "text": "plotGrainSizeDistribution(simulation, [filename_postfix], [nbins],\n                            [size_type], [figsize], [filetype])\n\nPlot the grain size distribution as a histogram and save it to the disk.  The  plot is saved accoring to the simulation id, the optional filename_postfix  string, and the filetype, and is written to the current folder.\n\nArguments\n\nsimulation::Simulation: the simulation object containing the grains.\nfilename_postfix::String: optional string for the output filename.\nnbins::Int: number of bins in the histogram (default = 12).\nsize_type::String: specify whether to use the contact or areal radius    for the grain size.  The default is contact.\nfigsize::Tuple: the output figure size in inches (default = (6,4).\nfiletype::String: the output file type (default = \"png\").\nverbose::String: show output file as info message in stdout (default =    true).\nskip_fixed::Bool: ommit grains that are fixed in space from the size    distribution (default = true).\nlogy::Bool: plot y-axis in log scale.\n\n\n\n"
+    "text": "plotGrainSizeDistribution(simulation, [filename_postfix], [nbins],\n                            [size_type], [figsize], [filetype])\n\nPlot the grain size distribution as a histogram and save it to the disk.  The  plot is saved accoring to the simulation id, the optional filename_postfix  string, and the filetype, and is written to the current folder.\n\nArguments\n\nsimulation::Simulation: the simulation object containing the grains.\nfilename_postfix::String: optional string for the output filename.\nnbins::Int: number of bins in the histogram (default = 12).\nsize_type::String: specify whether to use the contact or areal radius    for the grain size.  The default is contact.\nfigsize::Tuple: the output figure size in inches (default = (6,4).\nfiletype::String: the output file type (default = \"png\").\nverbose::String: show output file as info message in stdout (default =    true).\nskip_fixed::Bool: ommit grains that are fixed in space from the size    distribution (default = true).\nlog_y::Bool: plot y-axis in log scale.\nshow_plot::Bool: show plot in pop-up window in addition to writing to disk.\n\n\n\n"
 },
 
 {
@@ -913,11 +913,19 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.readSimulation",
+    "location": "lib/public.html#Granular.readSimulation-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.readSimulation",
-    "category": "Function",
-    "text": "readSimulation(filename::String=\"\";\n               verbose::Bool=true)\n\nRead all content from Simulation from disk in JDL format.\n\n\n\n"
+    "category": "Method",
+    "text": "readSimulation(simulation::Simulation;\n               step::Integer = -1,\n               verbose::Bool = true)\n\nRead the simulation state from disk and return as new simulation object.\n\nArguments\n\nsimulation::Simulation: use the simulation.id to determine the file name   to read from, and read information from the file into this object.\nstep::Integer=-1: attempt to read this output file step. At its default   value (-1), the function will try to read the latest file, determined by   calling readSimulationStatus.\nverbose::Bool=true: confirm to console that the file has been read.\n\n\n\n"
+},
+
+{
+    "location": "lib/public.html#Granular.readSimulation-Tuple{String}",
+    "page": "Public API",
+    "title": "Granular.readSimulation",
+    "category": "Method",
+    "text": "readSimulation(filename::String=\"\";\n               verbose::Bool=true)\n\nReturn Simulation content read from disk using the JDL format.\n\nArguments\n\nfilename::String: path to file on disk containing the simulation   information.\nverbose::Bool=true: confirm to console that the file has been read.\n\n\n\n"
 },
 
 {
@@ -925,7 +933,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.readSimulationStatus",
     "category": "Method",
-    "text": "readSimulationStatus(filename::String;\n                     folder::String=\".\",\n                     verbose::Bool=false)\n\nWrite current simulation status to disk in a minimal txt file.\n\n\n\n"
+    "text": "readSimulationStatus(simulation_id[, folder, verbose])\n\nRead the current simulation status from disk (<sim.id>/<sim.id>.status.txt) and return the last output file number.\n\nArguments\n\nsimulation_id::String: the simulation identifying string.\nfolder::String=\".\": the folder in which to search for the status file.\nverbose::Bool=true: show simulation status in console.\n\n\n\n"
 },
 
 {
