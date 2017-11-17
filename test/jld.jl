@@ -15,7 +15,17 @@ if typeof(Pkg.installed("JLD")) == VersionNumber
     Granular.writeVTK(sim, verbose=false)
 
     Granular.writeSimulation(sim)
+    Granular.writeSimulationStatus(sim)
 
+    info("Reading from JLD file by specifying the input file name")
     sim2 = Granular.readSimulation("./test/test.1.jld")
     Granular.compareSimulations(sim, sim2)
+
+    info("Reading and overwriting from JLD file by simulation id")
+    sim3 = Granular.createSimulation("test")
+    @test 1 == Granular.readSimulationStatus(sim3)
+    sim3 = Granular.readSimulation(sim3)
+    Granular.compareSimulations(sim, sim3)
+
+    rm("./test/test.1.jld")
 end

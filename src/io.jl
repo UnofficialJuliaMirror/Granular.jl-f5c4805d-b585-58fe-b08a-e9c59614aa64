@@ -50,9 +50,14 @@ export readSimulation
     readSimulation(filename::String="";
                    verbose::Bool=true)
 
-Read all content from `Simulation` from disk in JDL format.
+Return `Simulation` content read from disk using the JDL format.
+
+# Arguments
+* `filename::String`: path to file on disk containing the simulation
+    information.
+* `verbose::Bool=true`: confirm to console that the file has been read.
 """
-function readSimulation(filename::String="";
+function readSimulation(filename::String;
                          verbose::Bool=true)
     if !hasJLD
         warn("Package JLD not found. Simulation save/read not supported. " * 
@@ -60,8 +65,42 @@ function readSimulation(filename::String="";
              "requirements with `Pkg.add(\"JLD\")`.")
         nothing
     else
+        return JLD.load(filename, "simulation")
         if verbose
-            info("reading simulation from $filename")
+            info("Read simulation from $filename")
+        end
+    end
+end
+"""
+    readSimulation(simulation::Simulation;
+                   step::Integer = -1,
+                   verbose::Bool = true)
+
+Read the simulation state from disk and return as new simulation object.
+
+# Arguments
+* `simulation::Simulation`: use the `simulation.id` to determine the file name
+    to read from, and read information from the file into this object.
+* `step::Integer=-1`: attempt to read this output file step. At its default
+    value (`-1`), the function will try to read the latest file, determined by
+    calling [`readSimulationStatus`](@ref).
+* `verbose::Bool=true`: confirm to console that the file has been read.
+"""
+function readSimulation(simulation::Simulation;
+                         step::Integer = -1,
+                         verbose::Bool = true)
+    if !hasJLD
+        warn("Package JLD not found. Simulation save/read not supported. " * 
+             "Please install JLD and its " *
+             "requirements with `Pkg.add(\"JLD\")`.")
+        nothing
+    else
+        if step == -1
+            step = readSimulationStatus(simulation)
+        end
+        filename = string(simulation.id, "/", simulation.id, ".$step.jld")
+        if verbose
+            info("Read simulation from $filename")
         end
         return JLD.load(filename, "simulation")
     end
@@ -86,18 +125,22 @@ function writeSimulationStatus(simulation::Simulation;
                         simulation.time/simulation.time_total*100.
                         float(simulation.file_number)])
     if verbose
-        info("wrote status to $filename")
+        info("Wrote status to $filename")
     end
     nothing
 end
 
 export readSimulationStatus
 """
-    readSimulationStatus(filename::String;
-                         folder::String=".",
-                         verbose::Bool=false)
+    readSimulationStatus(simulation_id[, folder, verbose])
 
-Write current simulation status to disk in a minimal txt file.
+Read the current simulation status from disk (`<sim.id>/<sim.id>.status.txt`)
+and return the last output file number.
+
+# Arguments
+* `simulation_id::String`: the simulation identifying string.
+* `folder::String="."`: the folder in which to search for the status file.
+* `verbose::Bool=true`: show simulation status in console.
 """
 function readSimulationStatus(simulation_id::String;
                               folder::String=".",
@@ -113,7 +156,23 @@ function readSimulationStatus(simulation_id::String;
              "  complete:         $(data[2])%\n" *
              "  last output file: $(Int(round(data[3])))\n")
     end
-    return data[3]
+    return Int(round(data[3]))
+"""
+    readSimulationStatus(simulation[, folder, verbose])
+
+Read the current simulation status from disk (`<sim.id>/<sim.id>.status.txt`)
+and return the last output file number.
+
+# Arguments
+* `simulation::Simulation`: the simulation to read the status for.
+* `folder::String="."`: the folder in which to search for the status file.
+* `verbose::Bool=true`: show simulation status in console.
+"""
+end
+function readSimulationStatus(sim::Simulation;
+                              folder::String=".",
+                              verbose::Bool=true)
+    readSimulationStatus(sim.id, folder=folder, verbose=verbose)
 end
 
 export status

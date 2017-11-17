@@ -1,12 +1,6 @@
 ## Manage grains in the model
 using Compat.Test
 
-hasPyPlot = false
-if typeof(Pkg.installed("PyPlot")) == VersionNumber
-    import PyPlot
-    hasPyPlot = true
-end
-
 export addGrainCylindrical!
 """
     function addGrainCylindrical!(simulation, lin_pos, contact_radius,
@@ -742,7 +736,8 @@ string, and the `filetype`, and is written to the current folder.
     true).
 * `skip_fixed::Bool`: ommit grains that are fixed in space from the size 
     distribution (default = true).
-* `logy::Bool`: plot y-axis in log scale.
+* `log_y::Bool`: plot y-axis in log scale.
+* `show_plot::Bool`: show plot in pop-up window in addition to writing to disk.
 """
 function plotGrainSizeDistribution(simulation::Simulation;
                                      filename_postfix::String = "",
@@ -752,12 +747,9 @@ function plotGrainSizeDistribution(simulation::Simulation;
                                      filetype::String = "png",
                                      verbose::Bool = true,
                                      skip_fixed::Bool = true,
-                                     log_y::Bool = true)
+                                     log_y::Bool = false,
+                                     show_plot::Bool = false)
 
-    if !hasPyPlot
-        error("Function not available because PyPlot is not installed")
-        return
-    end
     diameters = Float64[]
     for i=1:length(simulation.grains)
         if simulation.grains[i].fixed && skip_fixed
@@ -771,14 +763,43 @@ function plotGrainSizeDistribution(simulation::Simulation;
             error("size_type '$size_type' not understood")
         end
     end
-    PyPlot.pygui(false)
-    PyPlot.figure(figsize=figsize)
-    PyPlot.plt[:hist](diameters, nbins, log=log_y)
-    PyPlot.xlabel("Diameter [m]")
-    PyPlot.ylabel("Count [-]")
+
     filename = string(simulation.id * filename_postfix * 
                       "-grain-size-distribution." * filetype)
-    PyPlot.savefig(filename)
+
+    # write data to temporary file on disk
+    datafile = Base.Filesystem.tempname()
+    writedlm(datafile, diameters)
+    gnuplotscript = Base.Filesystem.tempname()
+
+    open(gnuplotscript, "w") do f
+
+        write(f, """#!/usr/bin/env gnuplot
+              set out "$(filename)"
+              set xlabel "Diameter [m]"
+              set ylabel "Count [-]"
+              set style histogram
+              plot "$(datafile)"
+              """)
+    end
+
+    try
+        run(`gnuplot $gnuplotscript`)
+    catch return_signal
+        if isa(return_signal, Base.UVError)
+            error("Could not launch external gnuplot process")
+        end
+    end
+
+
+    xlabel = "Diameter [m]"
+    ylabel = "Count [-]"
+    if log_y
+        error("Logarithmic axis scaling isn't yet supported with GR histograms")
+        # try anyway
+        GR.setscale(GR.OPTION_Y_LOG)
+        GR.setscale(GR.OPTION_FLIP_X)
+    end
     if verbose
         info(filename)
     end
