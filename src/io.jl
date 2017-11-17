@@ -690,6 +690,10 @@ function writeParaviewPythonScript(simulation::Simulation;
         vtk_folder = string(pwd(), "/", simulation.id)
     end
 
+    if simulation.file_number == 0
+        simulation.file_number = readSimulationStatus(simulation)
+    end
+
     open(filename, "w") do f
         write(f, """from paraview.simple import *
 paraview.simple._DisableFirstRenderCameraReset()
