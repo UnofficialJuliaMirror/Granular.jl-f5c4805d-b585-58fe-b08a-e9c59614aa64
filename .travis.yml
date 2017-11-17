@@ -18,6 +18,12 @@ notifications:
       on_success: never # default: change
       on_failure: always # default: always
 
+addons:
+  apt:
+    packages:
+    - gnuplot
+    - imagemagick
+
 matrix:
   allow_failures:
     - julia: nightly
