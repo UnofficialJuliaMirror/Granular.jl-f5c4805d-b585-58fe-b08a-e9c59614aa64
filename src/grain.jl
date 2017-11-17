@@ -1,5 +1,15 @@
 ## Manage grains in the model
+
 using Compat.Test
+
+# load Homebrew/WinRPM for gnuplot and imagemagick
+if is_apple() 
+    using Homebrew
+end
+
+if is_windows() 
+    using WinRPM
+end
 
 export addGrainCylindrical!
 """
