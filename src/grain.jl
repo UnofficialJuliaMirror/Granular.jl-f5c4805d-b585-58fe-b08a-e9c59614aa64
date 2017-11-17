@@ -781,7 +781,7 @@ function plotGrainSizeDistribution(simulation::Simulation;
     open(gnuplotscript, "w") do f
 
         write(f, """#!/usr/bin/env gnuplot
-              set term $gnuplot_terminal size 12 cm,8 cm
+              set term $gnuplot_terminal
               set out "$(filename)"\n""")
         if log_y
             write(f, "set logscale y\n")
