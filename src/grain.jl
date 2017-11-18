@@ -2,15 +2,6 @@
 
 using Compat.Test
 
-# load Homebrew/WinRPM for gnuplot and imagemagick
-if is_apple() 
-    using Homebrew
-end
-
-if is_windows() 
-    using WinRPM
-end
-
 export addGrainCylindrical!
 """
     function addGrainCylindrical!(simulation, lin_pos, contact_radius,
@@ -723,102 +714,6 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
     @test if1.ocean_stress ≈ if2.ocean_stress
     @test if1.atmosphere_stress ≈ if2.atmosphere_stress
     nothing
-end
-
-export plotGrainSizeDistribution
-"""
-    plotGrainSizeDistribution(simulation, [filename_postfix], [nbins],
-                                [size_type], [figsize], [filetype])
-
-Plot the grain size distribution as a histogram and save it to the disk.  The 
-plot is saved accoring to the simulation id, the optional `filename_postfix` 
-string, and the `filetype`, and is written to the current folder.
-
-# Arguments
-* `simulation::Simulation`: the simulation object containing the grains.
-* `filename_postfix::String`: optional string for the output filename.
-* `nbins::Int`: number of bins in the histogram (default = 12).
-* `size_type::String`: specify whether to use the `contact` or `areal` radius 
-    for the grain size.  The default is `contact`.
-* `figsize::Tuple`: the output figure size in inches (default = (6,4).
-* `filetype::String`: the output file type (default = "png").
-* `verbose::String`: show output file as info message in stdout (default = 
-    true).
-* `skip_fixed::Bool`: ommit grains that are fixed in space from the size 
-    distribution (default = true).
-* `log_y::Bool`: plot y-axis in log scale.
-* `show_plot::Bool`: show plot in pop-up window in addition to writing to disk.
-"""
-function plotGrainSizeDistribution(simulation::Simulation;
-                                     filename_postfix::String = "",
-                                     nbins::Int=12,
-                                     size_type::String = "contact",
-                                     figsize::Tuple = (6,4),
-                                     filetype::String = "png",
-                                     gnuplot_terminal::String = "png",
-                                     verbose::Bool = true,
-                                     skip_fixed::Bool = true,
-                                     log_y::Bool = false,
-                                     show_plot::Bool = false)
-
-    diameters = Float64[]
-    for i=1:length(simulation.grains)
-        if simulation.grains[i].fixed && skip_fixed
-            continue
-        end
-        if size_type == "contact"
-            push!(diameters, simulation.grains[i].contact_radius*2.)
-        elseif size_type == "areal"
-            push!(diameters, simulation.grains[i].areal_radius*2.)
-        else
-            error("size_type '$size_type' not understood")
-        end
-    end
-
-    filename = string(simulation.id * filename_postfix * 
-                      "-grain-size-distribution." * filetype)
-
-    # write data to temporary file on disk
-    datafile = Base.Filesystem.tempname()
-    writedlm(datafile, diameters)
-    gnuplotscript = Base.Filesystem.tempname()
-
-    #if maximum(diameters) ≈ minimum(diameters)
-        #info("Overriding `nbins = $nbins` -> `nbins = 1`.")
-        #nbins = 1
-    #end
-
-    open(gnuplotscript, "w") do f
-
-        write(f, """#!/usr/bin/env gnuplot
-              set term $gnuplot_terminal
-              set out "$(filename)"\n""")
-        if log_y
-            write(f, "set logscale y\n")
-        end
-        write(f, """set xlabel "Diameter [m]"
-              set ylabel "Count [-]"
-              binwidth = $((maximum(diameters) - minimum(diameters)+1e-7)/nbins)
-              binstart = $(minimum(diameters))
-              set boxwidth 1.0*binwidth
-              set style fill solid 0.5
-              set key off
-              hist = 'u (binwidth*(floor((\$1-binstart)/binwidth)+0.5)+binstart):(1.0) smooth freq w boxes'
-              plot "$(datafile)" i 0 @hist ls 1
-              """)
-    end
-
-    try
-        run(`gnuplot $gnuplotscript`)
-    catch return_signal
-        if isa(return_signal, Base.UVError)
-            error("Could not launch external gnuplot process")
-        end
-    end
-
-    if verbose
-        info(filename)
-    end
 end
 
 export enableOceanDrag!
