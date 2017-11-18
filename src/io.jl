@@ -1172,13 +1172,13 @@ Plot the grains using Gnuplot and save the figure to disk.
 * `simulation::Simulation`: the simulation object containing the grains.
 * `filetype::String`: the output file type (default = "png").
 * `gnuplot_terminal::String`: the gnuplot output terminal to use (default =
-    "png").
+    "png crop size 1200,1200").
 * `verbose::String`: show output file as info message in stdout (default = 
     true).
 """
 function plotGrains(sim::Simulation;
                     filetype::String = "png",
-                    gnuplot_terminal::String = "png",
+                    gnuplot_terminal::String = "png crop size 1200,1200",
                     show_figure::Bool = true,
                     verbose::Bool = true)
 
@@ -1203,7 +1203,7 @@ function plotGrains(sim::Simulation;
     open(gnuplotscript, "w") do f
 
         write(f, """#!/usr/bin/env gnuplot
-              set term $(gnuplot_terminal) crop size 1200,1200
+              set term $(gnuplot_terminal)
               set out "$(filename)"
               set palette defined (0 "gray", 1 "white")
               set xlabel "x [m]"
