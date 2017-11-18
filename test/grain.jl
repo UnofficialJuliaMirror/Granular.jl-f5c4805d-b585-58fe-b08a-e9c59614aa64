@@ -30,17 +30,28 @@ Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.compareGrains(sim.grains[1], sim.grains[2])
 
-info("Testing GSD plotting ")
-Granular.plotGrainSizeDistribution(sim)
-@test isfile("test-grain-size-distribution.png")
-rm("test-grain-size-distribution.png")
-Granular.plotGrainSizeDistribution(sim, skip_fixed=false)
-@test isfile("test-grain-size-distribution.png")
-rm("test-grain-size-distribution.png")
-Granular.plotGrainSizeDistribution(sim, size_type="areal")
-@test isfile("test-grain-size-distribution.png")
-rm("test-grain-size-distribution.png")
-@test_throws ErrorException Granular.plotGrainSizeDistribution(sim, size_type="asdf")
+gnuplot = true
+try
+    run(`gnuplot --version`)
+catch return_signal
+    if isa(return_signal, Base.UVError)
+        warn("Skipping plotting routines: Could not launch gnuplot process")
+        gnuplot = false
+    end
+end
+if gnuplot
+    info("Testing GSD plotting ")
+    Granular.plotGrainSizeDistribution(sim)
+    @test isfile("test-grain-size-distribution.png")
+    rm("test-grain-size-distribution.png")
+    Granular.plotGrainSizeDistribution(sim, skip_fixed=false)
+    @test isfile("test-grain-size-distribution.png")
+    rm("test-grain-size-distribution.png")
+    Granular.plotGrainSizeDistribution(sim, size_type="areal")
+    @test isfile("test-grain-size-distribution.png")
+    rm("test-grain-size-distribution.png")
+    @test_throws ErrorException Granular.plotGrainSizeDistribution(sim, size_type="asdf")
+end
 
 info("Testing external body force routines")
 sim = Granular.createSimulation(id="test")
