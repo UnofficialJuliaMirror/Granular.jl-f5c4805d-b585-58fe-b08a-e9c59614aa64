@@ -566,7 +566,7 @@ function findEmptyPositionInGridCell(simulation::Simulation,
             continue
         elseif j == 1 && pos[2] - r < grid.yq[1,1]
             continue
-        elseif j == nx && pos[2] + r > grid.yq[end,end]
+        elseif j == ny && pos[2] + r > grid.yq[end,end]
             continue
         end
 
