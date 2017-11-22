@@ -559,6 +559,17 @@ function findEmptyPositionInGridCell(simulation::Simulation,
             info("trying poisition $pos in cell $i,$j")
         end
 
+        # do not penetrate outside of grid boundaries
+        if i == 1 && pos[1] - r < grid.xq[1,1]
+            continue
+        elseif i == nx && pos[1] + r > grid.xq[end,end]
+            continue
+        elseif j == 1 && pos[2] - r < grid.yq[1,1]
+            continue
+        elseif j == nx && pos[2] + r > grid.yq[end,end]
+            continue
+        end
+
         # search for contacts in current and eight neighboring cells
         for i_neighbor_corr=[0 -1 1]
             for j_neighbor_corr=[0 -1 1]
