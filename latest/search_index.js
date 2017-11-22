@@ -861,7 +861,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.plotGrains",
     "category": "Method",
-    "text": "plotGrains(simulation, [filetype, gnuplot_terminal, verbose])\n\nPlot the grains using Gnuplot and save the figure to disk.\n\nArguments\n\nsimulation::Simulation: the simulation object containing the grains.\nfiletype::String: the output file type (default = \"png\").\ngnuplot_terminal::String: the gnuplot output terminal to use (default =   \"png crop size 1200,1200\").\nverbose::String: show output file as info message in stdout (default =    true).\n\n\n\n"
+    "text": "plotGrains(simulation, [filetype, gnuplot_terminal, verbose])\n\nPlot the grains using Gnuplot and save the figure to disk.\n\nArguments\n\nsimulation::Simulation: the simulation object containing the grains.\nfiletype::String: the output file type (default = \"png\").\ngnuplot_terminal::String: the gnuplot output terminal to use (default =   \"png crop size 1200,1200\").\nplot_interactions::Bool: show grain-grain interactions in the plot.\nverbose::String: show output file as info message in stdout (default =    true).\n\n\n\n"
 },
 
 {
