@@ -512,6 +512,9 @@ end
 
 export findEmptyPositionInGridCell
 """
+    findEmptyPositionInGridCell(simulation, grid, i, j, r[, n_iter, seed,
+                                verbose])
+
 Attempt locate an empty spot for an grain with radius `r` with center 
 coordinates in a specified grid cell (`i`, `j`) without overlapping any other 
 grains in that cell or the neighboring cells.  This function will stop 
@@ -519,6 +522,16 @@ attempting after `n_iter` iterations, each with randomly generated positions.
 
 This function assumes that existing grains have been binned according to the 
 grid (e.g., using `sortGrainsInGrid()`).
+
+# Arguments
+* `simulation::Simulation`: the simulation object to add grains to.
+* `grid::Any`: the grid to use for position search.
+* `i::Int`: the grid-cell index along x.
+* `j::Int`: the grid-cell index along y.
+* `r::Float64`: the desired grain radius to fit into the cell.
+* `n_iter::Int = 10`: the number of attempts for finding an empty spot.
+* `seed::Int = 1`: seed for the pseudo-random number generator.
+* `verbose::Bool = false`: print diagnostic information.
 """
 function findEmptyPositionInGridCell(simulation::Simulation,
                                      grid::Any,
