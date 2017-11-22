@@ -30,7 +30,7 @@ function createSimulation(;id::String="unnamed")
     grains = Array{GrainCylindrical, 1}[]
     ocean::Ocean = createEmptyOcean()
     atmosphere::Atmosphere = createEmptyAtmosphere()
-    Nc_max::Int = 16
+    Nc_max::Int = 32
     walls = Array{WallLinearFrictionless, 1}[]
 
     return Simulation(id,

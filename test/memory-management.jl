@@ -12,7 +12,8 @@ empty_sim_size_recursive = 552
 @test Base.summarysize(sim) == empty_sim_size_recursive
 
 size_per_grain = 368
-size_per_grain_recursive = 1552
+#size_per_grain_recursive = 1552   # Nc_max = 16
+size_per_grain_recursive = 2576   # Nc_max = 32
 
 info("Testing memory usage when adding grains")
 for i=1:100

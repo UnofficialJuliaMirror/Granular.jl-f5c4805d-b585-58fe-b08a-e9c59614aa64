@@ -1173,12 +1173,14 @@ Plot the grains using Gnuplot and save the figure to disk.
 * `filetype::String`: the output file type (default = "png").
 * `gnuplot_terminal::String`: the gnuplot output terminal to use (default =
     "png crop size 1200,1200").
+* `plot_interactions::Bool`: show grain-grain interactions in the plot.
 * `verbose::String`: show output file as info message in stdout (default = 
     true).
 """
 function plotGrains(sim::Simulation;
                     filetype::String = "png",
                     gnuplot_terminal::String = "png crop size 1200,1200",
+                    plot_interactions::Bool = true,
                     show_figure::Bool = true,
                     verbose::Bool = true)
 
@@ -1186,6 +1188,7 @@ function plotGrains(sim::Simulation;
     filename = string(sim.id, "/", sim.id, ".grains.", sim.file_number, ".",
                       filetype)
 
+    # prepare grain data
     x = Float64[]
     y = Float64[]
     r = Float64[]
@@ -1195,10 +1198,100 @@ function plotGrains(sim::Simulation;
         push!(r, grain.contact_radius)
     end
 
-    # write data to temporary file on disk
+    # prepare interaction data
+    if plot_interactions
+        i1 = Int64[]
+        i2 = Int64[]
+        inter_particle_vector = Vector{Float64}[]
+        force = Float64[]
+        effective_radius = Float64[]
+        contact_area = Float64[]
+        contact_stiffness = Float64[]
+        tensile_stress = Float64[]
+        shear_displacement = Vector{Float64}[]
+        contact_age = Float64[]
+        for i=1:length(simulation.grains)
+            for ic=1:simulation.Nc_max
+                if simulation.grains[i].contacts[ic] > 0
+                    j = simulation.grains[i].contacts[ic]
+
+                    if !simulation.grains[i].enabled ||
+                        !simulation.grains[j].enabled
+                        continue
+                    end
+
+                    p = simulation.grains[i].lin_pos -
+                        simulation.grains[j].lin_pos
+                    dist = norm(p)
+
+                    r_i = simulation.grains[i].contact_radius
+                    r_j = simulation.grains[j].contact_radius
+                    δ_n = dist - (r_i + r_j)
+                    R_ij = harmonicMean(r_i, r_j)
+
+                    if simulation.grains[i].youngs_modulus > 0. &&
+                        simulation.grains[j].youngs_modulus > 0.
+                        E_ij = harmonicMean(simulation.grains[i].
+                                            youngs_modulus,
+                                            simulation.grains[j].
+                                            youngs_modulus)
+                        A_ij = R_ij*min(simulation.grains[i].thickness, 
+                                        simulation.grains[j].thickness)
+                        k_n = E_ij*A_ij/R_ij
+                    else
+                        k_n = harmonicMean(simulation.grains[i].
+                                           contact_stiffness_normal,
+                                           simulation.grains[j].
+                                           contact_stiffness_normal)
+                    end
+
+                    
+                    push!(i1, i)
+                    push!(i2, j)
+                    push!(inter_particle_vector, p)
+
+                    push!(force, k_n*δ_n)
+                    push!(effective_radius, R_ij)
+                    push!(contact_area, A_ij)
+                    push!(contact_stiffness, k_n)
+                    push!(tensile_stress, k_n*δ_n/A_ij)
+
+                    push!(shear_displacement, simulation.grains[i].
+                          contact_parallel_displacement[ic])
+
+                    push!(contact_age, simulation.grains[i].contact_age[ic])
+                end
+            end
+        end
+    end
+
+    # write grain data to temporary file on disk
     datafile = Base.Filesystem.tempname()
     writedlm(datafile, [x y r])
     gnuplotscript = Base.Filesystem.tempname()
+
+    #=
+    if plot_interactions
+        # write grain data to temporary file on disk
+        datafile_int = Base.Filesystem.tempname()
+
+        open(datafile_int, "w") do f
+            for i=1:length(i1)
+                write(f, "$(sim.grains[i1[i]].lin_pos[1]) ")
+                write(f, "$(sim.grains[i1[i]].lin_pos[2]) ")
+                write(f, "$(sim.grains[i2[i]].lin_pos[1]) ")
+                write(f, "$(sim.grains[i2[i]].lin_pos[2]) ")
+                write(f, "$(force[i]) ")
+                write(f, "$(effective_radius[i]) ")
+                write(f, "$(contact_area[i]) ")
+                write(f, "$(contact_stiffness[i]) ")
+                write(f, "$(tensile_stress[i]) ")
+                write(f, "$(shear_displacement[i]) ")
+                write(f, "$(contact_age[i]) ")
+                write(f, "\n")
+            end
+        end
+    end=#
 
     open(gnuplotscript, "w") do f
 
@@ -1217,10 +1310,36 @@ function plotGrains(sim::Simulation;
             write(f, "set xrange [$(minimum(x - r)):$(maximum(x + r))]\n")
             write(f, "set yrange [$(minimum(y - r)):$(maximum(y + r))]\n")
         end
+
+        # light gray to black
+        write(f, "set palette defined ( 1 '#d3d3d3', 2 '#000000')\n")
+
         write(f, """set cblabel "Diameter [m]"
               set size ratio -1
-              set key off
-              plot "$(datafile)" with circles lt 1 lc rgb "black" t "Particle"
+              set key off\n""")
+
+        max_tensile_stress = maximum(abs.(tensile_stress))
+        max_line_with = 5.
+        if plot_interactions
+            write(f, "set cbrange [-$max_tensile_stress:$max_tensile_stress]\n")
+            for i=1:length(i1)
+                write(f, "set arrow $i from " *
+                      "$(sim.grains[i1[i]].lin_pos[1])," *
+                      "$(sim.grains[i1[i]].lin_pos[2]) to " *
+                      "$(sim.grains[i2[i]].lin_pos[1])," *
+                      "$(sim.grains[i2[i]].lin_pos[2]) ")
+                if tensile_stress[i] > 0
+                    write(f, "nohead ")
+                else
+                    write(f, "doublehead ")
+                end
+                write(f, "lw $(abs(tensile_stress[i])/
+                                 max_tensile_stress*max_line_width) ")
+                write(f, "lc palette cb $(tensile_stress[i])\n")
+            end
+        end
+
+        write(f,"""plot "$(datafile)" with circles lt 1 lc rgb "black" t "Particle"
               """)
     end
 
