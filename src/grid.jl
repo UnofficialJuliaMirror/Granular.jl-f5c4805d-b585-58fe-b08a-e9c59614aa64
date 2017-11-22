@@ -523,6 +523,10 @@ attempting after `n_iter` iterations, each with randomly generated positions.
 This function assumes that existing grains have been binned according to the 
 grid (e.g., using `sortGrainsInGrid()`).
 
+If the function sucessfully finds a position it will be returned as a
+two-component Vector{Float64}.  If a position is not found, the function will
+return `false`.
+
 # Arguments
 * `simulation::Simulation`: the simulation object to add grains to.
 * `grid::Any`: the grid to use for position search.
@@ -611,16 +615,15 @@ function findEmptyPositionInGridCell(simulation::Simulation,
             break
         end
     end
-    if verbose && !overlap_found
-        info("Found position $pos in cell $i,$j")
-    elseif verbose && overlap_found
-        info("Free position not found in cell $i,$j")
+    if isnan(pos[1]) || isnan(pos[2])
+        if verbose
+            warn("could not determine free position in cell $i,$j")
+        end
+        return false
     end
-
     if !overlap_found
-        if isnan(pos[1]) || isnan(pos[2])
-            warn("could not determine free position in cell")
-            return false
+        if verbose
+            info("Found position $pos in cell $i,$j")
         end
         return pos
     else
