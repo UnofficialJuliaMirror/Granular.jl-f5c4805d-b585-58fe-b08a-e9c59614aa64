@@ -529,7 +529,7 @@ grid (e.g., using `sortGrainsInGrid()`).
 * `i::Int`: the grid-cell index along x.
 * `j::Int`: the grid-cell index along y.
 * `r::Float64`: the desired grain radius to fit into the cell.
-* `n_iter::Int = 10`: the number of attempts for finding an empty spot.
+* `n_iter::Int = 30`: the number of attempts for finding an empty spot.
 * `seed::Int = 1`: seed for the pseudo-random number generator.
 * `verbose::Bool = false`: print diagnostic information.
 """
@@ -538,7 +538,7 @@ function findEmptyPositionInGridCell(simulation::Simulation,
                                      i::Int,
                                      j::Int,
                                      r::Float64;
-                                     n_iter::Int = 10,
+                                     n_iter::Int = 30,
                                      seed::Int = 1,
                                      verbose::Bool = false)
     overlap_found = false
@@ -561,12 +561,16 @@ function findEmptyPositionInGridCell(simulation::Simulation,
 
         # do not penetrate outside of grid boundaries
         if i == 1 && pos[1] - r < grid.xq[1,1]
+            pos .= [NaN, NaN]
             continue
         elseif i == nx && pos[1] + r > grid.xq[end,end]
+            pos .= [NaN, NaN]
             continue
         elseif j == 1 && pos[2] - r < grid.yq[1,1]
+            pos .= [NaN, NaN]
             continue
         elseif j == ny && pos[2] + r > grid.yq[end,end]
+            pos .= [NaN, NaN]
             continue
         end
 
@@ -607,15 +611,16 @@ function findEmptyPositionInGridCell(simulation::Simulation,
             break
         end
     end
-    if verbose && overlap_found == false
+    if verbose && !overlap_found
         info("Found position $pos in cell $i,$j")
     elseif verbose && overlap_found
         info("Free position not found in cell $i,$j")
     end
 
-    if overlap_found == false
+    if !overlap_found
         if isnan(pos[1]) || isnan(pos[2])
-            error("fatal error: could not determine free position in cell")
+            warn("could not determine free position in cell")
+            return false
         end
         return pos
     else

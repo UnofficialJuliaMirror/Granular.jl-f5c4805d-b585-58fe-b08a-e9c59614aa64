@@ -251,17 +251,17 @@ sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
 Granular.addGrainCylindrical!(sim, [.25, .25], .25, 1., verbose=verbose)
 Granular.addGrainCylindrical!(sim, [.75, .75], .25, 1., verbose=verbose)
 Granular.sortGrainsInGrid!(sim, sim.ocean, verbose=verbose)
-pos = Granular.findEmptyPositionInGridCell(sim, sim.ocean, 1, 1, .25, 
-                                         verbose=true)
+pos = Granular.findEmptyPositionInGridCell(sim, sim.ocean, 1, 1, .25, n_iter=30,
+                                           verbose=true)
 @test pos != false
 @test Granular.isPointInCell(sim.ocean, 1, 1, pos) == true
 
 info("# Insert into full cell")
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
-Granular.addGrainCylindrical!(sim, [.5, .5], 1., 1., verbose=verbose)
-Granular.addGrainCylindrical!(sim, [.75, .5], 1., 1., verbose=verbose)
-Granular.addGrainCylindrical!(sim, [.5, .75], 1., 1., verbose=verbose)
+Granular.addGrainCylindrical!(sim, [.25, .25], 1., 1., verbose=verbose)
+Granular.addGrainCylindrical!(sim, [.75, .25], 1., 1., verbose=verbose)
+Granular.addGrainCylindrical!(sim, [.25, .75], 1., 1., verbose=verbose)
 Granular.addGrainCylindrical!(sim, [.75, .75], 1., 1., verbose=verbose)
 Granular.sortGrainsInGrid!(sim, sim.ocean, verbose=verbose)
 pos = Granular.findEmptyPositionInGridCell(sim, sim.ocean, 1, 1, 0.5,
