@@ -621,7 +621,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.findEmptyPositionInGridCell",
     "category": "Method",
-    "text": "Attempt locate an empty spot for an grain with radius r with center  coordinates in a specified grid cell (i, j) without overlapping any other  grains in that cell or the neighboring cells.  This function will stop  attempting after n_iter iterations, each with randomly generated positions.\n\nThis function assumes that existing grains have been binned according to the  grid (e.g., using sortGrainsInGrid()).\n\n\n\n"
+    "text": "findEmptyPositionInGridCell(simulation, grid, i, j, r[, n_iter, seed,\n                            verbose])\n\nAttempt locate an empty spot for an grain with radius r with center  coordinates in a specified grid cell (i, j) without overlapping any other  grains in that cell or the neighboring cells.  This function will stop  attempting after n_iter iterations, each with randomly generated positions.\n\nThis function assumes that existing grains have been binned according to the  grid (e.g., using sortGrainsInGrid()).\n\nArguments\n\nsimulation::Simulation: the simulation object to add grains to.\ngrid::Any: the grid to use for position search.\ni::Int: the grid-cell index along x.\nj::Int: the grid-cell index along y.\nr::Float64: the desired grain radius to fit into the cell.\nn_iter::Int = 30: the number of attempts for finding an empty spot.\nseed::Int = 1: seed for the pseudo-random number generator.\nverbose::Bool = false: print diagnostic information.\n\n\n\n"
 },
 
 {
@@ -853,7 +853,15 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.plotGrainSizeDistribution",
     "category": "Method",
-    "text": "plotGrainSizeDistribution(simulation, [filename_postfix], [nbins],\n                            [size_type], [figsize], [filetype])\n\nPlot the grain size distribution as a histogram and save it to the disk.  The  plot is saved accoring to the simulation id, the optional filename_postfix  string, and the filetype, and is written to the current folder.\n\nArguments\n\nsimulation::Simulation: the simulation object containing the grains.\nfilename_postfix::String: optional string for the output filename.\nnbins::Int: number of bins in the histogram (default = 12).\nsize_type::String: specify whether to use the contact or areal radius    for the grain size.  The default is contact.\nfigsize::Tuple: the output figure size in inches (default = (6,4).\nfiletype::String: the output file type (default = \"png\").\nverbose::String: show output file as info message in stdout (default =    true).\nskip_fixed::Bool: ommit grains that are fixed in space from the size    distribution (default = true).\nlog_y::Bool: plot y-axis in log scale.\nshow_plot::Bool: show plot in pop-up window in addition to writing to disk.\n\n\n\n"
+    "text": "plotGrainSizeDistribution(simulation, [filename_postfix, nbins,\n                            size_type, filetype, gnuplot_terminal,\n                            skip_fixed, log_y, verbose)\n\nPlot the grain size distribution as a histogram and save it to the disk.  The  plot is saved accoring to the simulation id, the optional filename_postfix  string, and the filetype, and is written to the current folder.\n\nArguments\n\nsimulation::Simulation: the simulation object containing the grains.\nfilename_postfix::String: optional string for the output filename.\nnbins::Int: number of bins in the histogram (default = 12).\nsize_type::String: specify whether to use the contact or areal radius    for the grain size.  The default is contact.\nfiletype::String: the output file type (default = \"png\").\ngnuplot_terminal::String: the gnuplot output terminal to use (default =   \"png\").\nskip_fixed::Bool: ommit grains that are fixed in space from the size    distribution (default = true).\nlog_y::Bool: plot y-axis in log scale.\nverbose::String: show output file as info message in stdout (default =    true).\n\n\n\n"
+},
+
+{
+    "location": "lib/public.html#Granular.plotGrains-Tuple{Granular.Simulation}",
+    "page": "Public API",
+    "title": "Granular.plotGrains",
+    "category": "Method",
+    "text": "plotGrains(simulation, [filetype, gnuplot_terminal, verbose])\n\nPlot the grains using Gnuplot and save the figure to disk.\n\nArguments\n\nsimulation::Simulation: the simulation object containing the grains.\nfiletype::String: the output file type (default = \"png\").\ngnuplot_terminal::String: the gnuplot output terminal to use (default =   \"png crop size 1200,1200\").\nverbose::String: show output file as info message in stdout (default =    true).\n\n\n\n"
 },
 
 {
