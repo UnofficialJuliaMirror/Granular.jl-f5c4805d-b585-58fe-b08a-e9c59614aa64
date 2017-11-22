@@ -1210,38 +1210,38 @@ function plotGrains(sim::Simulation;
         tensile_stress = Float64[]
         shear_displacement = Vector{Float64}[]
         contact_age = Float64[]
-        for i=1:length(simulation.grains)
-            for ic=1:simulation.Nc_max
-                if simulation.grains[i].contacts[ic] > 0
-                    j = simulation.grains[i].contacts[ic]
+        for i=1:length(sim.grains)
+            for ic=1:sim.Nc_max
+                if sim.grains[i].contacts[ic] > 0
+                    j = sim.grains[i].contacts[ic]
 
-                    if !simulation.grains[i].enabled ||
-                        !simulation.grains[j].enabled
+                    if !sim.grains[i].enabled ||
+                        !sim.grains[j].enabled
                         continue
                     end
 
-                    p = simulation.grains[i].lin_pos -
-                        simulation.grains[j].lin_pos
+                    p = sim.grains[i].lin_pos -
+                        sim.grains[j].lin_pos
                     dist = norm(p)
 
-                    r_i = simulation.grains[i].contact_radius
-                    r_j = simulation.grains[j].contact_radius
+                    r_i = sim.grains[i].contact_radius
+                    r_j = sim.grains[j].contact_radius
                     δ_n = dist - (r_i + r_j)
                     R_ij = harmonicMean(r_i, r_j)
 
-                    if simulation.grains[i].youngs_modulus > 0. &&
-                        simulation.grains[j].youngs_modulus > 0.
-                        E_ij = harmonicMean(simulation.grains[i].
+                    if sim.grains[i].youngs_modulus > 0. &&
+                        sim.grains[j].youngs_modulus > 0.
+                        E_ij = harmonicMean(sim.grains[i].
                                             youngs_modulus,
-                                            simulation.grains[j].
+                                            sim.grains[j].
                                             youngs_modulus)
-                        A_ij = R_ij*min(simulation.grains[i].thickness, 
-                                        simulation.grains[j].thickness)
+                        A_ij = R_ij*min(sim.grains[i].thickness, 
+                                        sim.grains[j].thickness)
                         k_n = E_ij*A_ij/R_ij
                     else
-                        k_n = harmonicMean(simulation.grains[i].
+                        k_n = harmonicMean(sim.grains[i].
                                            contact_stiffness_normal,
-                                           simulation.grains[j].
+                                           sim.grains[j].
                                            contact_stiffness_normal)
                     end
 
@@ -1256,10 +1256,10 @@ function plotGrains(sim::Simulation;
                     push!(contact_stiffness, k_n)
                     push!(tensile_stress, k_n*δ_n/A_ij)
 
-                    push!(shear_displacement, simulation.grains[i].
+                    push!(shear_displacement, sim.grains[i].
                           contact_parallel_displacement[ic])
 
-                    push!(contact_age, simulation.grains[i].contact_age[ic])
+                    push!(contact_age, sim.grains[i].contact_age[ic])
                 end
             end
         end
@@ -1318,24 +1318,26 @@ function plotGrains(sim::Simulation;
               set size ratio -1
               set key off\n""")
 
-        max_tensile_stress = maximum(abs.(tensile_stress))
-        max_line_with = 5.
-        if plot_interactions
-            write(f, "set cbrange [-$max_tensile_stress:$max_tensile_stress]\n")
-            for i=1:length(i1)
-                write(f, "set arrow $i from " *
-                      "$(sim.grains[i1[i]].lin_pos[1])," *
-                      "$(sim.grains[i1[i]].lin_pos[2]) to " *
-                      "$(sim.grains[i2[i]].lin_pos[1])," *
-                      "$(sim.grains[i2[i]].lin_pos[2]) ")
-                if tensile_stress[i] > 0
-                    write(f, "nohead ")
-                else
-                    write(f, "doublehead ")
+        if length(i1) > 0
+            max_tensile_stress = maximum(abs.(tensile_stress))
+            max_line_with = 5.
+            if plot_interactions
+                write(f, "set cbrange [-$max_tensile_stress:$max_tensile_stress]\n")
+                for i=1:length(i1)
+                    write(f, "set arrow $i from " *
+                          "$(sim.grains[i1[i]].lin_pos[1])," *
+                          "$(sim.grains[i1[i]].lin_pos[2]) to " *
+                          "$(sim.grains[i2[i]].lin_pos[1])," *
+                          "$(sim.grains[i2[i]].lin_pos[2]) ")
+                    if tensile_stress[i] > 0
+                        write(f, "nohead ")
+                    else
+                        write(f, "doublehead ")
+                    end
+                    write(f, "lw $(abs(tensile_stress[i])/
+                                   max_tensile_stress*max_line_width) ")
+                    write(f, "lc palette cb $(tensile_stress[i])\n")
                 end
-                write(f, "lw $(abs(tensile_stress[i])/
-                                 max_tensile_stress*max_line_width) ")
-                write(f, "lc palette cb $(tensile_stress[i])\n")
             end
         end
 
