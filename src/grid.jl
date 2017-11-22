@@ -546,6 +546,7 @@ function findEmptyPositionInGridCell(simulation::Simulation,
                                      seed::Int = 1,
                                      verbose::Bool = false)
     overlap_found = false
+    spot_found = false
     i_iter = 0
     pos = [NaN, NaN]
 
@@ -564,64 +565,57 @@ function findEmptyPositionInGridCell(simulation::Simulation,
         end
 
         # do not penetrate outside of grid boundaries
-        if i == 1 && pos[1] - r < grid.xq[1,1]
-            pos .= [NaN, NaN]
-            continue
-        elseif i == nx && pos[1] + r > grid.xq[end,end]
-            pos .= [NaN, NaN]
-            continue
-        elseif j == 1 && pos[2] - r < grid.yq[1,1]
-            pos .= [NaN, NaN]
-            continue
-        elseif j == ny && pos[2] + r > grid.yq[end,end]
-            pos .= [NaN, NaN]
-            continue
+        if i == 1 && pos[1] - r < grid.xq[1,1] ||
+            j == 1 && pos[2] - r < grid.yq[1,1] ||
+            i == nx && pos[1] + r > grid.xq[end,end] ||
+            j == ny && pos[2] + r > grid.yq[end,end]
+            overlap_found = true
         end
 
         # search for contacts in current and eight neighboring cells
-        for i_neighbor_corr=[0 -1 1]
-            for j_neighbor_corr=[0 -1 1]
+        if !overlap_found
+            for i_neighbor_corr=[0 -1 1]
+                for j_neighbor_corr=[0 -1 1]
 
-                # target cell index
-                it = i + i_neighbor_corr
-                jt = j + j_neighbor_corr
+                    # target cell index
+                    it = i + i_neighbor_corr
+                    jt = j + j_neighbor_corr
 
-                # do not search outside grid boundaries
-                if it < 1 || it > nx || jt < 1 || jt > ny
-                    continue
-                end
+                    # do not search outside grid boundaries
+                    if it < 1 || it > nx || jt < 1 || jt > ny
+                        continue
+                    end
 
-                # traverse list of grains in the target cell and check 
-                # for overlaps
-                for grain_idx in grid.grain_list[it, jt]
-                    overlap = norm(simulation.grains[grain_idx].lin_pos - 
-                                   pos) -
+                    # traverse list of grains in the target cell and check 
+                    # for overlaps
+                    for grain_idx in grid.grain_list[it, jt]
+                        overlap = norm(simulation.grains[grain_idx].lin_pos - 
+                                       pos) -
                         (simulation.grains[grain_idx].contact_radius + r)
 
-                    if overlap < 0.
-                        if verbose
-                            info("overlap with $grain_idx in cell $i,$j")
+                        if overlap < 0.
+                            if verbose
+                                info("overlap with $grain_idx in cell $i,$j")
+                            end
+                            overlap_found = true
+                            break
                         end
-                        overlap_found = true
-                        break
                     end
                 end
-            end
-            if overlap_found == true
-                break
+                if overlap_found == true
+                    break
+                end
             end
         end
         if overlap_found == false
             break
         end
     end
-    if isnan(pos[1]) || isnan(pos[2])
-        if verbose
-            warn("could not determine free position in cell $i,$j")
-        end
-        return false
+    if overlap_found == false
+        spot_found = true
     end
-    if !overlap_found
+
+    if spot_found
         if verbose
             info("Found position $pos in cell $i,$j")
         end
