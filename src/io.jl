@@ -6,6 +6,7 @@ if typeof(Pkg.installed("JLD")) == VersionNumber
     hasJLD = true
 end
 using Compat.DelimitedFiles
+using Compat.Dates
 
 # load Homebrew/WinRPM for gnuplot and imagemagick
 if is_apple() 
