@@ -1069,7 +1069,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.status",
     "category": "Function",
-    "text": "Shows the status of all simulations with output files written under the  specified folder, which is the current working directory by default.\n\n\n\n"
+    "text": "status(folder[, loop, t_int, colored_output, write_header, render)\n\nShows the status of all simulations with output files written under the  specified folder, which is the current working directory by default.\n\nArguments\n\nfolder::String=\".\": directory (including subdirectories) to scan for     simulation output. loop::Bool=false: continue printing the status every t_int seconds. t_int::Int=10: interval between status updates when loop=true. colored_output::Bool=true: display output with colors. write_header::Bool=true: write header line explaining the data. visualize::Bool=false: render the simulation output. Does not work well whenloop=true`, as the script regenerates (and overwrites)  all output graphics     on every call.\n\n\n\n"
 },
 
 {
