@@ -6,9 +6,14 @@
 set -e
 cmd_sing='julia --color=yes -e "import Granular; Granular.status()"'
 cmd_loop='julia --color=yes -e "import Granular; Granular.status(loop=true, t_int=10)"'
+cmd_render='julia --color=yes -e "import Granular; Granular.status(visualize=true)"'
 
 if [[ "$1" == "loop" ]]; then
     eval $cmd_loop
+elif [[ "$1" == "render" ]]; then
+    eval $cmd_render
+elif [[ "$1" == "visualize" ]]; then
+    eval $cmd_render
 else
     eval $cmd_sing
 fi
