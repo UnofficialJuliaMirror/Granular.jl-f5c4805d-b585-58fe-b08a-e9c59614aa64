@@ -68,6 +68,11 @@ function updateGrainKinematicsTwoTermTaylor!(grain::GrainCylindrical,
     grain.lin_pos +=
         grain.lin_vel * simulation.time_step +
         0.5*grain.lin_acc * simulation.time_step^2.0
+
+    grain.lin_disp +=
+        grain.lin_vel * simulation.time_step +
+        0.5*grain.lin_acc * simulation.time_step^2.0
+
     grain.ang_pos +=
         grain.ang_vel * simulation.time_step +
         0.5*grain.ang_acc * simulation.time_step^2.0
@@ -111,6 +116,12 @@ function updateGrainKinematicsThreeTermTaylor!(grain::GrainCylindrical,
         grain.lin_vel * simulation.time_step +
         0.5 * grain.lin_acc * simulation.time_step^2. +
         1. / 6. * d_lin_acc_dt * simulation.time_step^3.
+
+    grain.lin_disp +=
+        grain.lin_vel * simulation.time_step +
+        0.5 * grain.lin_acc * simulation.time_step^2. +
+        1. / 6. * d_lin_acc_dt * simulation.time_step^3.
+
     grain.ang_pos +=
         grain.ang_vel * simulation.time_step +
         0.5 * grain.ang_acc * simulation.time_step^2. +
@@ -232,4 +243,3 @@ function updateWallKinematicsThreeTermTaylor!(wall::WallLinearFrictionless,
 
     nothing
 end
-

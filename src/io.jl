@@ -186,14 +186,28 @@ end
 
 export status
 """
+    status(folder[, loop, t_int, colored_output, write_header, render)
+
 Shows the status of all simulations with output files written under the 
 specified `folder`, which is the current working directory by default.
+
+# Arguments
+`folder::String="."`: directory (including subdirectories) to scan for
+    simulation output.
+`loop::Bool=false`: continue printing the status every `t_int` seconds.
+`t_int::Int=10`: interval between status updates when `loop=true`.
+`colored_output::Bool=true`: display output with colors.
+`write_header::Bool=true`: write header line explaining the data.
+visualize::Bool=false`: render the simulation output. Does not work well when
+    `loop=true`, as the script regenerates (and overwrites)  all output graphics
+    on every call.
 """
 function status(folder::String=".";
                 loop::Bool=false,
                 t_int::Int=10,
                 colored_output::Bool=true,
-                write_header::Bool=true)
+                write_header::Bool=true,
+                visualize::Bool=false)
 
     if colored_output
         id_color_complete = :green
@@ -253,6 +267,11 @@ function status(folder::String=".";
                 print_with_color(time_color, "$time_s ($time_h) \t")
                 print_with_color(percentage_color, "$percentage \t")
                 print_with_color(lastfile_color, "$lastfile \n")
+
+                if visualize
+                    sim = createSimulation(id)
+                    render(sim)
+                end
             end
             if write_header
                 println("--------------------------------------" * 
@@ -354,6 +373,7 @@ function writeGrainVTK(simulation::Simulation,
     WriteVTK.vtk_point_data(vtkfile, ifarr.lin_acc,
                             "Linear acceleration [m s^-2]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.force, "Sum of forces [N]")
+    WriteVTK.vtk_point_data(vtkfile, ifarr.lin_disp, "Linear displacement [m]")
 
     WriteVTK.vtk_point_data(vtkfile, ifarr.ang_pos, "Angular position [rad]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.ang_vel,
@@ -759,7 +779,8 @@ function writeParaviewPythonScript(simulation::Simulation;
     end
 
     if simulation.file_number == 0
-        simulation.file_number = readSimulationStatus(simulation)
+        simulation.file_number = readSimulationStatus(simulation,
+                                                      verbose=verbose)
     end
 
     open(filename, "w") do f
@@ -786,6 +807,7 @@ imagegrains.PointArrayStatus = [
 'Linear velocity [m s^-1]',
 'Linear acceleration [m s^-2]',
 'Sum of forces [N]',
+'Linear displacement [m]',
 'Angular position [rad]',
 'Angular velocity [rad s^-1]',
 'Angular acceleration [rad s^-2]',

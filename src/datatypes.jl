@@ -21,6 +21,7 @@ mutable struct GrainCylindrical
     lin_acc::Vector{Float64}
     force::Vector{Float64}
     external_body_force::Vector{Float64}
+    lin_disp::Vector{Float64}
 
     # Angular kinematic degrees of freedom for vertical rotation around center
     ang_pos::Float64
@@ -106,6 +107,8 @@ mutable struct GrainArrays
     lin_vel::Array{Float64, 2}
     lin_acc::Array{Float64, 2}
     force::Array{Float64, 2}
+    external_body_force::Array{Float64, 2}
+    lin_disp::Array{Float64, 2}
 
     # Angular kinematic degrees of freedom for vertical rotation around center
     ang_pos::Array{Float64, 2}

@@ -224,6 +224,7 @@ function addGrainCylindrical!(simulation::Simulation,
                                  lin_acc,
                                  force,
                                  [0., 0.], # external_body_force
+                                 [0., 0.], # lin_disp
 
                                  ang_pos,
                                  ang_vel,
@@ -341,6 +342,8 @@ function convertGrainDataToArrays(simulation::Simulation)
                           zeros(Float64, 3, length(simulation.grains)),
                           zeros(Float64, 3, length(simulation.grains)),
                           zeros(Float64, 3, length(simulation.grains)),
+                          zeros(Float64, 3, length(simulation.grains)),
+                          zeros(Float64, 3, length(simulation.grains)),
 
                           zeros(Float64, 3, length(simulation.grains)),
                           zeros(Float64, 3, length(simulation.grains)),
@@ -397,6 +400,9 @@ function convertGrainDataToArrays(simulation::Simulation)
         ifarr.lin_vel[1:2, i] = simulation.grains[i].lin_vel
         ifarr.lin_acc[1:2, i] = simulation.grains[i].lin_acc
         ifarr.force[1:2, i] = simulation.grains[i].force
+        ifarr.external_body_force[1:2, i] =
+            simulation.grains[i].external_body_force
+        ifarr.lin_disp[1:2, i] = simulation.grains[i].lin_disp
 
         ifarr.ang_pos[3, i] = simulation.grains[i].ang_pos
         ifarr.ang_vel[3, i] = simulation.grains[i].ang_vel
@@ -470,6 +476,8 @@ function deleteGrainArrays!(ifarr::GrainArrays)
     ifarr.lin_vel = f2
     ifarr.lin_acc = f2
     ifarr.force = f2
+    ifarr.external_body_force = f2
+    ifarr.lin_disp = f2
 
     ifarr.ang_pos = f2
     ifarr.ang_vel = f2
@@ -532,6 +540,7 @@ function printGrainInfo(f::GrainCylindrical)
     println("  lin_vel: $(f.lin_vel) m/s")
     println("  lin_acc: $(f.lin_acc) m/s^2")
     println("  force:   $(f.force) N\n")
+    println("  external_body_force: $(f.external_body_force) N\n")
 
     println("  ang_pos: $(f.ang_pos) rad")
     println("  ang_vel: $(f.ang_vel) rad/s")
@@ -668,6 +677,7 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
     @test if1.lin_acc ≈ if2.lin_acc
     @test if1.force ≈ if2.force
     @test if1.external_body_force ≈ if2.external_body_force
+    @test if1.lin_disp ≈ if2.lin_disp
 
     @test if1.ang_pos ≈ if2.ang_pos
     @test if1.ang_vel ≈ if2.ang_vel
@@ -772,6 +782,7 @@ function zeroKinematics!(sim::Simulation)
         grain.lin_vel .= zeros(2)
         grain.lin_acc .= zeros(2)
         grain.force .= zeros(2)
+        grain.lin_disp .= zeros(2)
         grain.ang_vel = 0.
         grain.ang_acc = 0.
         grain.torque = 0.
