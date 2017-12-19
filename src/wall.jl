@@ -35,6 +35,10 @@ The only required arguments are
     parameter. Units: [m/s]
 * `force::Float64=0.`: sum of normal forces on the wall from interaction with
     grains [N].
+* `contact_viscosity_normal::Float64=0.`: viscosity to apply in parallel to
+    elasticity in interactions between wall and particles [N/(m/s)]. When this
+    term is larger than zero, the wall-grain interaction acts like a sink of
+    kinetic energy.
 * `verbose::Bool=true`: show verbose information during function call.
 
 # Examples
@@ -74,6 +78,7 @@ function addWallLinearFrictionless!(simulation::Simulation,
                                     vel::Float64 = 0.,
                                     acc::Float64 = 0.,
                                     force::Float64 = 0.,
+                                    contact_viscosity_normal = 0.,
                                     verbose::Bool=true)
 
     # Check input values
@@ -143,7 +148,8 @@ function addWallLinearFrictionless!(simulation::Simulation,
                                   normal_stress,
                                   vel,
                                   acc,
-                                  force)
+                                  force,
+                                  contact_viscosity_normal)
 
     # Add to simulation object
     addWall!(simulation, wall, verbose)

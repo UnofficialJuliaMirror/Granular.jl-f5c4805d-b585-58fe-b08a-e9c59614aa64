@@ -49,6 +49,9 @@ function interactWalls!(sim::Simulation)
     orientation::Float64 = 0.0
     δ_n::Float64 = 0.0
     k_n::Float64 = 0.0
+    γ_n::Float64 = 0.0
+    vel_n::Float64 = 0.0
+    force_n::Float64 = 0.0
 
     for iw=1:length(sim.walls)
         for i=1:length(sim.grains)
@@ -57,9 +60,11 @@ function interactWalls!(sim::Simulation)
                                    sim.grains[i].lin_pos) - sim.walls[iw].pos)
 
             # get overlap distance by projecting grain position onto wall-normal
-            # vector
+            # vector. Overlap when δ_n < 0.0
             δ_n = abs(dot(sim.walls[iw].normal, sim.grains[i].lin_pos) -
                       sim.walls[iw].pos) - sim.grains[i].contact_radius
+
+            vel_n = dot(sim.walls[iw].normal, sim.grains[i].lin_vel)
 
             if δ_n < 0.
                 if sim.grains[i].youngs_modulus > 0.
@@ -68,9 +73,31 @@ function interactWalls!(sim::Simulation)
                     k_n = sim.grains[i].contact_stiffness_normal
                 end
 
-                sim.grains[i].force += -k_n * δ_n .* sim.walls[iw].normal .*
+                γ_n = sim.walls[iw].contact_viscosity_normal
+
+                if k_n ≈ 0. && γ_n ≈ 0.  # No interaction
+                    force_n = 0.
+
+                elseif k_n > 0. && γ_n ≈ 0.  # Elastic (Hookean)
+                    force_n = k_n * δ_n
+
+                elseif k_n > 0. && γ_n > 0.  # Elastic-viscous (Kelvin-Voigt)
+                    force_n = k_n * δ_n + γ_n * vel_n
+
+                    # Make sure that the visous component doesn't dominate over
+                    # elasticity
+                    if force_n > 0.
+                        force_n = 0.
+                    end
+
+                else
+                    error("unknown contact_normal_rheology " *
+                          "(k_n = $k_n, γ_n = $γ_n")
+                end
+
+                sim.grains[i].force += -force_n .* sim.walls[iw].normal .*
                     orientation
-                sim.walls[iw].force += k_n * δ_n * orientation
+                sim.walls[iw].force += force_n * orientation
             end
         end
     end
@@ -162,13 +189,13 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
                        simulation.grains[j].contact_dynamic_friction)
 
     # Determine contact forces
-    if k_n ≈ 0. && γ_n ≈ 0.
+    if k_n ≈ 0. && γ_n ≈ 0.  # No interaction
         force_n = 0.
 
-    elseif k_n > 0. && γ_n ≈ 0.
+    elseif k_n > 0. && γ_n ≈ 0.  # Elastic (Hookean)
         force_n = -k_n*δ_n
 
-    elseif k_n > 0. && γ_n > 0.
+    elseif k_n > 0. && γ_n > 0.  # Elastic-viscous (Kelvin-Voigt)
         force_n = -k_n*δ_n - γ_n*vel_n
         if force_n < 0.
             force_n = 0.

@@ -50,7 +50,7 @@ Granular.addWallLinearFrictionless!(sim, [0., 1.], 1., verbose=false)
 @test Granular.getWallSurfaceArea(sim, 1) ≈ 20.0*2.0
 @test Granular.getWallSurfaceArea(sim, 2) ≈ 10.0*2.0
 
-info("# Test wall-grain interaction")
+info("# Test wall-grain interaction: elastic")
 
 info("Wall present but no contact")
 sim = Granular.createSimulation()
@@ -117,6 +117,109 @@ Granular.interactWalls!(sim)
 @test sim.walls[1].force > 0.
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] < 0.
+
+info("# Test wall-grain interaction: elastic-viscous")
+
+info("Wall present but no contact")
+sim = Granular.createSimulation()
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
+Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
+Granular.addWallLinearFrictionless!(sim, [1., 0.], -1.01, verbose=false)
+sim.walls[1].contact_viscosity_normal = 1e3
+Granular.setTimeStep!(sim, verbose=false)
+Granular.interactWalls!(sim)
+@test sim.walls[1].force ≈ 0.
+@test sim.grains[1].force[1] ≈ 0.
+@test sim.grains[1].force[2] ≈ 0.
+
+info("Wall present but no contact")
+sim = Granular.createSimulation()
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
+Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
+Granular.addWallLinearFrictionless!(sim, [1., 0.], +2.01, verbose=false)
+sim.walls[1].contact_viscosity_normal = 1e3
+Granular.setTimeStep!(sim, verbose=false)
+Granular.interactWalls!(sim)
+@test sim.walls[1].force ≈ 0.
+@test sim.grains[1].force[1] ≈ 0.
+@test sim.grains[1].force[2] ≈ 0.
+
+info("Wall at -x")
+sim = Granular.createSimulation()
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
+Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
+Granular.addWallLinearFrictionless!(sim, [1., 0.], -1. + .01, verbose=false)
+sim.walls[1].contact_viscosity_normal = 1e3
+Granular.setTimeStep!(sim, verbose=false)
+Granular.interactWalls!(sim)
+@test sim.walls[1].force < 0.
+@test sim.grains[1].force[1] > 0.
+@test sim.grains[1].force[2] ≈ 0.
+
+info("Wall at +x")
+sim = Granular.createSimulation()
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
+Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
+Granular.addWallLinearFrictionless!(sim, [1., 0.], +1. - .01, verbose=false)
+sim.walls[1].contact_viscosity_normal = 1e3
+Granular.setTimeStep!(sim, verbose=false)
+Granular.interactWalls!(sim)
+@test sim.walls[1].force > 0.
+@test sim.grains[1].force[1] < 0.
+@test sim.grains[1].force[2] ≈ 0.
+
+info("Wall at -y")
+sim = Granular.createSimulation()
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
+Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
+Granular.addWallLinearFrictionless!(sim, [0., 1.], -1. + .01, verbose=false)
+sim.walls[1].contact_viscosity_normal = 1e3
+Granular.setTimeStep!(sim, verbose=false)
+Granular.interactWalls!(sim)
+@test sim.walls[1].force < 0.
+@test sim.grains[1].force[1] ≈ 0.
+@test sim.grains[1].force[2] > 0.
+
+info("Wall at +y")
+sim = Granular.createSimulation()
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
+Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
+Granular.addWallLinearFrictionless!(sim, [0., 1.], +1. - .01, verbose=false)
+sim.walls[1].contact_viscosity_normal = 1e3
+Granular.setTimeStep!(sim, verbose=false)
+Granular.interactWalls!(sim)
+@test sim.walls[1].force > 0.
+@test sim.grains[1].force[1] ≈ 0.
+@test sim.grains[1].force[2] < 0.
+
+info("Full collision with wall")
+sim = Granular.createSimulation()
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
+Granular.addGrainCylindrical!(sim, [1.2, 0.], 1., 2., verbose=false)
+Granular.addWallLinearFrictionless!(sim, [1., 0.], 0., verbose=false)
+sim.walls[1].contact_viscosity_normal = 1e3
+sim.grains[1].lin_vel[1] = -0.2
+Granular.setTimeStep!(sim, verbose=false)
+Granular.setTotalTime!(sim, 5.)
+lin_vel0 = sim.grains[1].lin_vel
+Granular.run!(sim)
+@test sim.grains[1].lin_vel[1] < abs(lin_vel0[1])
+@test sim.grains[1].lin_vel[2] ≈ 0.
+lin_vel1 = sim.grains[1].lin_vel
+
+sim = Granular.createSimulation()
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
+Granular.addGrainCylindrical!(sim, [1.2, 0.], 1., 2., verbose=false)
+Granular.addWallLinearFrictionless!(sim, [1., 0.], 0., verbose=false)
+sim.walls[1].contact_viscosity_normal = 1e4
+sim.grains[1].lin_vel[1] = -0.2
+Granular.setTimeStep!(sim, verbose=false)
+Granular.setTotalTime!(sim, 5.)
+lin_vel0 = sim.grains[1].lin_vel
+Granular.run!(sim)
+@test sim.grains[1].lin_vel[1] < abs(lin_vel0[1])
+@test sim.grains[1].lin_vel[1] < lin_vel1[1]
+@test sim.grains[1].lin_vel[2] ≈ 0.
 
 
 info("# Testing wall dynamics")

@@ -83,6 +83,7 @@ mutable struct WallLinearFrictionless
     vel::Float64              # Velocity (constant when bc == "normal stress")
     acc::Float64              # Acceleration (zero when bc == "velocity")
     force::Float64            # Sum of normal forces on wall
+    contact_viscosity_normal::Float64 # Wall-normal contact viscosity
 end
 
 # Type for gathering data from grain objects into single arrays
