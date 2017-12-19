@@ -78,7 +78,7 @@ function addWallLinearFrictionless!(simulation::Simulation,
                                     vel::Float64 = 0.,
                                     acc::Float64 = 0.,
                                     force::Float64 = 0.,
-                                    contact_viscosity_normal = 0.,
+                                    contact_viscosity_normal::Float64 = 0.,
                                     verbose::Bool=true)
 
     # Check input values
