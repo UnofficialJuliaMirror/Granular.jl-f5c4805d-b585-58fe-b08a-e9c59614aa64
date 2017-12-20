@@ -3,7 +3,8 @@
 export addWallLinearFrictionless!
 """
     function addWallLinear!(simulation, normal, pos[, bc, mass, thickness, 
-                            normal_stress, vel, acc, force, verbose])
+                            normal_stress, vel, acc, force,
+                            contact_viscosity_normal, verbose])
 
 Creates and adds a linear (flat) and frictionless dynamic wall to a grain to a
 simulation. Most of the arguments are optional, and come with default values.
