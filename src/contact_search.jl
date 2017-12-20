@@ -128,36 +128,16 @@ function findContactsInGrid!(simulation::Simulation, grid::Any)
                 i_corrected = i
                 j_corrected = j
 
-                # vector for correcting inter-particle distance in case of
-                # boundary periodicity
-                distance_modifier .= [0., 0.]
+                # correct indexes if necessary
+                periodicBoundaryCorrection!(grid, i, j,
+                                            i_corrected, j_corrected,
+                                            distance_modifier)
 
-                # only check for contacts within grid boundaries, and wrap
-                # around if they are periodic
-                if i < 1 || i > nx || j < 1 || j > ny
-
-                    if i < 1 && grid.bc_west == 2  # periodic -x
-                        distance_modifier[1] = grid.xq[end] - grid.xq[1]
-                        i_corrected = nx
-                    elseif i > nx && grid.bc_east == 2  # periodic +x
-                        distance_modifier[1] = -(grid.xq[end] - grid.xq[1])
-                        i_corrected = 1
-                    end
-
-                    if j < 1 && grid.bc_south == 2  # periodic -y
-                        distance_modifier[2] = grid.yq[end] - grid.yq[1]
-                        j_corrected = ny
-                    elseif j > ny && grid.bc_north == 2  # periodic +y
-                        distance_modifier[2] = -(grid.yq[end] - grid.yq[1])
-                        j_corrected = 1
-                    end
-
-                    # skip iteration if target still falls outside grid after
-                    # periodicity correction
-                    if i_corrected < 1 || i_corrected > nx ||
-                        j_corrected < 1 || j_corrected > ny
-                        continue
-                    end
+                # skip iteration if target still falls outside grid after
+                # periodicity correction
+                if i_corrected < 1 || i_corrected > nx ||
+                    j_corrected < 1 || j_corrected > ny
+                    continue
                 end
 
                 @inbounds for idx_j in grid.grain_list[i_corrected, j_corrected]
@@ -168,6 +148,44 @@ function findContactsInGrid!(simulation::Simulation, grid::Any)
         end
     end
     nothing
+end
+
+"""
+    periodicBoundaryCorrection!(grid::Any, i::Integer, j::Integer,
+                                i_corrected::Integer, j_corrected::Integer,
+                                distance_modifier::Vector{Float64})
+
+Determine the geometric correction and grid-index adjustment required across
+periodic boundaries.
+"""
+function periodicBoundaryCorrection!(grid::Any, i::Integer, j::Integer,
+                                     i_corrected::Integer, j_corrected::Integer,
+                                     distance_modifier::Vector{Float64})
+
+    # vector for correcting inter-particle distance in case of
+    # boundary periodicity
+    distance_modifier .= [0., 0.]
+
+    # only check for contacts within grid boundaries, and wrap
+    # around if they are periodic
+    if i < 1 || i > size(grid.xh)[1] || j < 1 || j > size(grid.xh)[2]
+
+        if i < 1 && grid.bc_west == 2  # periodic -x
+            distance_modifier[1] = grid.xq[end] - grid.xq[1]
+            i_corrected = size(grid.xh)[1]
+        elseif i > size(grid.xh)[1] && grid.bc_east == 2  # periodic +x
+            distance_modifier[1] = -(grid.xq[end] - grid.xq[1])
+            i_corrected = 1
+        end
+
+        if j < 1 && grid.bc_south == 2  # periodic -y
+            distance_modifier[2] = grid.yq[end] - grid.yq[1]
+            j_corrected = size(grid.xh)[2]
+        elseif j > size(grid.xh)[2] && grid.bc_north == 2  # periodic +y
+            distance_modifier[2] = -(grid.yq[end] - grid.yq[1])
+            j_corrected = 1
+        end
+    end
 end
 
 export checkAndAddContact!
