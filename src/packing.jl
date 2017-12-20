@@ -4,7 +4,7 @@ export regularPacking!
 """
 
     regularPacking!(simulation, n, r_min, r_max[, padding_factor,
-                    size_distribution, size_distribution_parameter])
+                    size_distribution, size_distribution_parameter, seed])
 
 Create a grid-based regular packing with grain numbers along each axis specified
 by the `n` vector.
@@ -74,10 +74,13 @@ function generateNeighboringPoint(x_i::Vector, r_i::Real, r_j::Real,
     return [x_i[1] + R * sin(T), x_i[2] + R * cos(T)]
 end
 
-export poissonDiscSampling
+export irregularPacking!
 """
-Generate disc packing in 2D using Poisson disc sampling with O(N) complexity, as
-described by [Robert Bridson (2007)](http://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf).
+Generate a dense disc packing in 2D using Poisson disc sampling with O(N)
+complexity, as described by [Robert Bridson (2007) "Fast Poisson disk sampling
+in arbitrary dimensions"](https://doi.org/10.1145/1278780.1278807). The
+`simulation` can be empty or already contain grains. However, an
+`simulation.ocean` or `simulation.atmosphere` grid is required.
 
 # Arguments
 * `simulation::Simulation`: simulation object where grains are inserted.
@@ -87,26 +90,29 @@ described by [Robert Bridson (2007)](http://www.cs.ubc.ca/~rbridson/docs/bridson
     before giving up.
 * `max_padding_factor::Real=2.`: this factor scales the padding to use during ice
     floe generation in numbers of grain diameters.
+* `seed::Integer`: seed value to the pseudo-random number generator.
 * `verbose::Bool=true`: show diagnostic information to stdout.
 
 """
-function poissonDiscSampling(simulation::Simulation;
-                             radius_max::Real=.1,
-                             radius_min::Real=.1,
-                             sample_limit::Integer=30,
-                             max_padding_factor::Real=2.,
-                             thickness::Real=1.,
-                             verbose::Bool=true)
+function irregularPacking!(simulation::Simulation;
+                           radius_max::Real=.1,
+                           radius_min::Real=.1,
+                           sample_limit::Integer=30,
+                           max_padding_factor::Real=2.,
+                           thickness::Real=1.,
+                           seed::Integer=1,
+                           verbose::Bool=true)
+    srand(seed)
 
     active_list = Int[]  # list of points to originate search from
 
-    # Step 0: Use existing `grid` (ocean or atmosphere) for contact-search grid
+    # Step 0: Use existing `grid` (ocean or atmosphere) for contact search
     if typeof(simulation.ocean.input_file) != Bool
         grid = simulation.ocean
     elseif typeof(simulation.atmosphere.input_file) != Bool
         grid = simulation.atmosphere
     else
-        error("poissonDiscSampling requires an ocean or atmosphere grid")
+        error("irregularPacking requires an ocean or atmosphere grid")
     end
     # save grid boundaries
     sw, se, ne, nw = getGridCornerCoordinates(grid.xq, grid.yq)
@@ -114,7 +120,8 @@ function poissonDiscSampling(simulation::Simulation;
     width_y = nw[2] - sw[2]  # assume regular grid
 
     # Step 1: If grid is empty: select random initial sample and save its index
-    # to the background grid. Else: Make all grains active for search
+    # to the background grid. Otherwise mark all existing grains as active
+    np_init = length(simulation.grains)
     if isempty(simulation.grains)
         r = rand()*(radius_max - radius_min) + radius_min
         x0 = rand(2).*[width_x, width_y] + sw
@@ -128,37 +135,88 @@ function poissonDiscSampling(simulation::Simulation;
     end
 
     # Step 2: While the active list is not empty, choose a random index `i` from
-    # it.  Generate up to `k` points chosen uniformly from the spherical annulus
-    # between radius `2*(r_i+r_j)` and `max_padding_factor*2*(r_i+r_j)` around
-    # `x_i`.
-    i = 0; j = 0; x_i = zeros(2); x_j = zeros(2); r_i = 0.; r_j = 0.
+    # it.  Generate up to `sample_limit` points chosen uniformly from the
+    # spherical annulus between radius `2*(r_i+r_j)` and 
+    # `max_padding_factor*2*(r_i+r_j)` around `x_i`.
+    # For each point in turn, check if it is within distance r of existing
+    # samples (using the background grid to only test nearby samples). If a
+    # point is adequately far from existing samples, emit it as the next sample
+    # and add it to the active list. If after `sample_limit` attempts no such
+    # point is found, instead remove `i` from the active list.
+    i = 0; j = 0;
+    x_active = zeros(2); x_candidate = zeros(2);
+    r_active = 0.; r_candidate = 0.
+    distance_modifier = zeros(2)
+    sw = zeros(2); se = zeros(2); ne = zeros(2); nw = zeros(2)
+    nx, ny = size(grid.xh)
+    n = 0
+
     while !isempty(active_list)
 
         i = rand(1:length(active_list))
         deleteat!(active_list, i)
 
-        x_i = simulation.grains[i].lin_pos
-        r_i = simulation.grains[i].contact_radius
-        r_j = rand()*(radius_max - radius_min) + radius_min
+        x_active = simulation.grains[i].lin_pos
+        r_active = simulation.grains[i].contact_radius
+        r_candidate = rand()*(radius_max - radius_min) + radius_min
 
         for j=1:sample_limit
 
-            x_j = generateNeighboringPoint(x_i, r_i, r_j, max_padding_factor)
-            if !(isPointInGrid(grid, x_j))
-                continue
+            x_candidate = generateNeighboringPoint(x_active, r_active,
+                                                   r_candidate,
+                                                   max_padding_factor)
+
+            if !(isPointInGrid(grid, x_candidate))
+                continue  # skip this candidate
             end
 
-            # if it doesn't collide, add it to the active list
-            if !checkCollisions(grid, x_j, dx, position_list, radius_list)
-                push!(position_list, x_j)
-                push!(radius_list, r_j)
-                push!(active_list, length(radius_list))
+            # Inter-grain position vector and grain overlap
+            ix, iy = findCellContainingPoint(grid, x_candidate, sw, se, ne, nw)
+            no_overlaps_found = true
+
+            # Check for overlap with existing grains
+            for ix_=(ix - 1):(ix + 1)
+                for iy_=(iy - 1):(iy + 1)
+
+                    # correct indexes if necessary
+                    ix_corrected, iy_corrected = periodicBoundaryCorrection!(
+                                                     grid, ix_, iy_,
+                                                     distance_modifier)
+
+                    # skip iteration if target still falls outside grid after
+                    # periodicity correction
+                    if ix_corrected < 1 || ix_corrected > nx ||
+                        iy_corrected < 1 || iy_corrected > ny
+                        continue
+                    end
+
+                    for idx in grid.grain_list[ix_corrected, iy_corrected]
+                        if norm(simulation.grains[idx].lin_pos - x_candidate +
+                                distance_modifier) -
+                            (simulation.grains[idx].contact_radius +
+                             r_candidate) < 0.
+
+                            no_overlaps_found = false
+                            break  # overlap: skip this candidate
+                        end
+                    end
+                end
+            end
+
+            # if the grain candidate doesn't overlap with any other grains, add
+            # it to the active list
+            if no_overlaps_found
+                addGrainCylindrical!(simulation, x_candidate, r_candidate,
+                                     thickness, verbose=false)
+                sortGrainsInGrid!(simulation, grid)
+                push!(active_list, length(simulation.grains))
             end
         end
         println("Active points: $(length(active_list))")
+        n += 1
+        plotGrains(simulation, filetype="$n.png", show_figure=false)
     end
     if verbose
-        info("Generated $(length(radius_list)) points")
+        info("Generated $(length(simulation.grains) - np_init) points")
     end
-    return position_list, radius_list
 end
