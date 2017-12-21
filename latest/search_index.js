@@ -833,6 +833,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/public.html#Granular.irregularPacking!-Tuple{Granular.Simulation}",
+    "page": "Public API",
+    "title": "Granular.irregularPacking!",
+    "category": "Method",
+    "text": "Generate a dense disc packing in 2D using Poisson disc sampling with O(N) complexity, as described by Robert Bridson (2007) \"Fast Poisson disk sampling in arbitrary dimensions\". The simulation can be empty or already contain grains. However, an simulation.ocean or simulation.atmosphere grid is required.\n\nArguments\n\nsimulation::Simulation: simulation object where grains are inserted.\nradius_max::Real: largest grain radius to use.\nradius_min::Real: smallest grain radius to use.\nsample_limit::Integer=30: number of points to sample around each grain   before giving up.\nseed::Integer: seed value to the pseudo-random number generator.\nverbose::Bool=true: show diagnostic information to stdout.\n\n\n\n"
+},
+
+{
     "location": "lib/public.html#Granular.isPointInCell",
     "page": "Public API",
     "title": "Granular.isPointInCell",
@@ -862,14 +870,6 @@ var documenterSearchIndex = {"docs": [
     "title": "Granular.plotGrains",
     "category": "Method",
     "text": "plotGrains(simulation, [filetype, gnuplot_terminal, verbose])\n\nPlot the grains using Gnuplot and save the figure to disk.\n\nArguments\n\nsimulation::Simulation: the simulation object containing the grains.\nfiletype::String: the output file type (default = \"png\").\ngnuplot_terminal::String: the gnuplot output terminal to use (default =   \"png crop size 1200,1200\").\nplot_interactions::Bool: show grain-grain interactions in the plot.\nverbose::String: show output file as info message in stdout (default =    true).\n\n\n\n"
-},
-
-{
-    "location": "lib/public.html#Granular.poissonDiscSampling-Tuple{Granular.Simulation}",
-    "page": "Public API",
-    "title": "Granular.poissonDiscSampling",
-    "category": "Method",
-    "text": "Generate disc packing in 2D using Poisson disc sampling with O(N) complexity, as described by Robert Bridson (2007).\n\nArguments\n\nsimulation::Simulation: simulation object where grains are inserted.\nradius_max::Real: largest grain radius to use.\nradius_min::Real: smallest grain radius to use.\nsample_limit::Integer=30: number of points to sample around each grain   before giving up.\nmax_padding_factor::Real=2.: this factor scales the padding to use during ice   floe generation in numbers of grain diameters.\nverbose::Bool=true: show diagnostic information to stdout.\n\n\n\n"
 },
 
 {
@@ -957,7 +957,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.regularPacking!",
     "category": "Method",
-    "text": "regularPacking!(simulation, n, r_min, r_max[, padding_factor,\n                size_distribution, size_distribution_parameter])\n\nCreate a grid-based regular packing with grain numbers along each axis specified by the n vector.\n\nArguments\n\nsimulation::Simulation: simulation object where the grains are inserted,   preferably not containing prior grains.\nn::Vector{Integer}: 2-element vector determining number of grains along the   x and y axes.\nr_min::Real: minimum desired grain radius.\nr_max::Real: maximum desired grain radius.\npadding_factor::Real: percentage-wise padding around each grain to allow for   random perturbations to grain position.\nsize_distribution::String: grain-size distribution to sample. Valid values   are \"powerlaw\" and \"uniform\".\nsize_distribution_parameter::Real: parameter to pass to the grain-size   distribution generating function.\nseed::Integer: seed value to the pseudo-random number generator.\n\n\n\n"
+    "text": "regularPacking!(simulation, n, r_min, r_max[, padding_factor,\n                size_distribution, size_distribution_parameter, seed])\n\nCreate a grid-based regular packing with grain numbers along each axis specified by the n vector.\n\nArguments\n\nsimulation::Simulation: simulation object where the grains are inserted,   preferably not containing prior grains.\nn::Vector{Integer}: 2-element vector determining number of grains along the   x and y axes.\nr_min::Real: minimum desired grain radius.\nr_max::Real: maximum desired grain radius.\npadding_factor::Real: percentage-wise padding around each grain to allow for   random perturbations to grain position.\nsize_distribution::String: grain-size distribution to sample. Valid values   are \"powerlaw\" and \"uniform\".\nsize_distribution_parameter::Real: parameter to pass to the grain-size   distribution generating function.\nseed::Integer: seed value to the pseudo-random number generator.\n\n\n\n"
 },
 
 {
