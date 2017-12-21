@@ -66,12 +66,20 @@ Return random point in spherical annulus between `(r_i + r_j)` and `2.*(r_i +
 r_j)` around `x_i`.  Note: there is slightly higher point density towards (r_i +
 r_j).
 """
-function generateNeighboringPoint(x_i::Vector, r_i::Real, r_j::Real,
-                                  max_padding_factor::Real)
+function generateNeighboringPoint(x_i::Vector, r_i::Real,
+                                  r_max::Real, r_min::Real;
+                                  padding::Real=0.)
 
-    R = rand() * (r_i + r_j) * max_padding_factor + 2. * (r_i + r_j)
+    if padding > 0.
+        r_j = r_min + (rand()*0.5 + 0.5)*(r_max - r_min)
+    else
+        r_j = r_min + rand()*(r_max - r_min)  # between r_min and r_max
+    end
+    #r_j = r_min + rand()*(r_i - r_min)  # between r_min and r_i
+    #R = rand() * (r_i + r_j) * max_padding_factor + 2. * (r_i + r_j)
+    R = r_i + r_j + padding
     T = rand() * 2. * pi
-    return [x_i[1] + R * sin(T), x_i[2] + R * cos(T)]
+    return [x_i[1] + R * sin(T), x_i[2] + R * cos(T)], r_j
 end
 
 export irregularPacking!
@@ -88,17 +96,13 @@ in arbitrary dimensions"](https://doi.org/10.1145/1278780.1278807). The
 * `radius_min::Real`: smallest grain radius to use.
 * `sample_limit::Integer=30`: number of points to sample around each grain
     before giving up.
-* `max_padding_factor::Real=2.`: this factor scales the padding to use during ice
-    floe generation in numbers of grain diameters.
 * `seed::Integer`: seed value to the pseudo-random number generator.
 * `verbose::Bool=true`: show diagnostic information to stdout.
-
 """
 function irregularPacking!(simulation::Simulation;
                            radius_max::Real=.1,
                            radius_min::Real=.1,
                            sample_limit::Integer=30,
-                           max_padding_factor::Real=2.,
                            thickness::Real=1.,
                            seed::Integer=1,
                            verbose::Bool=true)
@@ -136,8 +140,7 @@ function irregularPacking!(simulation::Simulation;
 
     # Step 2: While the active list is not empty, choose a random index `i` from
     # it.  Generate up to `sample_limit` points chosen uniformly from the
-    # spherical annulus between radius `2*(r_i+r_j)` and 
-    # `max_padding_factor*2*(r_i+r_j)` around `x_i`.
+    # distance `(r_i+r_j)` around `x_i`.
     # For each point in turn, check if it is within distance r of existing
     # samples (using the background grid to only test nearby samples). If a
     # point is adequately far from existing samples, emit it as the next sample
@@ -150,21 +153,35 @@ function irregularPacking!(simulation::Simulation;
     sw = zeros(2); se = zeros(2); ne = zeros(2); nw = zeros(2)
     nx, ny = size(grid.xh)
     n = 0
+    neighbor_found = false
 
     while !isempty(active_list)
 
         i = rand(1:length(active_list))
-        deleteat!(active_list, i)
 
         x_active = simulation.grains[i].lin_pos
         r_active = simulation.grains[i].contact_radius
-        r_candidate = rand()*(radius_max - radius_min) + radius_min
+        #r_candidate = rand()*(radius_max - radius_min) + radius_min
+
+        neighbor_found = false
 
         for j=1:sample_limit
 
-            x_candidate = generateNeighboringPoint(x_active, r_active,
-                                                   r_candidate,
-                                                   max_padding_factor)
+            # add points at wider distance for the first 10 iterations, and
+            # afterwards directly neighboring points
+            if j <= 2
+                x_candidate, r_candidate = generateNeighboringPoint(x_active,
+                                               r_active,
+                                               radius_max,
+                                               radius_min,
+                                               padding=2.0*radius_max)
+            else
+                x_candidate, r_candidate = generateNeighboringPoint(x_active,
+                                               r_active,
+                                               radius_max,
+                                               radius_min)
+            end
+
 
             if !(isPointInGrid(grid, x_candidate))
                 continue  # skip this candidate
@@ -210,11 +227,16 @@ function irregularPacking!(simulation::Simulation;
                                      thickness, verbose=false)
                 sortGrainsInGrid!(simulation, grid)
                 push!(active_list, length(simulation.grains))
+                neighbor_found = true
             end
+        end
+        if !neighbor_found
+            deleteat!(active_list, i)
         end
         println("Active points: $(length(active_list))")
         n += 1
-        plotGrains(simulation, filetype="$n.png", show_figure=false)
+        filepostfix = @sprintf("packing.%05d.png", n)
+        plotGrains(simulation, filetype=filepostfix, show_figure=false)
     end
     if verbose
         info("Generated $(length(simulation.grains) - np_init) points")
