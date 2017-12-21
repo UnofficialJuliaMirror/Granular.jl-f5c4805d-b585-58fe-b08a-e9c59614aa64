@@ -84,6 +84,9 @@ end
 
 export irregularPacking!
 """
+    irregularPacking!(simulation[, radius_max, radius_min, sample_limit,
+                      thickness, seed, plot_during_packing, verbose)
+
 Generate a dense disc packing in 2D using Poisson disc sampling with O(N)
 complexity, as described by [Robert Bridson (2007) "Fast Poisson disk sampling
 in arbitrary dimensions"](https://doi.org/10.1145/1278780.1278807). The
@@ -97,6 +100,8 @@ in arbitrary dimensions"](https://doi.org/10.1145/1278780.1278807). The
 * `sample_limit::Integer=30`: number of points to sample around each grain
     before giving up.
 * `seed::Integer`: seed value to the pseudo-random number generator.
+* `plot_during_packing::Bool=false`: produce successive plots as the packing is
+    generated. Requires gnuplot (default).
 * `verbose::Bool=true`: show diagnostic information to stdout.
 """
 function irregularPacking!(simulation::Simulation;
@@ -105,6 +110,7 @@ function irregularPacking!(simulation::Simulation;
                            sample_limit::Integer=30,
                            thickness::Real=1.,
                            seed::Integer=1,
+                           plot_during_packing::Bool=false,
                            verbose::Bool=true)
     srand(seed)
 
@@ -234,9 +240,12 @@ function irregularPacking!(simulation::Simulation;
             deleteat!(active_list, i)
         end
         println("Active points: $(length(active_list))")
-        n += 1
-        filepostfix = @sprintf("packing.%05d.png", n)
-        plotGrains(simulation, filetype=filepostfix, show_figure=false)
+
+        if plot_during_packing
+            n += 1
+            filepostfix = @sprintf("packing.%05d.png", n)
+            plotGrains(simulation, filetype=filepostfix, show_figure=false)
+        end
     end
     if verbose
         info("Generated $(length(simulation.grains) - np_init) points")

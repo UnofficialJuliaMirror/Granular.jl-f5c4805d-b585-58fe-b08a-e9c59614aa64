@@ -54,3 +54,11 @@ Granular.irregularPacking!(sim,
                            radius_max=.1,
                            radius_min=.001,
                            verbose=true)
+
+info("Testing irregular (Poisson-disk) packing generation (intermediate PSD)")
+sim = Granular.createSimulation("poisson3")
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
+Granular.irregularPacking!(sim,
+                           radius_max=.1,
+                           radius_min=.01,
+                           verbose=true)
