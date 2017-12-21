@@ -82,6 +82,14 @@ function generateNeighboringPoint(x_i::Vector, r_i::Real,
     return [x_i[1] + R * sin(T), x_i[2] + R * cos(T)], r_j
 end
 
+function generateRandomDirection()
+    return rand() * 2. * pi
+end
+
+function getPositionDistancedFromPoint(T::Real, x_i::Vector, dist::Real)
+    return [x_i[1] + dist * sin(T), x_i[2] + dist * cos(T)]
+end
+
 export irregularPacking!
 """
     irregularPacking!(simulation[, radius_max, radius_min, sample_limit,
@@ -108,6 +116,8 @@ function irregularPacking!(simulation::Simulation;
                            radius_max::Real=.1,
                            radius_min::Real=.1,
                            sample_limit::Integer=30,
+                           padding_factor::Real=2.,
+                           progressive_downwards_radius_search::Bool=false,
                            thickness::Real=1.,
                            seed::Integer=1,
                            plot_during_packing::Bool=false,
@@ -154,10 +164,7 @@ function irregularPacking!(simulation::Simulation;
     # point is found, instead remove `i` from the active list.
     i = 0; j = 0;
     x_active = zeros(2); x_candidate = zeros(2);
-    r_active = 0.; r_candidate = 0.
-    distance_modifier = zeros(2)
-    sw = zeros(2); se = zeros(2); ne = zeros(2); nw = zeros(2)
-    nx, ny = size(grid.xh)
+    r_active = 0.; r_candidate = 0.; T = 0.
     n = 0
     neighbor_found = false
 
@@ -167,25 +174,33 @@ function irregularPacking!(simulation::Simulation;
 
         x_active = simulation.grains[i].lin_pos
         r_active = simulation.grains[i].contact_radius
-        #r_candidate = rand()*(radius_max - radius_min) + radius_min
 
         neighbor_found = false
 
         for j=1:sample_limit
 
-            # add points at wider distance for the first 10 iterations, and
-            # afterwards directly neighboring points
-            if j <= 2
-                x_candidate, r_candidate = generateNeighboringPoint(x_active,
-                                               r_active,
-                                               radius_max,
-                                               radius_min,
-                                               padding=2.0*radius_max)
+            if progressive_downwards_radius_search
+                # Generate a point positioned at r_active + radius_max from the
+                # position x_active.
+                T = generateRandomDirection()
+                r_candidate = radius_max
+                x_candidate = getPositionFromPoint(x_active, T,
+                                                   r_active + r_candidate)
             else
-                x_candidate, r_candidate = generateNeighboringPoint(x_active,
-                                               r_active,
-                                               radius_max,
-                                               radius_min)
+                if j <= 2
+                    x_candidate, r_candidate = generateNeighboringPoint(
+                                                   x_active,
+                                                   r_active,
+                                                   radius_max,
+                                                   radius_min,
+                                                   padding=padding_factor*radius_max)
+                else
+                    x_candidate, r_candidate = generateNeighboringPoint(
+                                                   x_active,
+                                                   r_active,
+                                                   radius_max,
+                                                   radius_min)
+                end
             end
 
 
@@ -193,37 +208,15 @@ function irregularPacking!(simulation::Simulation;
                 continue  # skip this candidate
             end
 
-            # Inter-grain position vector and grain overlap
-            ix, iy = findCellContainingPoint(grid, x_candidate, sw, se, ne, nw)
-            no_overlaps_found = true
-
-            # Check for overlap with existing grains
-            for ix_=(ix - 1):(ix + 1)
-                for iy_=(iy - 1):(iy + 1)
-
-                    # correct indexes if necessary
-                    ix_corrected, iy_corrected = periodicBoundaryCorrection!(
-                                                     grid, ix_, iy_,
-                                                     distance_modifier)
-
-                    # skip iteration if target still falls outside grid after
-                    # periodicity correction
-                    if ix_corrected < 1 || ix_corrected > nx ||
-                        iy_corrected < 1 || iy_corrected > ny
-                        continue
-                    end
-
-                    for idx in grid.grain_list[ix_corrected, iy_corrected]
-                        if norm(simulation.grains[idx].lin_pos - x_candidate +
-                                distance_modifier) -
-                            (simulation.grains[idx].contact_radius +
-                             r_candidate) < 0.
-
-                            no_overlaps_found = false
-                            break  # overlap: skip this candidate
-                        end
-                    end
+            
+            if progressive_downwards_radius_search
+                while no_overlaps_found == false
+                    error("not yet implemented")
                 end
+            else
+                no_overlaps_found = checkForContacts(simulation, grid,
+                                                     x_candidate,
+                                                     r_candidate)
             end
 
             # if the grain candidate doesn't overlap with any other grains, add

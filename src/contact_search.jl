@@ -155,20 +155,22 @@ position `position` and `radius`, against all grains registered in the `grid`.
 Returns `true` if no contacts were found, and `false` if contacts were found.
 
 # Arguments
+* `simulation::Simulation`: Simulation object containing grain positions.
 * `grid::Any`: `Ocean` or `Atmosphere` grid containing sorted particles.
 * `position::Vector{Float64}`: Candidate center position to probe for contacts
     with existing grains [m].
 * `radius::Float64`: Candidate radius [m].
 """
-function checkForContacts(grid::Any, x_candidate::Vector{Float64},
+function checkForContacts(simulation::Simulation,
+                          grid::Any,
+                          x_candidate::Vector{Float64},
                           r_candidate::Float64)
 
-    sw = zeros(2); se = zeros(2); ne = zeros(2); nw = zeros(2)
     distance_modifier = zeros(2)
     no_overlaps_found = true
 
     # Inter-grain position vector and grain overlap
-    ix, iy = findCellContainingPoint(grid, x_candidate, sw, se, ne, nw)
+    ix, iy = findCellContainingPoint(grid, x_candidate)
 
     # Check for overlap with existing grains
     for ix_=(ix - 1):(ix + 1)
@@ -180,8 +182,8 @@ function checkForContacts(grid::Any, x_candidate::Vector{Float64},
 
             # skip iteration if target still falls outside grid after
             # periodicity correction
-            if ix_corrected < 1 || ix_corrected > nx ||
-                iy_corrected < 1 || iy_corrected > ny
+            if ix_corrected < 1 || ix_corrected > size(grid.xh)[1] ||
+                iy_corrected < 1 || iy_corrected > size(grid.xh)[2]
                 continue
             end
 

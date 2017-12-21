@@ -40,25 +40,26 @@ end
 
 
 info("Testing irregular (Poisson-disk) packing generation (monodisperse size)")
-sim = Granular.createSimulation("poisson1")
+sim = Granular.createSimulation("poisson1-monodisperse-nopadding")
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
 Granular.irregularPacking!(sim,
                            radius_max=.1,
                            radius_min=.1,
+                           padding_factor=0.,
                            verbose=true)
 
 info("Testing irregular (Poisson-disk) packing generation (wide PSD)")
-sim = Granular.createSimulation("poisson2")
+sim = Granular.createSimulation("poisson2-wide-nopadding")
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
 Granular.irregularPacking!(sim,
                            radius_max=.1,
                            radius_min=.001,
+                           padding_factor=0.,
                            verbose=true)
-
-info("Testing irregular (Poisson-disk) packing generation (intermediate PSD)")
-sim = Granular.createSimulation("poisson3")
+sim = Granular.createSimulation("poisson3-wide-padding")
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
 Granular.irregularPacking!(sim,
                            radius_max=.1,
-                           radius_min=.01,
+                           radius_min=.001,
+                           padding_factor=2.,
                            verbose=true)
