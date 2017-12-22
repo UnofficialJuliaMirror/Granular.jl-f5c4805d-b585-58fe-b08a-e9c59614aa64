@@ -117,7 +117,7 @@ function irregularPacking!(simulation::Simulation;
                            radius_min::Real=.1,
                            sample_limit::Integer=30,
                            padding_factor::Real=2.,
-                           progressive_downwards_radius_search::Bool=false,
+                           binary_radius_search::Bool=false,
                            thickness::Real=1.,
                            seed::Integer=1,
                            plot_during_packing::Bool=false,
@@ -170,22 +170,25 @@ function irregularPacking!(simulation::Simulation;
 
     while !isempty(active_list)
 
-        i = rand(1:length(active_list))
+        # Draw a random grain from the list of active grains
+        i = active_list[rand(1:length(active_list))]
 
         x_active = simulation.grains[i].lin_pos
         r_active = simulation.grains[i].contact_radius
 
+        # Did the algoritm find a neighbor to the current active grain `i`?
         neighbor_found = false
 
         for j=1:sample_limit
 
-            if progressive_downwards_radius_search
+            # Generate a candidate point
+            if binary_radius_search
                 # Generate a point positioned at r_active + radius_max from the
                 # position x_active.
                 T = generateRandomDirection()
                 r_candidate = radius_max
-                x_candidate = getPositionFromPoint(x_active, T,
-                                                   r_active + r_candidate)
+                x_candidate = getPositionDistancedFromPoint(T, x_active,
+                                                            r_active + r_candidate)
             else
                 if j <= 2
                     x_candidate, r_candidate = generateNeighboringPoint(
@@ -203,43 +206,84 @@ function irregularPacking!(simulation::Simulation;
                 end
             end
 
-
+            # Make sure that the point is within the current grid cell
             if !(isPointInGrid(grid, x_candidate))
                 continue  # skip this candidate
             end
 
-            
-            if progressive_downwards_radius_search
-                while no_overlaps_found == false
-                    error("not yet implemented")
+            # If the binary_radius_search is selected, try to adjust the radius
+            # to a value as large as possible
+            if binary_radius_search
+
+                radius_not_found = true
+
+                # first test the maximum radius. If unsuccessful, iteratively
+                # find the optimal radius using binary searches
+                if !checkForContacts(simulation, grid, x_candidate, r_candidate)
+
+                    # 1. Set L to min and R to max of sampling range
+                    r_L = radius_min
+                    r_R = radius_max
+
+                    # size of radius sampling step
+                    dr = (r_R - r_L)/25.
+
+                    while radius_not_found
+
+                        # 2. If L > R, the search terminates as unsuccessful
+                        if r_L > r_R
+                            radius_not_found = false
+                            break
+                        end
+
+                        # 3. Set r to the middle of the current range
+                        r_candidate = (r_L + r_R)/2.0
+                        x_candidate = getPositionDistancedFromPoint(T, x_active,
+                                        r_active + r_candidate)
+
+                        # 4. If r < target, set L to r+dr and go to step 2
+                        if checkForContacts(simulation, grid, x_candidate,
+                                            r_candidate)
+                            r_L = r_candidate + dr
+
+                        else # 5. If r > target, set R to r-dr and go to step 2
+                            r_R = r_candidate - dr
+                        end
+                    end
                 end
-            else
-                no_overlaps_found = checkForContacts(simulation, grid,
-                                                     x_candidate,
-                                                     r_candidate)
+
             end
 
-            # if the grain candidate doesn't overlap with any other grains, add
-            # it to the active list
-            if no_overlaps_found
+            # if the grain candidate doesn't overlap with any other grains,
+            # add it and mark it as active
+            if checkForContacts(simulation, grid, x_candidate, r_candidate)
+                #println("Added grain from parent $i")
                 addGrainCylindrical!(simulation, x_candidate, r_candidate,
                                      thickness, verbose=false)
                 sortGrainsInGrid!(simulation, grid)
                 push!(active_list, length(simulation.grains))
-                neighbor_found = true
+                break
+            end
+
+            if j == sample_limit
+                # If no neighbors were found, delete the grain `i` from the list
+                # of active grains
+                filter!(f->f≠i, active_list)
             end
         end
-        if !neighbor_found
-            deleteat!(active_list, i)
+        if verbose
+            println("Active points: $(length(active_list))")
+            #println(active_list)
         end
-        println("Active points: $(length(active_list))")
 
         if plot_during_packing
             n += 1
             filepostfix = @sprintf("packing.%05d.png", n)
             plotGrains(simulation, filetype=filepostfix, show_figure=false)
         end
-    end
+
+    end  # end while !isempty(active_list)
+
     if verbose
         info("Generated $(length(simulation.grains) - np_init) points")
     end
