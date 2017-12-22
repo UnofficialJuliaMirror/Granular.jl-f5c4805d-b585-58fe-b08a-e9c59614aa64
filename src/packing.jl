@@ -157,7 +157,8 @@ function irregularPacking!(simulation::Simulation;
     if isempty(simulation.grains)
         r = rand()*(radius_max - radius_min) + radius_min
         x0 = rand(2).*[width_x, width_y] + sw
-        addGrainCylindrical!(simulation, x0, r, thickness, color=1)
+        addGrainCylindrical!(simulation, x0, r, thickness, color=1,
+                             verbose=false)
         sortGrainsInGrid!(simulation, grid)
         push!(active_list, 1)
     else
