@@ -1321,7 +1321,6 @@ function plotGrains(sim::Simulation;
         write(f, """#!/usr/bin/env gnuplot
               set term $(gnuplot_terminal)
               set out "$(filename)"
-              set palette defined (0 "gray", 1 "white")
               set xlabel "x [m]"
               set ylabel "y [m]"\n""")
         if typeof(sim.ocean.input_file) != Bool
@@ -1336,6 +1335,9 @@ function plotGrains(sim::Simulation;
 
         # light gray to black
         write(f, "set palette defined ( 1 '#d3d3d3', 2 '#000000')\n")
+
+        # gray to white
+        #write(f, "set palette defined (0 'gray', 1 'white')\n")
 
         write(f, """set cblabel "Diameter [m]"
               set size ratio -1
@@ -1364,7 +1366,7 @@ function plotGrains(sim::Simulation;
             end
         end
 
-        write(f,"""plot "$(datafile)" with circles lt 1 lc rgb "black" t "Particle"
+        write(f,"""plot "$(datafile)" with circles palette fs lt 1 lc rgb "black" t "Particle"
               """)
     end
 
