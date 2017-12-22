@@ -126,7 +126,7 @@ in arbitrary dimensions"](https://doi.org/10.1145/1278780.1278807). The
 function irregularPacking!(simulation::Simulation;
                            radius_max::Real=.1,
                            radius_min::Real=.1,
-                           sample_limit::Integer=30,
+                           sample_limit::Integer=100,
                            padding_factor::Real=0.,
                            binary_radius_search::Bool=false,
                            binary_sampling_quality::Real=100.,
@@ -157,11 +157,12 @@ function irregularPacking!(simulation::Simulation;
     if isempty(simulation.grains)
         r = rand()*(radius_max - radius_min) + radius_min
         x0 = rand(2).*[width_x, width_y] + sw
-        addGrainCylindrical!(simulation, x0, r, thickness)
+        addGrainCylindrical!(simulation, x0, r, thickness, color=1)
         sortGrainsInGrid!(simulation, grid)
         push!(active_list, 1)
     else
         for i=1:length(simulation.grains)
+            simulation.grains[i].color=1
             push!(active_list, i)
         end
     end
@@ -218,7 +219,7 @@ function irregularPacking!(simulation::Simulation;
                 end
             end
 
-            # Make sure that the point is within the current grid cell
+            # Make sure that the point is within the grid limits
             if !(isPointInGrid(grid, x_candidate))
                 continue  # skip this candidate
             end
@@ -229,7 +230,8 @@ function irregularPacking!(simulation::Simulation;
 
                 # first test the maximum radius. If unsuccessful, iteratively
                 # find the optimal radius using binary searches
-                if !checkForContacts(simulation, grid, x_candidate, r_candidate)
+               if !checkForContacts(simulation, grid, x_candidate, r_candidate,
+                                   return_when_overlap_found=true)
 
                     # 1. Set L to min and R to max of sampling range
                     r_L = radius_min
@@ -249,7 +251,7 @@ function irregularPacking!(simulation::Simulation;
 
                         # 4. If r < target, set L to r+dr and go to step 2
                         if checkForContacts(simulation, grid, x_candidate,
-                                            r_candidate)
+                                            r_candidate) <= 1
                             r_L = r_candidate + dr
 
                         else # 5. If r > target, set R to r-dr and go to step 2
@@ -262,10 +264,11 @@ function irregularPacking!(simulation::Simulation;
 
             # if the grain candidate doesn't overlap with any other grains,
             # add it and mark it as active
-            if checkForContacts(simulation, grid, x_candidate, r_candidate)
+            if checkForContacts(simulation, grid, x_candidate, r_candidate,
+                               return_when_overlap_found=true)
                 #println("Added grain from parent $i")
                 addGrainCylindrical!(simulation, x_candidate, r_candidate,
-                                     thickness, verbose=false)
+                                     thickness, color=1, verbose=false)
                 sortGrainsInGrid!(simulation, grid)
                 push!(active_list, length(simulation.grains))
                 break
@@ -274,6 +277,7 @@ function irregularPacking!(simulation::Simulation;
             if j == sample_limit
                 # If no neighbors were found, delete the grain `i` from the list
                 # of active grains
+                simulation.grains[i].color = 0
                 filter!(f->f≠i, active_list)
             end
         end
@@ -285,7 +289,8 @@ function irregularPacking!(simulation::Simulation;
         if plot_during_packing
             n += 1
             filepostfix = @sprintf("packing.%05d.png", n)
-            plotGrains(simulation, filetype=filepostfix, show_figure=false)
+            plotGrains(simulation, filetype=filepostfix, show_figure=false,
+                       palette_scalar="color", cbrange=[0.,1.])
         end
 
     end  # end while !isempty(active_list)
