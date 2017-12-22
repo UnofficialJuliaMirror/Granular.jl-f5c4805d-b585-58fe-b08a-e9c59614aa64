@@ -93,7 +93,9 @@ end
 export irregularPacking!
 """
     irregularPacking!(simulation[, radius_max, radius_min, sample_limit,
-                      thickness, seed, plot_during_packing, verbose)
+                      padding_factor, binary_radius_search,
+                      binary_sampling_quality, thickness, seed,
+                      plot_during_packing, verbose)
 
 Generate a dense disc packing in 2D using Poisson disc sampling with O(N)
 complexity, as described by [Robert Bridson (2007) "Fast Poisson disk sampling
@@ -107,6 +109,15 @@ in arbitrary dimensions"](https://doi.org/10.1145/1278780.1278807). The
 * `radius_min::Real`: smallest grain radius to use.
 * `sample_limit::Integer=30`: number of points to sample around each grain
     before giving up.
+* `padding_factor::Real=0.`: if positive and `binary_radius_search = false`, try to
+    add an occasional grain from the current active grain
+    (`radius_max*padding_factor`).
+* `binary_radius_search::Bool=false`: use a binary radius-sampling procedure to
+    fit the largest possible grains into the packing. This option will create
+    the highest packing density.
+* `binary_sampling_quality::Real=100.`: the quality to enforce during the binary
+    radius search when `binary_radius_search = true`. Larger values create
+    denser packings but take longer to complete.
 * `seed::Integer`: seed value to the pseudo-random number generator.
 * `plot_during_packing::Bool=false`: produce successive plots as the packing is
     generated. Requires gnuplot (default).
@@ -116,8 +127,9 @@ function irregularPacking!(simulation::Simulation;
                            radius_max::Real=.1,
                            radius_min::Real=.1,
                            sample_limit::Integer=30,
-                           padding_factor::Real=2.,
+                           padding_factor::Real=0.,
                            binary_radius_search::Bool=false,
+                           binary_sampling_quality::Real=100.,
                            thickness::Real=1.,
                            seed::Integer=1,
                            plot_during_packing::Bool=false,
@@ -215,8 +227,6 @@ function irregularPacking!(simulation::Simulation;
             # to a value as large as possible
             if binary_radius_search
 
-                radius_not_found = true
-
                 # first test the maximum radius. If unsuccessful, iteratively
                 # find the optimal radius using binary searches
                 if !checkForContacts(simulation, grid, x_candidate, r_candidate)
@@ -226,20 +236,16 @@ function irregularPacking!(simulation::Simulation;
                     r_R = radius_max
 
                     # size of radius sampling step
-                    dr = (r_R - r_L)/25.
+                    dr = (r_R - r_L)/binary_sampling_quality
 
-                    while radius_not_found
-
-                        # 2. If L > R, the search terminates as unsuccessful
-                        if r_L > r_R
-                            radius_not_found = false
-                            break
-                        end
+                    # 2. If L > R, the search terminates as unsuccessful
+                    while r_L < r_R
 
                         # 3. Set r to the middle of the current range
                         r_candidate = (r_L + r_R)/2.0
                         x_candidate = getPositionDistancedFromPoint(T, x_active,
                                         r_active + r_candidate)
+                        #println("[$r_L, \t $r_candidate, \t $r_R]")
 
                         # 4. If r < target, set L to r+dr and go to step 2
                         if checkForContacts(simulation, grid, x_candidate,
