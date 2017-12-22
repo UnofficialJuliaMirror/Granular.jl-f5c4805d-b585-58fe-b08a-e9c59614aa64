@@ -152,7 +152,7 @@ export checkForContacts
 
 Perform an O(n*log(n)) cell-based contact search between a candidate grain with
 position `position` and `radius`, against all grains registered in the `grid`.
-Returns `true` if no contacts were found, and `false` if contacts were found.
+Returns the number of contacts that were found as an `Integer` value.
 
 # Arguments
 * `simulation::Simulation`: Simulation object containing grain positions.
@@ -164,10 +164,11 @@ Returns `true` if no contacts were found, and `false` if contacts were found.
 function checkForContacts(simulation::Simulation,
                           grid::Any,
                           x_candidate::Vector{Float64},
-                          r_candidate::Float64)
+                          r_candidate::Float64;
+                          return_when_overlap_found::Bool=false)
 
     distance_modifier = zeros(2)
-    no_overlaps_found = true
+    overlaps_found::Integer = 0
 
     # Inter-grain position vector and grain overlap
     ix, iy = findCellContainingPoint(grid, x_candidate)
@@ -193,13 +194,19 @@ function checkForContacts(simulation::Simulation,
                     (simulation.grains[idx].contact_radius +
                      r_candidate) < 0.
 
-                    no_overlaps_found = false
-                    break  # overlap: skip this candidate
+                    if return_when_overlap_found
+                        return false
+                    end
+                    overlaps_found += 1
                 end
             end
         end
     end
-    return no_overlaps_found
+    if return_when_overlap_found
+        return true
+    else
+        return overlaps_found
+    end
 end
 
 """
