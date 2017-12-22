@@ -39,6 +39,9 @@ for grain in sim.grains
 end
 
 
+plot_packings=false
+verbose=false
+
 info("Testing irregular (Poisson-disk) packing generation (monodisperse size)")
 sim = Granular.createSimulation("poisson1-monodisperse-nopadding")
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
@@ -46,20 +49,36 @@ Granular.irregularPacking!(sim,
                            radius_max=.1,
                            radius_min=.1,
                            padding_factor=0.,
-                           verbose=true)
+                           plot_during_packing=plot_packings,
+                           verbose=verbose)
+@test length(sim.grains) > 23
 
 info("Testing irregular (Poisson-disk) packing generation (wide PSD)")
 sim = Granular.createSimulation("poisson2-wide-nopadding")
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
 Granular.irregularPacking!(sim,
                            radius_max=.1,
-                           radius_min=.001,
+                           radius_min=.005,
                            padding_factor=0.,
-                           verbose=true)
+                           plot_during_packing=plot_packings,
+                           verbose=verbose)
+@test length(sim.grains) > 280
 sim = Granular.createSimulation("poisson3-wide-padding")
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
 Granular.irregularPacking!(sim,
                            radius_max=.1,
-                           radius_min=.001,
+                           radius_min=.005,
                            padding_factor=2.,
-                           verbose=true)
+                           plot_during_packing=plot_packings,
+                           verbose=verbose)
+@test length(sim.grains) > 280
+
+sim = Granular.createSimulation("poisson4-binary-search")
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
+Granular.irregularPacking!(sim,
+                           radius_max=.1,
+                           radius_min=.005,
+                           binary_radius_search=true,
+                           plot_during_packing=plot_packings,
+                           verbose=verbose)
+@test length(sim.grains) > 280
