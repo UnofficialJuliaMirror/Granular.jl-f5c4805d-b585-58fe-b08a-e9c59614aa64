@@ -69,6 +69,9 @@ mutable struct GrainCylindrical
     granular_stress::Vector{Float64}
     ocean_stress::Vector{Float64}
     atmosphere_stress::Vector{Float64}
+
+    # Visualization parameters
+    color::Int
 end
 
 # Type for linear (flat) and frictionless dynamic walls
@@ -149,6 +152,8 @@ mutable struct GrainArrays
     granular_stress::Array{Float64, 2}
     ocean_stress::Array{Float64, 2}
     atmosphere_stress::Array{Float64, 2}
+
+    color::Vector{Int}
 end
 
 #=

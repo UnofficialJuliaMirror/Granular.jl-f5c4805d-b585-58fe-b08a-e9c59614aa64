@@ -431,6 +431,9 @@ function writeGrainVTK(simulation::Simulation,
     WriteVTK.vtk_point_data(vtkfile, ifarr.atmosphere_stress,
                             "Atmosphere stress [Pa]")
 
+    WriteVTK.vtk_point_data(vtkfile, ifarr.color,
+                            "Color [-]")
+
     deleteGrainArrays!(ifarr)
     ifarr = 0
     gc()
@@ -834,7 +837,8 @@ imagegrains.PointArrayStatus = [
 'Number of contacts [-]',
 'Granular stress [Pa]',
 'Ocean stress [Pa]',
-'Atmosphere stress [Pa]']
+'Atmosphere stress [Pa]',
+'Color [-]']
 
 animationScene1 = GetAnimationScene()
 
@@ -1204,6 +1208,8 @@ function plotGrains(sim::Simulation;
                     filetype::String = "png",
                     gnuplot_terminal::String = "png crop size 1200,1200",
                     plot_interactions::Bool = true,
+                    palette_scalar::String = "contact_radius",
+                    cbrange::Vector{Float64} = [NaN, NaN],
                     show_figure::Bool = true,
                     verbose::Bool = true)
 
@@ -1215,10 +1221,24 @@ function plotGrains(sim::Simulation;
     x = Float64[]
     y = Float64[]
     r = Float64[]
+    scalars = Float64[]
     for grain in sim.grains
         push!(x, grain.lin_pos[1])
         push!(y, grain.lin_pos[2])
         push!(r, grain.contact_radius)
+
+        if palette_scalar == "contact_radius"
+            push!(scalars, grain.contact_radius)
+
+        elseif palette_scalar == "areal_radius"
+            push!(scalars, grain.areal_radius)
+
+        elseif palette_scalar == "color"
+            push!(scalars, grain.color)
+
+        else
+            error("palette_scalar = '$palette_scalar' not understood.")
+        end
     end
 
     # prepare interaction data
@@ -1268,7 +1288,6 @@ function plotGrains(sim::Simulation;
                                            contact_stiffness_normal)
                     end
 
-                    
                     push!(i1, i)
                     push!(i2, j)
                     push!(inter_particle_vector, p)
@@ -1290,7 +1309,7 @@ function plotGrains(sim::Simulation;
 
     # write grain data to temporary file on disk
     datafile = Base.Filesystem.tempname()
-    writedlm(datafile, [x y r])
+    writedlm(datafile, [x y r scalars])
     gnuplotscript = Base.Filesystem.tempname()
 
     #=
@@ -1335,11 +1354,15 @@ function plotGrains(sim::Simulation;
 
         # light gray to black
         write(f, "set palette defined ( 1 '#d3d3d3', 2 '#000000')\n")
+        
+        if !isnan(cbrange[1])
+            write(f, "set cbrange [$(cbrange[1]):$(cbrange[2])]\n")
+        end
 
         # gray to white
         #write(f, "set palette defined (0 'gray', 1 'white')\n")
 
-        write(f, """set cblabel "Diameter [m]"
+        write(f, """set cblabel "$palette_scalar"
               set size ratio -1
               set key off\n""")
 
@@ -1366,7 +1389,8 @@ function plotGrains(sim::Simulation;
             end
         end
 
-        write(f,"""plot "$(datafile)" with circles palette fs lt 1 lc rgb "black" t "Particle"
+        #write(f,"""plot "$(datafile)" with circles lt 1 lc rgb "black" t "Particle"
+        write(f,"""plot "$(datafile)" with circles fill solid fillcolor palette lw 0 title "Particle"
               """)
     end
 

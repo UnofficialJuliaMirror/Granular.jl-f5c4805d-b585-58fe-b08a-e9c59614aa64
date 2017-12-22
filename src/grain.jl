@@ -98,6 +98,8 @@ are optional, and come with default values.  The only required arguments are
     ocean drag [Pa].
 * `atmosphere_stress::Vector{Float64} = [0., 0.]`: resultant stress on grain
     from atmosphere drag [Pa].
+* `color::Int=0`: type number, usually used for associating a color to the grain
+    during visualization.
 
 # Examples
 The most basic example adds a new grain to the simulation `sim`, with a 
@@ -171,7 +173,8 @@ function addGrainCylindrical!(simulation::Simulation,
                                 n_contacts::Int = 0,
                                 granular_stress::Vector{Float64} = [0., 0.],
                                 ocean_stress::Vector{Float64} = [0., 0.],
-                                atmosphere_stress::Vector{Float64} = [0., 0.])
+                                atmosphere_stress::Vector{Float64} = [0., 0.],
+                                color::Int = 0)
 
     # Check input values
     if length(lin_pos) != 2
@@ -266,7 +269,9 @@ function addGrainCylindrical!(simulation::Simulation,
 
                                  granular_stress,
                                  ocean_stress,
-                                 atmosphere_stress
+                                 atmosphere_stress,
+
+                                 color
                                 )
 
     # Overwrite previous placeholder values
@@ -379,6 +384,9 @@ function convertGrainDataToArrays(simulation::Simulation)
                           zeros(Float64, 3, length(simulation.grains)),
                           zeros(Float64, 3, length(simulation.grains)),
                           zeros(Float64, 3, length(simulation.grains)),
+
+                          Array{Int}(length(simulation.grains)),
+
                          )
 
     # fill arrays
@@ -450,6 +458,8 @@ function convertGrainDataToArrays(simulation::Simulation)
         ifarr.ocean_stress[1:2, i] = simulation.grains[i].ocean_stress
         ifarr.atmosphere_stress[1:2, i] =
             simulation.grains[i].atmosphere_stress
+
+        ifarr.color[i] = simulation.grains[i].color
     end
 
     return ifarr
@@ -514,6 +524,7 @@ function deleteGrainArrays!(ifarr::GrainArrays)
     ifarr.ocean_stress = f2
     ifarr.atmosphere_stress = f2
 
+    ifarr.color = i1
     gc()
     nothing
 end
@@ -579,6 +590,8 @@ function printGrainInfo(f::GrainCylindrical)
     println("  granular_stress:   $(f.granular_stress) Pa")
     println("  ocean_stress:      $(f.ocean_stress) Pa")
     println("  atmosphere_stress: $(f.atmosphere_stress) Pa")
+
+    println("  color:  $(f.color)\n")
     nothing
 end
 
@@ -723,6 +736,8 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
     @test if1.granular_stress ≈ if2.granular_stress
     @test if1.ocean_stress ≈ if2.ocean_stress
     @test if1.atmosphere_stress ≈ if2.atmosphere_stress
+
+    @test if1.color ≈ if2.color
     nothing
 end
 
