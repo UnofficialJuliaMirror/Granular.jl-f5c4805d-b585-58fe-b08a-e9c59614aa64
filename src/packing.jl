@@ -181,11 +181,13 @@ function irregularPacking!(simulation::Simulation;
     r_active = 0.; r_candidate = 0.; T = 0.
     n = 0
     neighbor_found = false
+    i_last_active = 0
 
     while !isempty(active_list)
 
         # Draw a random grain from the list of active grains
         i = active_list[rand(1:length(active_list))]
+        i_last_active = i
 
         x_active = simulation.grains[i].lin_pos
         r_active = simulation.grains[i].contact_radius
@@ -272,6 +274,7 @@ function irregularPacking!(simulation::Simulation;
                                      thickness, color=1, verbose=false)
                 sortGrainsInGrid!(simulation, grid)
                 push!(active_list, length(simulation.grains))
+                simulation.grains[i].color = 1
                 break
             end
 
@@ -289,9 +292,12 @@ function irregularPacking!(simulation::Simulation;
 
         if plot_during_packing
             n += 1
+            color = simulation.grains[i_last_active].color
+            simulation.grains[i_last_active].color = 2
             filepostfix = @sprintf("packing.%05d.png", n)
             plotGrains(simulation, filetype=filepostfix, show_figure=false,
-                       palette_scalar="color", cbrange=[0.,1.])
+                       palette_scalar="color", cbrange=[0.,2.])
+            simulation.grains[i_last_active].color = color
         end
 
     end  # end while !isempty(active_list)

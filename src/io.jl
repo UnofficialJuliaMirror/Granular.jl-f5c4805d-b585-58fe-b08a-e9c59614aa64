@@ -1352,8 +1352,11 @@ function plotGrains(sim::Simulation;
             write(f, "set yrange [$(minimum(y - r)):$(maximum(y + r))]\n")
         end
 
-        # light gray to black
-        write(f, "set palette defined ( 1 '#d3d3d3', 2 '#000000')\n")
+        # light gray to black to red
+        #write(f, "set palette defined ( 1 '#d3d3d3', 2 '#000000')\n")
+
+        # light gray to black to red
+        write(f, "set palette defined ( 1 '#d3d3d3', 2 '#000000', 3 '#993333')\n")
         
         if !isnan(cbrange[1])
             write(f, "set cbrange [$(cbrange[1]):$(cbrange[2])]\n")
