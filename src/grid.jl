@@ -284,6 +284,14 @@ function isPointInCell(grid::Any, i::Int, j::Int,
                        nw::Vector{Float64} = Vector{Float64}(2);
                        method::String="Conformal")
 
+    #=if grid.regular_grid
+        if [i,j] == Int.(ceil.(point ./ grid.dx[1:2]))
+            return true
+        else
+            return false
+        end
+    end=#
+
     @views sw .= grid.xq[   i,   j], grid.yq[   i,   j]
     @views se .= grid.xq[ i+1,   j], grid.yq[ i+1,   j]
     @views ne .= grid.xq[ i+1, j+1], grid.yq[ i+1, j+1]

@@ -21,7 +21,9 @@ function createEmptyAtmosphere()
 
                       1, 1, 1, 1,
 
-                      false)
+                      false,
+
+                      false, [1.,1.,1.], [1,1,1], [1.,1.,1.])
 end
 
 export interpolateAtmosphereVelocitiesToCorners
@@ -138,7 +140,8 @@ function createRegularAtmosphereGrid(n::Vector{Int},
                  u, v,
                  Array{Array{Int, 1}}(size(xh, 1), size(xh, 2)),
                  bc_west, bc_south, bc_east, bc_north,
-                 false)
+                 false,
+                 true, L, n, dx)
 end
 
 export addAtmosphereDrag!

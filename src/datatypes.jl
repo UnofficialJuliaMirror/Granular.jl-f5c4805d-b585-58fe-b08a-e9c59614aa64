@@ -237,6 +237,14 @@ mutable struct Ocean
     bc_south::Integer
     bc_east::Integer
     bc_north::Integer
+
+    # If the grid is regular, allow for simpler particle sorting
+    regular_grid::Bool
+
+    # Grid size when regular_grid == true
+    L::Vector{Float64}   # Grid length
+    n::Vector{Integer}   # Cell count
+    dx::Vector{Float64}  # Cell size
 end
 
 #=
@@ -313,6 +321,14 @@ mutable struct Atmosphere
 
     # If true the grid positions are identical to the ocean grid
     collocated_with_ocean_grid::Bool
+
+    # If the grid is regular, allow for simpler particle sorting
+    regular_grid::Bool
+
+    # Grid size when regular_grid == true
+    L::Vector{Float64}   # Grid length
+    n::Vector{Integer}   # Cell count
+    dx::Vector{Float64}  # Cell size
 end
 
 # Top-level simulation type
