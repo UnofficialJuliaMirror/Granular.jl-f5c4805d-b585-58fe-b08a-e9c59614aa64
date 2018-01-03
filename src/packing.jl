@@ -137,6 +137,7 @@ function irregularPacking!(simulation::Simulation;
     srand(seed)
 
     active_list = Int[]  # list of points to originate search from
+    i = 0
 
     # Step 0: Use existing `grid` (ocean or atmosphere) for contact search
     if typeof(simulation.ocean.input_file) != Bool
@@ -176,7 +177,7 @@ function irregularPacking!(simulation::Simulation;
     # point is adequately far from existing samples, emit it as the next sample
     # and add it to the active list. If after `sample_limit` attempts no such
     # point is found, instead remove `i` from the active list.
-    i = 0; j = 0;
+    j = 0;
     x_active = zeros(2); x_candidate = zeros(2);
     r_active = 0.; r_candidate = 0.; T = 0.
     n = 0
