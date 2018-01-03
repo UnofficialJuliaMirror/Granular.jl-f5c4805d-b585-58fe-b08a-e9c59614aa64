@@ -102,8 +102,8 @@ end
 
 info("Checking if memory is freed after ended collision (all to all)")
 sim = Granular.createSimulation(id="test")
-Granular.addGrainCylindrical!(sim, [0., 0.], 10., 1., verbose=false)
-Granular.addGrainCylindrical!(sim, [20.05, 0.], 10., 1., verbose=false)
+Granular.addGrainCylindrical!(sim, [1., 1.], 10., 1., verbose=false)
+Granular.addGrainCylindrical!(sim, [21.05, 1.], 10., 1., verbose=false)
 sim.grains[1].lin_vel[1] = 0.1
 Granular.setTotalTime!(sim, 10.0)
 Granular.setTimeStep!(sim, epsilon=0.07, verbose=false)
@@ -113,8 +113,8 @@ Granular.run!(sim, verbose=false)
 
 info("Checking if memory is freed after ended collision (cell sorting)")
 sim = Granular.createSimulation(id="test")
-Granular.addGrainCylindrical!(sim, [0., 0.], 10., 1., verbose=false)
-Granular.addGrainCylindrical!(sim, [20.05, 0.], 10., 1., verbose=false)
+Granular.addGrainCylindrical!(sim, [1., 1.], 10., 1., verbose=false)
+Granular.addGrainCylindrical!(sim, [21.05, 1.], 10., 1., verbose=false)
 sim.ocean = Granular.createRegularOceanGrid([2, 2, 2], [40., 40., 10.])
 sim.grains[1].lin_vel[1] = 0.1
 Granular.setTotalTime!(sim, 10.0)
@@ -131,8 +131,8 @@ Granular.run!(sim, verbose=false)
 @test Base.summarysize(sim) == original_sim_size_recursive
 
 sim = Granular.createSimulation(id="test")
-Granular.addGrainCylindrical!(sim, [0., 0.], 10., 1., verbose=false)
-Granular.addGrainCylindrical!(sim, [20.05, 0.], 10., 1., verbose=false)
+Granular.addGrainCylindrical!(sim, [1., 1.], 10., 1., verbose=false)
+Granular.addGrainCylindrical!(sim, [21.05, 1.], 10., 1., verbose=false)
 sim.atmosphere = Granular.createRegularAtmosphereGrid([2, 2, 2], [40., 40., 10.])
 sim.grains[1].lin_vel[1] = 0.1
 Granular.setTotalTime!(sim, 10.0)
@@ -149,8 +149,8 @@ Granular.run!(sim, verbose=false)
 @test Base.summarysize(sim) == original_sim_size_recursive
 
 sim = Granular.createSimulation(id="test")
-Granular.addGrainCylindrical!(sim, [0., 0.], 10., 1., verbose=false)
-Granular.addGrainCylindrical!(sim, [20.05, 0.], 10., 1., verbose=false)
+Granular.addGrainCylindrical!(sim, [1., 1.], 10., 1., verbose=false)
+Granular.addGrainCylindrical!(sim, [21.05, 1.], 10., 1., verbose=false)
 sim.atmosphere = Granular.createRegularAtmosphereGrid([2, 2, 2], [40., 40., 10.])
 sim.ocean = Granular.createRegularOceanGrid([2, 2, 2], [40., 40., 10.])
 sim.grains[1].lin_vel[1] = 0.1

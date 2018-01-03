@@ -164,8 +164,8 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
         else
 
             if grid.regular_grid
-                i, j = Int.(floor.(simulation.grains[idx].lin_pos
-                                   ./ grid.dx[1:2])) + [1,1]
+                i, j = Int.(ceil.(simulation.grains[idx].lin_pos
+                                  ./ grid.dx[1:2]))
             else
 
                 # Search for point in 8 neighboring cells
@@ -275,9 +275,12 @@ This function is a wrapper for `getCellCornerCoordinates()` and
 """
 function getNonDimensionalCellCoordinates(grid::Any, i::Int, j::Int,
                                           point::Vector{Float64})
-
-    sw, se, ne, nw = getCellCornerCoordinates(grid.xq, grid.yq, i, j)
-    return conformalQuadrilateralCoordinates(sw, se, ne, nw, point)
+    if grid.regular_grid
+        return (point - Float64.([i-1,j-1]).*grid.dx[1:2])./grid.dx[1:2]
+    else
+        sw, se, ne, nw = getCellCornerCoordinates(grid.xq, grid.yq, i, j)
+        return conformalQuadrilateralCoordinates(sw, se, ne, nw, point)
+    end
 end
 
 export isPointInCell
@@ -296,7 +299,7 @@ function isPointInCell(grid::Any, i::Int, j::Int,
                        method::String="Conformal")
 
     if grid.regular_grid
-        if [i,j] == Int.(floor.(point ./ grid.dx[1:2])) + [1,1]
+        if [i,j] == Int.(ceil.(point ./ grid.dx[1:2]))
             return true
         else
             return false
