@@ -1,3 +1,5 @@
+using Compat.Printf
+
 ## General simulation functions
 
 export createSimulation
