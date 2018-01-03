@@ -9,15 +9,6 @@ import Compat
 using Compat.DelimitedFiles
 using Compat.Dates
 
-# load Homebrew/WinRPM for gnuplot and imagemagick
-if Compat.Sys.isapple()
-    using Homebrew
-end
-
-if Compat.Sys.iswindows()
-    using WinRPM
-end
-
 ## IO functions
 
 export writeSimulation
