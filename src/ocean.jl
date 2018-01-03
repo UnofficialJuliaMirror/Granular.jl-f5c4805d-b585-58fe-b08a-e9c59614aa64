@@ -289,13 +289,8 @@ function addOceanDrag!(simulation::Simulation)
         x_tilde, y_tilde = getNonDimensionalCellCoordinates(simulation.ocean,
                                                             i, j,
                                                             grain.lin_pos)
-        if x_tilde < 0. || x_tilde > 1. || y_tilde < 0. || y_tilde > 1.
-            warn("""
-                 relative coordinates outside bounds ($(x_tilde), $(y_tilde)),
-                 pos = $(grain.lin_pos) at i,j = $(i), $(j).
-
-                 """)
-        end
+        x_tilde = clamp(x_tilde, 0., 1.)
+        y_tilde = clamp(y_tilde, 0., 1.)
 
         bilinearInterpolation!(uv_interp, u, v, x_tilde, y_tilde, i, j, k, 1)
         applyOceanDragToGrain!(grain, uv_interp[1], uv_interp[2])
