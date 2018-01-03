@@ -152,7 +152,9 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
         else
             error("grid type not understood.")
         end
+
         if simulation.time > 0. &&
+            !grid.regular_grid &&
             i_old > 0 && j_old > 0 &&
             isPointInCell(grid, i_old, j_old,
                           simulation.grains[idx].lin_pos, sw, se, ne, nw)
@@ -161,41 +163,50 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
 
         else
 
-            # Search for point in 8 neighboring cells
-            nx = size(grid.xh, 1)
-            ny = size(grid.xh, 2)
-            found = false
-            for i_rel=-1:1
-                for j_rel=-1:1
-                    if i_rel == 0 && j_rel == 0
-                        continue  # cell previously searched
+            if grid.regular_grid
+                i, j = Int.(floor.(simulation.grains[idx].lin_pos
+                                   ./ grid.dx[1:2])) + [1,1]
+            else
+
+                # Search for point in 8 neighboring cells
+                nx = size(grid.xh, 1)
+                ny = size(grid.xh, 2)
+                found = false
+                for i_rel=-1:1
+                    for j_rel=-1:1
+                        if i_rel == 0 && j_rel == 0
+                            continue  # cell previously searched
+                        end
+                        i_t = max(min(i_old + i_rel, nx), 1)
+                        j_t = max(min(j_old + j_rel, ny), 1)
+                        
+                        @inbounds if isPointInCell(grid, i_t, j_t,
+                                         simulation.grains[idx].lin_pos,
+                                         sw, se, ne, nw)
+                            i = i_t
+                            j = j_t
+                            found = true
+                            break
+                        end
                     end
-                    i_t = max(min(i_old + i_rel, nx), 1)
-                    j_t = max(min(j_old + j_rel, ny), 1)
-                    
-                    @inbounds if isPointInCell(grid, i_t, j_t,
-                                     simulation.grains[idx].lin_pos,
-                                     sw, se, ne, nw)
-                        i = i_t
-                        j = j_t
-                        found = true
+                    if found
                         break
                     end
                 end
-                if found
-                    break
+
+                if !found
+                    i, j = findCellContainingPoint(grid,
+                                                   simulation.grains[idx].
+                                                   lin_pos,
+                                                   sw, se, ne, nw)
                 end
             end
 
-            if !found
-                i, j = findCellContainingPoint(grid,
-                                               simulation.grains[idx].
-                                               lin_pos,
-                                               sw, se, ne, nw)
-            end
-
             # remove grain if it is outside of the grid
-            if i == 0 && j == 0
+            if (!grid.regular_grid && i == 0 && j == 0 ) ||
+                (grid.regular_grid &&
+                 (i < 1 || j < 1 || i > grid.n[1] || i > grid.n[2]))
+
                 if verbose
                     info("Disabling grain $idx at pos (" *
                          "$(simulation.grains[idx].lin_pos))")
@@ -284,13 +295,13 @@ function isPointInCell(grid::Any, i::Int, j::Int,
                        nw::Vector{Float64} = Vector{Float64}(2);
                        method::String="Conformal")
 
-    #=if grid.regular_grid
-        if [i,j] == Int.(ceil.(point ./ grid.dx[1:2]))
+    if grid.regular_grid
+        if [i,j] == Int.(floor.(point ./ grid.dx[1:2])) + [1,1]
             return true
         else
             return false
         end
-    end=#
+    end
 
     @views sw .= grid.xq[   i,   j], grid.yq[   i,   j]
     @views se .= grid.xq[ i+1,   j], grid.yq[ i+1,   j]
