@@ -583,7 +583,7 @@ function findEmptyPositionInGridCell(simulation::Simulation,
         y_tilde = rand()
         bilinearInterpolation!(pos, grid.xq, grid.yq, x_tilde, y_tilde, i, j)
         if verbose
-            info("trying poisition $pos in cell $i,$j")
+            info("trying position $pos in cell $i,$j")
         end
 
         # do not penetrate outside of grid boundaries
