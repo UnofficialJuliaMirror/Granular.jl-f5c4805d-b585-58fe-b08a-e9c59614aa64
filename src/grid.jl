@@ -164,7 +164,7 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
         else
 
             if grid.regular_grid
-                i, j = Int.(floor.(simulation.grains[idx].lin_pos
+                i, j = Int.(floor.((simulation.grains[idx].lin_pos - grid.origo)
                                    ./ grid.dx[1:2])) + [1,1]
             else
 
@@ -299,7 +299,7 @@ function isPointInCell(grid::Any, i::Int, j::Int,
                        method::String="Conformal")
 
     if grid.regular_grid
-        if [i,j] == Int.(floor.(point ./ grid.dx[1:2])) + [1,1]
+        if [i,j] == Int.(floor.((point - grid.origo) ./ grid.dx[1:2])) + [1,1]
             return true
         else
             return false

@@ -242,9 +242,10 @@ mutable struct Ocean
     regular_grid::Bool
 
     # Grid size when regular_grid == true
-    L::Vector{Float64}   # Grid length
-    n::Vector{Integer}   # Cell count
-    dx::Vector{Float64}  # Cell size
+    origo::Vector{Float64} # Grid origo
+    L::Vector{Float64}     # Grid length
+    n::Vector{Integer}     # Cell count
+    dx::Vector{Float64}    # Cell size
 end
 
 #=
@@ -326,9 +327,10 @@ mutable struct Atmosphere
     regular_grid::Bool
 
     # Grid size when regular_grid == true
-    L::Vector{Float64}   # Grid length
-    n::Vector{Integer}   # Cell count
-    dx::Vector{Float64}  # Cell size
+    origo::Vector{Float64} # Grid origo
+    L::Vector{Float64}     # Grid length
+    n::Vector{Integer}     # Cell count
+    dx::Vector{Float64}    # Cell size
 end
 
 # Top-level simulation type
