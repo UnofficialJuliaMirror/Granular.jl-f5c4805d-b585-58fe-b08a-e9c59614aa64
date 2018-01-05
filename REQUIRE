@@ -2,4 +2,4 @@ julia 0.6
 WriteVTK
 NetCDF
 Documenter
-Compat 0.9.1
+Compat 0.42.0
