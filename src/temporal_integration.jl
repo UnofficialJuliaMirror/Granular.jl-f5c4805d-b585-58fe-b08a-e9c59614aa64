@@ -102,7 +102,12 @@ function updateGrainKinematicsThreeTermTaylor!(grain::GrainCylindrical,
     grain.ang_acc = grain.torque/grain.moment_of_inertia
 
     if grain.fixed
-        fill!(grain.lin_acc, 0.)
+        if !grain.allow_x_acc
+            grain.lin_acc[1] = 0.
+        end
+        if !grain.allow_y_acc
+            grain.lin_acc[2] = 0.
+        end
         grain.ang_acc = 0.
     elseif !grain.rotating
         grain.ang_acc = 0.
