@@ -226,7 +226,7 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
         end
 
         # add grain to cell
-        @inbounds push!(grid.grain_list[i, j], idx)
+        push!(grid.grain_list[i, j], idx)
     end
     nothing
 end
