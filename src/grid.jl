@@ -203,9 +203,12 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
             end
 
             # remove grain if it is outside of the grid
-            if (!grid.regular_grid && i == 0 && j == 0 ) ||
+            if (!grid.regular_grid && 
+                 (i < 1 || j < 1 || 
+                  i > size(grid.xh, 1) || j > size(grid.xh, 2))) ||
                 (grid.regular_grid &&
-                 (i < 1 || j < 1 || i > grid.n[1] || i > grid.n[2]))
+                 (i < 1 || j < 1 || 
+                  i > grid.n[1] || j > grid.n[2]))
 
                 if verbose
                     info("Disabling grain $idx at pos (" *
@@ -226,7 +229,7 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
         end
 
         # add grain to cell
-        push!(grid.grain_list[i, j], idx)
+        @inbounds push!(grid.grain_list[i, j], idx)
     end
     nothing
 end
