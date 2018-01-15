@@ -1,4 +1,5 @@
 #!/usr/bin/env julia
+import Compat
 
 info("#### $(basename(@__FILE__)) ####")
 
@@ -14,7 +15,7 @@ ocean = Granular.createEmptyOcean()
 @test ocean.bc_north == 1
 @test ocean.bc_south == 1
 
-if !is_windows()
+if !Compat.Sys.iswindows()
     const originalSTDOUT = STDOUT
     (out_r, out_w) = redirect_stdout()
     Granular.reportGridBoundaryConditions(ocean)
