@@ -376,6 +376,10 @@ function writeGrainVTK(simulation::Simulation,
     WriteVTK.vtk_point_data(vtkfile, ifarr.torque, "Sum of torques [N*m]")
 
     WriteVTK.vtk_point_data(vtkfile, ifarr.fixed, "Fixed in space [-]")
+    WriteVTK.vtk_point_data(vtkfile, ifarr.allow_x_acc,
+                            "Fixed but allow (x) acceleration [-]")
+    WriteVTK.vtk_point_data(vtkfile, ifarr.allow_y_acc,
+                            "Fixed but allow (y) acceleration [-]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.rotating, "Free to rotate [-]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.enabled, "Enabled [-]")
 
@@ -398,6 +402,8 @@ function writeGrainVTK(simulation::Simulation,
                             "Poisson's ratio [-]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.tensile_strength,
                             "Tensile strength [Pa]")
+    WriteVTK.vtk_point_data(vtkfile, ifarr.tensile_heal_rate,
+                            "Tensile healing rate [1/s]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.compressive_strength_prefactor,
                             "Compressive strength prefactor [m^0.5 Pa]")
 
@@ -412,7 +418,6 @@ function writeGrainVTK(simulation::Simulation,
 
     WriteVTK.vtk_point_data(vtkfile, ifarr.pressure,
                             "Contact pressure [Pa]")
-
     WriteVTK.vtk_point_data(vtkfile, ifarr.n_contacts,
                             "Number of contacts [-]")
 
@@ -447,8 +452,8 @@ Saves grain interactions to `.vtp` files for visualization with VTK, for
 example in Paraview.  Convert Cell Data to Point Data and use with Tube filter.
 """
 function writeGrainInteractionVTK(simulation::Simulation,
-                                    filename::String;
-                                    verbose::Bool=false)
+                                  filename::String;
+                                  verbose::Bool=false)
 
     i1 = Int64[]
     i2 = Int64[]
@@ -460,6 +465,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
     tensile_stress = Float64[]
     shear_displacement = Vector{Float64}[]
     contact_age = Float64[]
+
     for i=1:length(simulation.grains)
         for ic=1:simulation.Nc_max
             if simulation.grains[i].contacts[ic] > 0
@@ -476,6 +482,19 @@ function writeGrainInteractionVTK(simulation::Simulation,
 
                 r_i = simulation.grains[i].contact_radius
                 r_j = simulation.grains[j].contact_radius
+
+                # skip visualization of contacts across periodic BCs
+                if dist > 5.0*(r_i + r_j) &&
+                    (simulation.ocean.bc_west == 2 ||
+                     simulation.ocean.bc_east == 2 ||
+                     simulation.ocean.bc_north == 2 ||
+                     simulation.ocean.bc_south == 2 ||
+                     simulation.atmosphere.bc_west == 2 ||
+                     simulation.atmosphere.bc_east == 2 ||
+                     simulation.atmosphere.bc_north == 2 ||
+                     simulation.atmosphere.bc_south == 2)
+                    continue
+                end
                 δ_n = dist - (r_i + r_j)
                 R_ij = harmonicMean(r_i, r_j)
 
@@ -809,6 +828,8 @@ imagegrains.PointArrayStatus = [
 'Angular acceleration [rad s^-2]',
 'Sum of torques [N*m]',
 'Fixed in space [-]',
+'Fixed but allow (x) acceleration [-]',
+'Fixed but allow (y) acceleration [-]',
 'Free to rotate [-]',
 'Enabled [-]',
 'Contact stiffness (normal) [N m^-1]',
@@ -820,6 +841,7 @@ imagegrains.PointArrayStatus = [
 "Young's modulus [Pa]",
 "Poisson's ratio [-]",
 'Tensile strength [Pa]'
+'Tensile heal rate [1/s]'
 'Compressive strength prefactor [m^0.5 Pa]',
 'Ocean drag coefficient (vertical) [-]',
 'Ocean drag coefficient (horizontal) [-]',
