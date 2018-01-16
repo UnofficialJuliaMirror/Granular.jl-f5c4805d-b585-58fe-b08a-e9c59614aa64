@@ -138,7 +138,7 @@ mutable struct GrainArrays
     youngs_modulus::Vector{Float64}
     poissons_ratio::Vector{Float64}
     tensile_strength::Vector{Float64}
-    #tensile_heal_rate::Vector{Float64}
+    tensile_heal_rate::Vector{Float64}
     compressive_strength_prefactor::Vector{Float64}
 
     ocean_drag_coeff_vert::Vector{Float64}

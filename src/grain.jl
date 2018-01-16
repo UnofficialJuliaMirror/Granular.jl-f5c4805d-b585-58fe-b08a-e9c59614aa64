@@ -495,6 +495,7 @@ function convertGrainDataToArrays(simulation::Simulation)
         ifarr.youngs_modulus[i] = simulation.grains[i].youngs_modulus
         ifarr.poissons_ratio[i] = simulation.grains[i].poissons_ratio
         ifarr.tensile_strength[i] = simulation.grains[i].tensile_strength
+        ifarr.tensile_heal_rate[i] = simulation.grains[i].tensile_heal_rate
         ifarr.compressive_strength_prefactor[i] = 
             simulation.grains[i].compressive_strength_prefactor
 
@@ -566,6 +567,7 @@ function deleteGrainArrays!(ifarr::GrainArrays)
     ifarr.youngs_modulus = f1
     ifarr.poissons_ratio = f1
     ifarr.tensile_strength = f1
+    ifarr.tensile_heal_rate = f1
     ifarr.compressive_strength_prefactor = f1
 
     ifarr.ocean_drag_coeff_vert = f1
