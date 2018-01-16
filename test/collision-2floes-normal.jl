@@ -273,3 +273,76 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_rot_init ≈ E_kin_rot_final
 @test sim.grains[2].lin_pos[1] > grain2_pos_init[1]
 
+r = 10.
+for angle in linspace(0, 2π, 4)
+    info("## Contact angle: $angle")
+
+    info("Testing behavior with two fixed grains and allow_*_acc")
+    sim = Granular.createSimulation(id="test")
+    Granular.addGrainCylindrical!(sim, [0., 0.], r, 1., verbose=verbose)
+    Granular.addGrainCylindrical!(sim, [2.0*r*cos(angle), 2.0*r*sin(angle)],
+                                  r, 1., verbose=verbose)
+    sim.grains[1].fixed = true
+    sim.grains[2].fixed = true
+
+    E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
+    E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
+    grain1_pos_init = sim.grains[1].lin_pos
+    grain2_pos_init = sim.grains[2].lin_pos
+
+    Granular.setTotalTime!(sim, 10.0)
+    Granular.setTimeStep!(sim, epsilon=0.07)
+    sim_init = deepcopy(sim)
+
+    info("Both fixed, no allow_*_acc, no cohesion (TY2)")
+    sim = deepcopy(sim_init)
+    #sim.grains[2].allow_y_acc = true  # should not influence result
+    tol = 0.02
+    Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbose)
+    E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
+    E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
+    @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
+    @test E_kin_rot_init ≈ E_kin_rot_final
+    @test sim.grains[1].lin_pos ≈ grain1_pos_init
+    @test sim.grains[2].lin_pos ≈ grain2_pos_init
+
+    info("Both fixed, no allow_*_acc, no cohesion (TY3)")
+    sim = deepcopy(sim_init)
+    #sim.grains[2].allow_y_acc = true  # should not influence result
+    tol = 0.02
+    Granular.run!(sim, temporal_integration_method="Three-term Taylor", verbose=verbose)
+    E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
+    E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
+    @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
+    @test E_kin_rot_init ≈ E_kin_rot_final
+    @test sim.grains[1].lin_pos ≈ grain1_pos_init
+    @test sim.grains[2].lin_pos ≈ grain2_pos_init
+
+    info("Both fixed, no allow_*_acc, cohesion (TY2)")
+    sim = deepcopy(sim_init)
+    #sim.grains[2].allow_y_acc = true  # should not influence result
+    sim.grains[1].tensile_strength = 200e3
+    sim.grains[2].tensile_strength = 200e3
+    tol = 0.2
+    Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbose)
+    E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
+    E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
+    @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
+    @test E_kin_rot_init ≈ E_kin_rot_final
+    @test sim.grains[1].lin_pos ≈ grain1_pos_init
+    @test sim.grains[2].lin_pos ≈ grain2_pos_init
+
+    info("Both fixed, no allow_*_acc, cohesion (TY3)")
+    sim = deepcopy(sim_init)
+    #sim.grains[2].allow_y_acc = true  # should not influence result
+    sim.grains[1].tensile_strength = 200e3
+    sim.grains[2].tensile_strength = 200e3
+    tol = 0.02
+    Granular.run!(sim, temporal_integration_method="Three-term Taylor", verbose=verbose)
+    E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
+    E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
+    @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
+    @test E_kin_rot_init ≈ E_kin_rot_final
+    @test sim.grains[1].lin_pos ≈ grain1_pos_init
+    @test sim.grains[2].lin_pos ≈ grain2_pos_init
+end
