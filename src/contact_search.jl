@@ -68,7 +68,7 @@ export findContactsAllToAll!
     findContactsAllToAll!(simulation)
 
 Perform an O(n^2) all-to-all contact search between all grains in the 
-`simulation` object.  Contacts between fixed grains are ignored.
+`simulation` object.
 """
 function findContactsAllToAll!(simulation::Simulation)
 
@@ -102,7 +102,7 @@ export findContactsInGrid!
     findContactsInGrid!(simulation)
 
 Perform an O(n*log(n)) cell-based contact search between all grains in the 
-`simulation` object.  Contacts between fixed or disabled grains are ignored.
+`simulation` object.
 """
 function findContactsInGrid!(simulation::Simulation, grid::Any)
 
@@ -275,8 +275,7 @@ function checkAndAddContact!(sim::Simulation, i::Int, j::Int,
                              distance_modifier::Vector{Float64} = [0., 0.])
     if i < j
 
-        @inbounds if (sim.grains[i].fixed && sim.grains[j].fixed) ||
-            !sim.grains[i].enabled || !sim.grains[j].enabled
+        @inbounds if !sim.grains[i].enabled || !sim.grains[j].enabled
             return
         end
 
