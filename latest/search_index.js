@@ -613,7 +613,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.findContactsAllToAll!",
     "category": "Method",
-    "text": "findContactsAllToAll!(simulation)\n\nPerform an O(n^2) all-to-all contact search between all grains in the  simulation object.  Contacts between fixed grains are ignored.\n\n\n\n"
+    "text": "findContactsAllToAll!(simulation)\n\nPerform an O(n^2) all-to-all contact search between all grains in the  simulation object.\n\n\n\n"
 },
 
 {
@@ -621,7 +621,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.findContactsInGrid!",
     "category": "Method",
-    "text": "findContactsInGrid!(simulation)\n\nPerform an O(n*log(n)) cell-based contact search between all grains in the  simulation object.  Contacts between fixed or disabled grains are ignored.\n\n\n\n"
+    "text": "findContactsInGrid!(simulation)\n\nPerform an O(n*log(n)) cell-based contact search between all grains in the  simulation object.\n\n\n\n"
 },
 
 {
