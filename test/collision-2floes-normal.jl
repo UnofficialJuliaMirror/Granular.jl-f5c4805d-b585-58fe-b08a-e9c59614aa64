@@ -273,76 +273,61 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_rot_init ≈ E_kin_rot_final
 @test sim.grains[2].lin_pos[1] > grain2_pos_init[1]
 
+#=
+info("# Test stability under collision with fixed particles different allow_*_acc")
 r = 10.
-for angle in linspace(0, 2π, 4)
-    info("## Contact angle: $angle")
+i = 1
+for tensile_strength in [0.0, 200e3]
+    for angle in linspace(0, 2π, 7)
+        for allow_x_acc in [false, true]
+            for allow_y_acc in [false, true]
+                info("Test $i")
+                info("Contact angle: $angle rad")
+                info("allow_x_acc = $allow_x_acc")
+                info("allow_y_acc = $allow_y_acc")
+                info("tensile_strength = $tensile_strength Pa")
 
-    info("Testing behavior with two fixed grains and allow_*_acc")
-    sim = Granular.createSimulation(id="test")
-    Granular.addGrainCylindrical!(sim, [0., 0.], r, 1., verbose=verbose)
-    Granular.addGrainCylindrical!(sim, [2.0*r*cos(angle), 2.0*r*sin(angle)],
-                                  r, 1., verbose=verbose)
-    sim.grains[1].fixed = true
-    sim.grains[2].fixed = true
+                sim = Granular.createSimulation()
+                sim.id = "test-$i-$allow_x_acc-$allow_y_acc-C=$tensile_strength"
+                Granular.addGrainCylindrical!(sim, [0., 0.], r, 1., verbose=verbose)
+                Granular.addGrainCylindrical!(sim, [2.0*r*cos(angle), 2.0*r*sin(angle)],
+                                              r, 1., verbose=verbose)
+                sim.grains[1].lin_vel = r/10.0 .* [cos(angle), sin(angle)]
 
-    E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
-    E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
-    grain1_pos_init = sim.grains[1].lin_pos
-    grain2_pos_init = sim.grains[2].lin_pos
+                E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
+                E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
+                grain1_pos_init = sim.grains[1].lin_pos
+                grain2_pos_init = sim.grains[2].lin_pos
 
-    Granular.setTotalTime!(sim, 10.0)
-    Granular.setTimeStep!(sim, epsilon=0.07)
-    sim_init = deepcopy(sim)
+                sim.grains[1].fixed = true
+                sim.grains[2].fixed = true
 
-    info("Both fixed, no allow_*_acc, no cohesion (TY2)")
-    sim = deepcopy(sim_init)
-    #sim.grains[2].allow_y_acc = true  # should not influence result
-    tol = 0.02
-    Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbose)
-    E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
-    E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
-    @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
-    @test E_kin_rot_init ≈ E_kin_rot_final
-    @test sim.grains[1].lin_pos ≈ grain1_pos_init
-    @test sim.grains[2].lin_pos ≈ grain2_pos_init
+                sim.grains[1].allow_x_acc = allow_x_acc
+                sim.grains[2].allow_x_acc = allow_x_acc
+                sim.grains[1].allow_y_acc = allow_y_acc
+                sim.grains[2].allow_y_acc = allow_y_acc
 
-    info("Both fixed, no allow_*_acc, no cohesion (TY3)")
-    sim = deepcopy(sim_init)
-    #sim.grains[2].allow_y_acc = true  # should not influence result
-    tol = 0.02
-    Granular.run!(sim, temporal_integration_method="Three-term Taylor", verbose=verbose)
-    E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
-    E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
-    @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
-    @test E_kin_rot_init ≈ E_kin_rot_final
-    @test sim.grains[1].lin_pos ≈ grain1_pos_init
-    @test sim.grains[2].lin_pos ≈ grain2_pos_init
+                sim.grains[1].tensile_strength = tensile_strength
+                sim.grains[2].tensile_strength = tensile_strength
 
-    info("Both fixed, no allow_*_acc, cohesion (TY2)")
-    sim = deepcopy(sim_init)
-    #sim.grains[2].allow_y_acc = true  # should not influence result
-    sim.grains[1].tensile_strength = 200e3
-    sim.grains[2].tensile_strength = 200e3
-    tol = 0.2
-    Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbose)
-    E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
-    E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
-    @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
-    @test E_kin_rot_init ≈ E_kin_rot_final
-    @test sim.grains[1].lin_pos ≈ grain1_pos_init
-    @test sim.grains[2].lin_pos ≈ grain2_pos_init
+                Granular.setTotalTime!(sim, 20.0)
+                Granular.setTimeStep!(sim, epsilon=0.07)
+                sim_init = deepcopy(sim)
 
-    info("Both fixed, no allow_*_acc, cohesion (TY3)")
-    sim = deepcopy(sim_init)
-    #sim.grains[2].allow_y_acc = true  # should not influence result
-    sim.grains[1].tensile_strength = 200e3
-    sim.grains[2].tensile_strength = 200e3
-    tol = 0.02
-    Granular.run!(sim, temporal_integration_method="Three-term Taylor", verbose=verbose)
-    E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
-    E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
-    @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
-    @test E_kin_rot_init ≈ E_kin_rot_final
-    @test sim.grains[1].lin_pos ≈ grain1_pos_init
-    @test sim.grains[2].lin_pos ≈ grain2_pos_init
+                info("TY3")
+                sim = deepcopy(sim_init)
+                tol = 0.02
+                Granular.setOutputFileInterval!(sim, 1.0)
+                Granular.run!(sim, temporal_integration_method="Three-term Taylor",
+                              verbose=verbose)
+                Granular.render(sim)
+                E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
+                E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
+                @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
+
+                i += 1
+            end
+        end
+    end
 end
+=#

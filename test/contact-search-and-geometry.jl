@@ -26,7 +26,7 @@ info("Testing findContacts(...)")
 sim = deepcopy(sim_copy)
 Granular.findContacts!(sim)
 
-sim.grains[1].fixed = true
+sim.grains[1].enabled = false
 # The contact should be registered in ice floe 1, but not ice floe 2
 @test 2 == sim.grains[1].contacts[1]
 @test [-18., 0.] ≈ sim.grains[1].position_vector[1]
@@ -65,8 +65,8 @@ end
 @test_throws ErrorException Granular.findContacts!(sim, method="")
 
 sim = deepcopy(sim_copy)
-sim.grains[1].fixed = true
-sim.grains[2].fixed = true
+sim.grains[1].enabled = false
+sim.grains[2].enabled = false
 Granular.findContacts!(sim)
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
@@ -182,8 +182,8 @@ end
 
 sim = deepcopy(sim_copy)
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [80., 80., 2.])
-sim.grains[1].fixed = true
-sim.grains[2].fixed = true
+sim.grains[1].enabled = false
+sim.grains[2].enabled = false
 Granular.sortGrainsInGrid!(sim, sim.ocean)
 Granular.findContactsInGrid!(sim, sim.ocean)
 
