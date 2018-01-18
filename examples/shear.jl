@@ -40,7 +40,7 @@ const vel_shear = 0.5
 
 # Simulation duration of individual steps [s]
 const t_init  = 2.0
-const t_cons  = 1.0
+const t_cons  = 2.5
 const t_shear = 5.0
 
 ################################################################################
@@ -130,7 +130,8 @@ for grain in sim.grains
     end
 end
 Granular.addWallLinearFrictionless!(sim, [0., 1.], y_top,
-                                    bc="normal stress", normal_stress=-N)
+                                    bc="normal stress", normal_stress=-N,
+                                    contact_viscosity_normal=1e3)
 info("Placing top wall at y=$y_top")
 
 # Resize the grid to span the current state
