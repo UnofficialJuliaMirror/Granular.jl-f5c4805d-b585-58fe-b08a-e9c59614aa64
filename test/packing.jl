@@ -126,6 +126,7 @@ sim = deepcopy(sim_init)
 np_init = length(sim.grains)
 Granular.rasterPacking!(sim, 0.02, 0.04, verbose=verbose)
 @test np_init < length(sim.grains)
+#Granular.plotGrains(sim, filetype="powerlaw.png", show_figure=false)
 
 info("Testing raster-based mapping algorithm (uniform GSD)")
 sim = deepcopy(sim_init)
@@ -133,4 +134,4 @@ np_init = length(sim.grains)
 Granular.rasterPacking!(sim, 0.02, 0.04, size_distribution="uniform",
                         verbose=verbose)
 @test np_init < length(sim.grains)
-
+#Granular.plotGrains(sim, filetype="uniform.png", show_figure=false)
