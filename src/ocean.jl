@@ -214,6 +214,10 @@ end
 
 export createRegularOceanGrid
 """
+
+    createRegularOceanGrid(n, L[, origo, time, name,
+                           bc_west, bc_south, bc_east, bc_north])
+
 Initialize and return a regular, Cartesian `Ocean` grid with `n[1]` by `n[2]` 
 cells in the horizontal dimension, and `n[3]` vertical cells.  The cell corner 
 and center coordinates will be set according to the grid spatial dimensions 
@@ -221,6 +225,18 @@ and center coordinates will be set according to the grid spatial dimensions
 one 4-th dimension matrix per `time` step.  Sea surface will be at `z=0.` with 
 the ocean spanning `z<0.`.  Vertical indexing starts with `k=0` at the sea 
 surface, and increases downwards.
+
+# Arguments
+* `n::Vector{Int}`: number of cells along each dimension [-].
+* `L::Vector{Float64}`: domain length along each dimension [m].
+* `origo::Vector{Float64}`: domain offset in each dimension [m] (default =
+    `[0.0, 0.0]`).
+* `time::Vector{Float64}`: vector of time stamps for the grid [s].
+* `name::String`: grid name (default = `"unnamed"`).
+* `bc_west::Integer`: grid boundary condition for the grains.
+* `bc_south::Integer`: grid boundary condition for the grains.
+* `bc_east::Integer`: grid boundary condition for the grains.
+* `bc_north::Integer`: grid boundary condition for the grains.
 """
 function createRegularOceanGrid(n::Vector{Int},
                                 L::Vector{Float64};
