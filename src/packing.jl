@@ -308,6 +308,58 @@ function irregularPacking!(simulation::Simulation;
     end
 end
 
+export rasterPacking!
+function rasterPacking!(sim::Simulation,
+                        r_min::Real,
+                        r_max::Real;
+                        padding_factor::Real=0.1,
+                        size_distribution::String="powerlaw",
+                        size_distribution_parameter::Real=-1.8,
+                        seed::Integer=1,
+                        verbose::Bool=true)
+
+    r_rand = 0.
+    const h = .5   # disc tickness
+    const dx = r_max * 2. * (1. + padding_factor)  # cell size
+    const dx_padding = r_max * 2. * padding_factor
+    srand(seed)
+
+    const np_init = length(sim.grains)
+
+    # Generate a grid spanning the entire domain, with cell width corresponding
+    # to the largest grain to be inserted
+    const occupied = rasterMap(sim, dx)
+
+    # Add grains in unoccupied places
+    pos = zeros(2)
+    for ix=1:size(occupied, 1)
+        for iy=1:size(occupied, 2)
+
+            if occupied[ix,iy]
+                continue
+            end
+
+            if size_distribution == "powerlaw"
+                r_rand = Granular.randpower(1, size_distribution_parameter,
+                                            r_min, r_max)
+            elseif size_distribution == "uniform"
+                r_rand = rand()*(r_max - r_min) + r_min
+            end
+
+            # Determine position from grid index and sample randomly from within
+            # padding
+            pos = [ix*dx - .5*dx, iy*dx - .5*dx] .+
+                rand(2) .* dx_padding .- .5*dx_padding
+
+            addGrainCylindrical!(sim, pos, r_rand, h, verbose=false)
+
+        end
+    end
+    if verbose
+        info("Generated $(length(sim.grains) - np_init) points")
+    end
+end
+
 """
     rasterMap(sim, dx)
 
@@ -347,6 +399,7 @@ function rasterMap(sim::Simulation, dx::Real)
     min_i = 0; min_j = 0
     max_i = 0; max_j = 0
     cell_mid_point = zeros(2)
+    const dist = sqrt(2.0*(dx/2.0)^2.)
     for grain in sim.grains
         
         # Find center position in `occupied` grid
@@ -364,7 +417,7 @@ function rasterMap(sim::Simulation, dx::Real)
                 cell_mid_point = dx .* Vector{Float64}([i,j]) - 0.5 * dx
 
                 if (norm(cell_mid_point - grain.lin_pos) -
-                    grain.contact_radius < 0.5*dx)
+                    grain.contact_radius < dist)
                     occupied[i,j] = true
                 end
             end

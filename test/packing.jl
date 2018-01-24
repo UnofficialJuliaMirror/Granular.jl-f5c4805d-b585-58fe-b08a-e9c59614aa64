@@ -84,7 +84,7 @@ Granular.irregularPacking!(sim,
 @test length(sim.grains) > 280
 
 
-info("Testing raster-based packing algorithm")
+info("Testing raster-based mapping algorithm")
 sim = Granular.createSimulation("raster-packing1")
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
 Granular.addGrainCylindrical!(sim, [0.5, 0.5], 0.4, 1.0)
@@ -92,36 +92,45 @@ occupied = Granular.rasterMap(sim, 0.08)
 occupied_ans = Array{Bool}([
 0 0 0 0 0 0 0 0 0 0 0 0;
 0 0 0 1 1 1 1 1 1 0 0 0;
-0 0 1 1 1 1 1 1 1 1 0 0;
+0 0 1 1 1 1 1 1 1 1 1 0;
 0 1 1 1 1 1 1 1 1 1 1 0;
-0 1 1 1 1 1 1 1 1 1 1 0;
+0 1 1 1 1 1 1 1 1 1 1 1;
 0 1 1 1 1 1 1 1 1 1 1 1;
 0 1 1 1 1 1 1 1 1 1 1 1;
 0 1 1 1 1 1 1 1 1 1 1 1;
 0 1 1 1 1 1 1 1 1 1 1 0;
 0 0 1 1 1 1 1 1 1 1 1 0;
-0 0 0 1 1 1 1 1 1 1 0 0;
-0 0 0 0 0 1 1 1 0 0 0 0])
+0 0 1 1 1 1 1 1 1 1 0 0;
+0 0 0 0 1 1 1 1 0 0 0 0])
 @test occupied == occupied_ans
 Granular.addGrainCylindrical!(sim, [0.03, 0.03], 0.02, 1.0)
 occupied = Granular.rasterMap(sim, 0.08)
 occupied_ans = Array{Bool}([
 1 0 0 0 0 0 0 0 0 0 0 0;
 0 0 0 1 1 1 1 1 1 0 0 0;
-0 0 1 1 1 1 1 1 1 1 0 0;
+0 0 1 1 1 1 1 1 1 1 1 0;
 0 1 1 1 1 1 1 1 1 1 1 0;
-0 1 1 1 1 1 1 1 1 1 1 0;
+0 1 1 1 1 1 1 1 1 1 1 1;
 0 1 1 1 1 1 1 1 1 1 1 1;
 0 1 1 1 1 1 1 1 1 1 1 1;
 0 1 1 1 1 1 1 1 1 1 1 1;
 0 1 1 1 1 1 1 1 1 1 1 0;
 0 0 1 1 1 1 1 1 1 1 1 0;
-0 0 0 1 1 1 1 1 1 1 0 0;
-0 0 0 0 0 1 1 1 0 0 0 0])
+0 0 1 1 1 1 1 1 1 1 0 0;
+0 0 0 0 1 1 1 1 0 0 0 0])
 @test occupied == occupied_ans
+sim_init = deepcopy(sim)
 
-#Granular.rasterPacking!(sim,
-                           #radius_max=.01,
-                           #radius_min=.01,
-                           #verbose=verbose)
+info("Testing raster-based mapping algorithm (power law GSD)")
+sim = deepcopy(sim_init)
+np_init = length(sim.grains)
+Granular.rasterPacking!(sim, 0.02, 0.04, verbose=verbose)
+@test np_init < length(sim.grains)
+
+info("Testing raster-based mapping algorithm (uniform GSD)")
+sim = deepcopy(sim_init)
+np_init = length(sim.grains)
+Granular.rasterPacking!(sim, 0.02, 0.04, size_distribution="uniform",
+                        verbose=verbose)
+@test np_init < length(sim.grains)
 
