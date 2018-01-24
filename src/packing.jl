@@ -307,3 +307,68 @@ function irregularPacking!(simulation::Simulation;
         info("Generated $(length(simulation.grains) - np_init) points")
     end
 end
+
+"""
+    rasterMap(sim, dx)
+
+Returns a rasterized map of grain extent in the domain with length `L` and a
+pixel size of `dx`. The function will return a map of `Bool` type with size
+`floor.(L./dx)`.
+
+* Arguments
+- `sim::Simulation`: simulation object containing the grains.
+- `dx::Real`: pixel size to use for the raster map.
+
+"""
+function rasterMap(sim::Simulation, dx::Real)
+
+    # Use existing `grid` (ocean or atmosphere) for contact search
+    if typeof(sim.ocean.input_file) != Bool
+        grid = sim.ocean
+    elseif typeof(sim.atmosphere.input_file) != Bool
+        grid = sim.atmosphere
+    else
+        error("rasterMap(...) requires an ocean or atmosphere grid")
+    end
+    # save grid boundaries
+    if grid.regular_grid
+        L = grid.L[1:2]
+        origo = grid.origo
+    else
+        sw, se, ne, nw = getGridCornerCoordinates(grid.xq, grid.yq)
+        L = [se[1] - sw[1], nw[2] - sw[2]]
+        origo = [sw[1], sw[2]]
+    end
+    const dims = floor.(L./dx)
+    occupied = zeros(Bool, dims[1], dims[2])
+
+    # Loop over existing grains and mark their extent in the `occupied` array
+    i = 0; j = 0
+    min_i = 0; min_j = 0
+    max_i = 0; max_j = 0
+    cell_mid_point = zeros(2)
+    for grain in sim.grains
+        
+        # Find center position in `occupied` grid
+        #i, j = Int.(floor.((grain.lin_pos - origo) ./ dx)) + [1,1]
+
+        # Find corner indexes for box spanning the grain
+        min_i, min_j = Int.(floor.((grain.lin_pos - origo -
+                                    grain.contact_radius) ./ dx)) + [1,1]
+        max_i, max_j = Int.(floor.((grain.lin_pos - origo +
+                                    grain.contact_radius) ./ dx)) + [1,1]
+
+        # For each cell in box, check if the grain is contained
+        for i = min_i:max_i
+            for j = min_j:max_j
+                cell_mid_point = dx .* Vector{Float64}([i,j]) - 0.5 * dx
+
+                if (norm(cell_mid_point - grain.lin_pos) -
+                    grain.contact_radius < 0.5*dx)
+                    occupied[i,j] = true
+                end
+            end
+        end
+    end
+    return occupied
+end

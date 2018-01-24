@@ -82,3 +82,46 @@ Granular.irregularPacking!(sim,
                            plot_during_packing=plot_packings,
                            verbose=verbose)
 @test length(sim.grains) > 280
+
+
+info("Testing raster-based packing algorithm")
+sim = Granular.createSimulation("raster-packing1")
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
+Granular.addGrainCylindrical!(sim, [0.5, 0.5], 0.4, 1.0)
+occupied = Granular.rasterMap(sim, 0.08)
+occupied_ans = Array{Bool}([
+0 0 0 0 0 0 0 0 0 0 0 0;
+0 0 0 1 1 1 1 1 1 0 0 0;
+0 0 1 1 1 1 1 1 1 1 0 0;
+0 1 1 1 1 1 1 1 1 1 1 0;
+0 1 1 1 1 1 1 1 1 1 1 0;
+0 1 1 1 1 1 1 1 1 1 1 1;
+0 1 1 1 1 1 1 1 1 1 1 1;
+0 1 1 1 1 1 1 1 1 1 1 1;
+0 1 1 1 1 1 1 1 1 1 1 0;
+0 0 1 1 1 1 1 1 1 1 1 0;
+0 0 0 1 1 1 1 1 1 1 0 0;
+0 0 0 0 0 1 1 1 0 0 0 0])
+@test occupied == occupied_ans
+Granular.addGrainCylindrical!(sim, [0.03, 0.03], 0.02, 1.0)
+occupied = Granular.rasterMap(sim, 0.08)
+occupied_ans = Array{Bool}([
+1 0 0 0 0 0 0 0 0 0 0 0;
+0 0 0 1 1 1 1 1 1 0 0 0;
+0 0 1 1 1 1 1 1 1 1 0 0;
+0 1 1 1 1 1 1 1 1 1 1 0;
+0 1 1 1 1 1 1 1 1 1 1 0;
+0 1 1 1 1 1 1 1 1 1 1 1;
+0 1 1 1 1 1 1 1 1 1 1 1;
+0 1 1 1 1 1 1 1 1 1 1 1;
+0 1 1 1 1 1 1 1 1 1 1 0;
+0 0 1 1 1 1 1 1 1 1 1 0;
+0 0 0 1 1 1 1 1 1 1 0 0;
+0 0 0 0 0 1 1 1 0 0 0 0])
+@test occupied == occupied_ans
+
+#Granular.rasterPacking!(sim,
+                           #radius_max=.01,
+                           #radius_min=.01,
+                           #verbose=verbose)
+
