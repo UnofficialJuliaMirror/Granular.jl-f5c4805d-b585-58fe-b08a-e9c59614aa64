@@ -248,7 +248,7 @@ found the function returns `(0,0)`.
 * `grid::Any`: grid object containing ocean or atmosphere data.
 * `point::Vector{Float64}`: two-dimensional vector of point to check.
 * `method::String`: approach to use for determining if point is inside cell or 
-    not, can be "Conformal" (default) or "Areal".
+    not, can be "Conformal" (default) or "Area".
 """
 function findCellContainingPoint(grid::Any, point::Vector{Float64},
                                  sw = Vector{Float64}(2),
@@ -1034,4 +1034,16 @@ function fitGridToGrains!(simulation::Simulation, grid::Any;
     end
 
     nothing
+end
+
+function findPorosity(grid::Any)
+
+    cell_area = 0.0
+    for ix in size(grid.xh, 1)
+        for iy in size(grid.xh, 2)
+            cell_area = 
+
+        end
+    end
+
 end
