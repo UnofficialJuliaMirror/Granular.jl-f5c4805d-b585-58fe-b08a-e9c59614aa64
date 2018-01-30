@@ -734,8 +734,17 @@ function writeGridVTK(grid::Any,
             end
         end
     end
-    
     WriteVTK.vtk_point_data(vtkfile, vel, "Velocity vector [m/s]")
+
+    # Porosity is in the grids stored on the cell center, but is here
+    # interpolated to the cell corners
+    porosity = zeros(size(xq, 1), size(xq, 2), size(xq, 3))
+    for ix=1:size(grid.xh, 1)
+        for iy=1:size(grid.xh, 2)
+            @inbounds porosity[ix, iy, 1] = grid.porosity[ix, iy]
+        end
+    end
+    WriteVTK.vtk_point_data(vtkfile, porosity, "Porosity [-]")
 
     if typeof(grid) == Ocean
         WriteVTK.vtk_point_data(vtkfile, grid.h[:, :, :, 1],

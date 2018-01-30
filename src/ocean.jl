@@ -20,6 +20,7 @@ function createEmptyOcean()
                  zeros(1,1,1,1),
                  zeros(1,1,1,1),
                  Array{Array{Int, 1}}(1, 1),
+                 zeros(1,1),
                  1, 1, 1, 1,
                  false, [0.,0.,0.], [1.,1.,1.], [1,1,1], [1.,1.,1.])
 end
@@ -67,6 +68,7 @@ function readOceanNetCDF(velocity_file::String, grid_file::String;
                   h,
                   e,
                   Array{Array{Int, 1}}(size(xh, 1), size(xh, 2)),
+                  zeros(size(xh)),
                   1, 1, 1, 1,
 
                   false, [0.,0.,0.], [1.,1.,1.], [1,1,1], [1.,1.,1.]
@@ -272,6 +274,7 @@ function createRegularOceanGrid(n::Vector{Int},
                  zl, zi,
                  u, v, h, e,
                  Array{Array{Int, 1}}(size(xh, 1), size(xh, 2)),
+                 zeros(size(xh)),
                  bc_west, bc_south, bc_east, bc_north,
                  true, origo, L, n, dx)
 end

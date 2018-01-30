@@ -231,6 +231,7 @@ mutable struct Ocean
 
     # Grains in grid cells
     grain_list::Array{Vector{Int}, 2}
+    porosity::Array{Float64, 2}
 
     # Boundary conditions for grains
     bc_west::Integer
@@ -312,7 +313,9 @@ mutable struct Atmosphere
     u::Array{Float64, 4}
     v::Array{Float64, 4}
 
+    # Grains in grid cells
     grain_list::Array{Vector{Int}, 2}
+    porosity::Array{Float64, 2}
 
     # Boundary conditions for grains
     bc_west::Integer

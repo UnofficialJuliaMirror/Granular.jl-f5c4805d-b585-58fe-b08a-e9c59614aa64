@@ -39,7 +39,7 @@ graininteractionpath * "\n"
 
 oceanpath = "test/test.ocean.1.vts"
 oceanchecksum =
-"d56ffb109841a803f2b2b94c74c87f7a497237204841d557d2b1043694d51f0d  " *
+"b65f00942f1cbef7335921948c9eb73d137574eb806c33dea8b0e9b638665f3b  " *
 oceanpath * "\n"
 
 @test read(`$(cmd) $(grainpath)$(cmd_post)`, String) == grainchecksum

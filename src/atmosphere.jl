@@ -18,6 +18,7 @@ function createEmptyAtmosphere()
                       zeros(1,1,1,1),
 
                       Array{Vector{Int}}(1, 1),
+                      zeros(1,1),
 
                       1, 1, 1, 1,
 
@@ -154,6 +155,7 @@ function createRegularAtmosphereGrid(n::Vector{Int},
                  zl,
                  u, v,
                  Array{Array{Int, 1}}(size(xh, 1), size(xh, 2)),
+                 zeros(size(xh)),
                  bc_west, bc_south, bc_east, bc_north,
                  false,
                  true, origo, L, n, dx)
