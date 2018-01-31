@@ -10,7 +10,7 @@ A [Julia](https://julialang.org) package for granular mechanics.
 
 ## Installation
 [Granular.jl](https://github.com/anders-dc/Granular.jl) is registered in the 
-[official Julia package repository](https://pkg.julialang.o,rg), and the latest 
+[official Julia package repository](https://pkg.julialang.org), and the latest 
 release can be installed directly from the Julia shell by:
 
 ```julia
