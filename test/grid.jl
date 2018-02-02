@@ -1,4 +1,6 @@
 #!/usr/bin/env julia
+using Compat.Test
+import Granular
 
 # Check the grid interpolation and sorting functions
 verbose = false
@@ -399,3 +401,16 @@ Granular.fitGridToGrains!(sim, sim.atmosphere, padding=.5, verbose=true)
 @test sim.atmosphere.yq[1,1] ≈ -1.
 @test sim.atmosphere.xq[end,end] ≈ 3.5
 @test sim.atmosphere.yq[end,end] ≈ 5.5
+
+info("Testing porosity estimation")
+sim = Granular.createSimulation()
+dx = 1.0; dy = 1.0
+nx = 3; ny = 3
+sim.ocean = Granular.createRegularOceanGrid([nx, ny, 1], [nx*dx, ny*dy, 1.])
+Granular.addGrainCylindrical!(sim, [1.5, 1.5], 0.5*dx, 1.0)
+A_particle = π*(0.5*dx)^2
+A_cell = dx^2
+Granular.findPorosity!(sim, sim.ocean)
+@test sim.ocean.porosity ≈ [1. 1. 1.;
+                            1. (A_cell - A_particle)/A_cell 1.;
+                            1. 1. 1]

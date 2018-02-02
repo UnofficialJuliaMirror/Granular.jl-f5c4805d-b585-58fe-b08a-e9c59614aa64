@@ -1036,14 +1036,48 @@ function fitGridToGrains!(simulation::Simulation, grid::Any;
     nothing
 end
 
-function findPorosity(grid::Any)
+function findPorosity!(sim::Simulation, grid::Any; verbose::Bool=true)
 
-    cell_area = 0.0
-    for ix in size(grid.xh, 1)
-        for iy in size(grid.xh, 2)
-            cell_area = 
-
-        end
+    if !isassigned(grid.grain_list)
+        info("Sorting grains in grid")
+        sortGrainsInGrid!(sim, grid, verbose=verbose)
     end
 
+    sw = Vector{Float64}(2)
+    se = Vector{Float64}(2)
+    ne = Vector{Float64}(2)
+    nw = Vector{Float64}(2)
+    cell_area = 0.0
+
+    for ix in 1:size(grid.xh, 1)
+        for iy in 1:size(grid.xh, 2)
+
+            @views sw .= grid.xq[   ix,   iy], grid.yq[   ix,   iy]
+            @views se .= grid.xq[ ix+1,   iy], grid.yq[ ix+1,   iy]
+            @views ne .= grid.xq[ ix+1, iy+1], grid.yq[ ix+1, iy+1]
+            @views nw .= grid.xq[   ix, iy+1], grid.yq[   ix, iy+1]
+            cell_area = areaOfQuadrilateral(sw, se, ne, nw)
+
+            # Subtract grain area from cell area
+            particle_area = 0.0
+            #=for ix_ = -1:1
+                for iy_ = -1:1
+
+                    if ix + ix_ < 1 || ix + ix_ > size(grid.xh, 1) ||
+                        iy + iy_ < 1 || iy + iy_ > size(grid.xh, 2)
+                        continue
+                    end
+
+                    for i in grid.grain_list[ix + ix_, iy + iy_]=#
+                    for i in grid.grain_list[ix, iy]
+                            particle_area +=
+                                grainHorizontalSurfaceArea(sim.grains[i])
+                    end
+                    #=end
+                end
+            end=#
+
+            grid.porosity[ix, iy] = (cell_area - particle_area)/cell_area
+        end
+    end
 end
