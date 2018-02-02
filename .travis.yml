@@ -13,8 +13,6 @@ julia:
 
 notifications:
   email:
-      recipients:
-          - andersd@riseup.net
       on_success: never # default: change
       on_failure: always # default: always
 
