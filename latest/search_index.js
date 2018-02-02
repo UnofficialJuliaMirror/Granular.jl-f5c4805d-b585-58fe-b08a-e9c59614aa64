@@ -525,7 +525,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.createRegularAtmosphereGrid",
     "category": "Method",
-    "text": "Initialize and return a regular, Cartesian Atmosphere grid with n[1] by n[2]  cells in the horizontal dimension, and n[3] vertical cells.  The cell corner  and center coordinates will be set according to the grid spatial dimensions  L[1], L[2], and L[3].  The grid u, v, h, and e fields will contain  one 4-th dimension matrix per time step.  Sea surface will be at z=0. with  the atmosphere spanning z<0..  Vertical indexing starts with k=0 at the sea  surface, and increases downwards.\n\n\n\n"
+    "text": "createRegularAtmosphereGrid(n, L[, origo, time, name,\n                            bc_west, bc_south, bc_east, bc_north])\n\nInitialize and return a regular, Cartesian Atmosphere grid with n[1] by n[2] cells in the horizontal dimension, and n[3] vertical cells.  The cell corner and center coordinates will be set according to the grid spatial dimensions L[1], L[2], and L[3].  The grid u, v, h, and e fields will contain one 4-th dimension matrix per time step.  Sea surface will be at z=0. with the atmosphere spanning z<0..  Vertical indexing starts with k=0 at the sea surface, and increases downwards.\n\nArguments\n\nn::Vector{Int}: number of cells along each dimension [-].\nL::Vector{Float64}: domain length along each dimension [m].\norigo::Vector{Float64}: domain offset in each dimension m.\ntime::Vector{Float64}: vector of time stamps for the grid [s].\nname::String: grid name (default = \"unnamed\").\nbc_west::Integer: grid boundary condition for the grains.\nbc_south::Integer: grid boundary condition for the grains.\nbc_east::Integer: grid boundary condition for the grains.\nbc_north::Integer: grid boundary condition for the grains.\n\n\n\n"
 },
 
 {
@@ -533,7 +533,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.createRegularOceanGrid",
     "category": "Method",
-    "text": "Initialize and return a regular, Cartesian Ocean grid with n[1] by n[2]  cells in the horizontal dimension, and n[3] vertical cells.  The cell corner  and center coordinates will be set according to the grid spatial dimensions  L[1], L[2], and L[3].  The grid u, v, h, and e fields will contain  one 4-th dimension matrix per time step.  Sea surface will be at z=0. with  the ocean spanning z<0..  Vertical indexing starts with k=0 at the sea  surface, and increases downwards.\n\n\n\n"
+    "text": "createRegularOceanGrid(n, L[, origo, time, name,\n                       bc_west, bc_south, bc_east, bc_north])\n\nInitialize and return a regular, Cartesian Ocean grid with n[1] by n[2]  cells in the horizontal dimension, and n[3] vertical cells.  The cell corner  and center coordinates will be set according to the grid spatial dimensions  L[1], L[2], and L[3].  The grid u, v, h, and e fields will contain  one 4-th dimension matrix per time step.  Sea surface will be at z=0. with  the ocean spanning z<0..  Vertical indexing starts with k=0 at the sea  surface, and increases downwards.\n\nArguments\n\nn::Vector{Int}: number of cells along each dimension [-].\nL::Vector{Float64}: domain length along each dimension [m].\norigo::Vector{Float64}: domain offset in each dimension m.\ntime::Vector{Float64}: vector of time stamps for the grid [s].\nname::String: grid name (default = \"unnamed\").\nbc_west::Integer: grid boundary condition for the grains.\nbc_south::Integer: grid boundary condition for the grains.\nbc_east::Integer: grid boundary condition for the grains.\nbc_north::Integer: grid boundary condition for the grains.\n\n\n\n"
 },
 
 {
@@ -597,7 +597,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.findCellContainingPoint",
     "category": "Function",
-    "text": "findCellContainingPoint(grid, point[, method])\n\nReturns the i, j index of the grid cell containing the point. The function uses either an area-based approach (method = \"Area\"), or a  conformal mapping approach (method = \"Conformal\").  The area-based approach is  more robust.  This function returns the coordinates of the cell.  If no match is  found the function returns (0,0).\n\nArguments\n\ngrid::Any: grid object containing ocean or atmosphere data.\npoint::Vector{Float64}: two-dimensional vector of point to check.\nmethod::String: approach to use for determining if point is inside cell or    not, can be \"Conformal\" (default) or \"Areal\".\n\n\n\n"
+    "text": "findCellContainingPoint(grid, point[, method])\n\nReturns the i, j index of the grid cell containing the point. The function uses either an area-based approach (method = \"Area\"), or a  conformal mapping approach (method = \"Conformal\").  The area-based approach is  more robust.  This function returns the coordinates of the cell.  If no match is  found the function returns (0,0).\n\nArguments\n\ngrid::Any: grid object containing ocean or atmosphere data.\npoint::Vector{Float64}: two-dimensional vector of point to check.\nmethod::String: approach to use for determining if point is inside cell or    not, can be \"Conformal\" (default) or \"Area\".\n\n\n\n"
 },
 
 {
