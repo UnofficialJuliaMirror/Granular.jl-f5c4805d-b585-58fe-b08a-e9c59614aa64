@@ -328,13 +328,12 @@ floe.
 function applyOceanDragToGrain!(grain::GrainCylindrical,
                                   u::Float64, v::Float64)
     freeboard = .1*grain.thickness  # height above water
-    rho_o = 1000.   # ocean density
+    ρ_o = 1000.   # ocean density
     draft = grain.thickness - freeboard  # height of submerged thickness
-    length = grain.areal_radius*2.
-    width = grain.areal_radius*2.
 
-    drag_force = rho_o * (.5*grain.ocean_drag_coeff_vert*width*draft + 
-        grain.ocean_drag_coeff_horiz*length*width) *
+    drag_force = ρ_o * π *
+    (2.0*grain.ocean_drag_coeff_vert*grain.areal_radius*draft + 
+        grain.ocean_drag_coeff_horiz*grain.areal_radius^2.0) *
         ([u, v] - grain.lin_vel)*norm([u, v] - grain.lin_vel)
 
     grain.force += drag_force
@@ -351,11 +350,11 @@ and Boucher, 1999.
 function applyOceanVorticityToGrain!(grain::GrainCylindrical, 
                                        ocean_curl::Float64)
     freeboard = .1*grain.thickness  # height above water
-    rho_o = 1000.   # ocean density
+    ρ_o = 1000.   # ocean density
     draft = grain.thickness - freeboard  # height of submerged thickness
 
     grain.torque +=
-        pi * grain.areal_radius^4. * rho_o * 
+        π * grain.areal_radius^4. * ρ_o * 
         (grain.areal_radius/5. * grain.ocean_drag_coeff_horiz + 
         draft * grain.ocean_drag_coeff_vert) * 
         abs(.5 * ocean_curl - grain.ang_vel) * (.5 * ocean_curl - grain.ang_vel)

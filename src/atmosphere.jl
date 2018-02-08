@@ -211,13 +211,11 @@ grain.
 """
 function applyAtmosphereDragToGrain!(grain::GrainCylindrical,
                                   u::Float64, v::Float64)
-    rho_a = 1.2754   # atmosphere density
-    length = grain.areal_radius*2.
-    width = grain.areal_radius*2.
+    ρ_a = 1.2754   # atmosphere density
 
-    drag_force = rho_a * 
-    (.5*grain.ocean_drag_coeff_vert*width*.1*grain.thickness + 
-     grain.atmosphere_drag_coeff_horiz*length*width) *
+    drag_force = ρ_a * π * 
+    (2.0*grain.ocean_drag_coeff_vert*grain.areal_radius*.1*grain.thickness + 
+     grain.atmosphere_drag_coeff_horiz*grain.areal_radius^2.0) *
         ([u, v] - grain.lin_vel)*norm([u, v] - grain.lin_vel)
 
     grain.force += drag_force
@@ -233,10 +231,10 @@ and Boucher, 1999.
 """
 function applyAtmosphereVorticityToGrain!(grain::GrainCylindrical, 
                                             atmosphere_curl::Float64)
-    rho_a = 1.2754   # atmosphere density
+    ρ_a = 1.2754   # atmosphere density
 
     grain.torque +=
-        pi * grain.areal_radius^4. * rho_a * 
+        π * grain.areal_radius^4. * ρ_a * 
         (grain.areal_radius / 5. * grain.atmosphere_drag_coeff_horiz + 
         .1 * grain.thickness * grain.atmosphere_drag_coeff_vert) * 
         abs(.5 * atmosphere_curl - grain.ang_vel) * 
