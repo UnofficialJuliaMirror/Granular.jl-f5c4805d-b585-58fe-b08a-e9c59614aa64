@@ -15,7 +15,7 @@ export addGrainCylindrical!
                                     contact_dynamic_friction,
                                     youngs_modulus, poissons_ratio,
                                     tensile_strength, tensile_heal_rate,
-                                    compressive_strength_prefactor,
+                                    fracture_toughness,
                                     ocean_drag_coeff_vert,
                                     ocean_drag_coeff_horiz,
                                     atmosphere_drag_coeff_vert,
@@ -69,7 +69,7 @@ are optional, and come with default values.  The only required arguments are
     [Pa].
 * `tensile_heal_rate::Float64 = 0.`: rate at which contact-tensile bond strength
     is obtained [1/s].
-* `compressive_strength_prefactor::Float64 = 0.`: maximum compressive
+* `fracture_toughness::Float64 = 0.`: maximum compressive
     strength on granular contact (not currently enforced) [m^{1/2}*Pa]. A value
     of 1.285e3 m^{1/2}*Pa is used for sea ice by Hopkins 2004.
 * `ocean_drag_coeff_vert::Float64 = 0.85`: vertical drag coefficient for ocean
@@ -152,7 +152,7 @@ function addGrainCylindrical!(simulation::Simulation,
                                 poissons_ratio::Float64 = 0.185,  # Hopkins 2004
                                 tensile_strength::Float64 = 0.,
                                 tensile_heal_rate::Float64 = 0.,
-                                compressive_strength_prefactor::Float64 = 0.,  
+                                fracture_toughness::Float64 = 0.,  
                                 ocean_drag_coeff_vert::Float64 = 0.85, # H&C 2011
                                 ocean_drag_coeff_horiz::Float64 = 5e-4, # H&C 2011
                                 atmosphere_drag_coeff_vert::Float64 = 0.4, # H&C 2011
@@ -247,7 +247,7 @@ function addGrainCylindrical!(simulation::Simulation,
                                  poissons_ratio,
                                  tensile_strength,
                                  tensile_heal_rate,
-                                 compressive_strength_prefactor,
+                                 fracture_toughness,
 
                                  ocean_drag_coeff_vert,
                                  ocean_drag_coeff_horiz,
@@ -409,7 +409,7 @@ function convertGrainDataToArrays(simulation::Simulation)
                         Array{Float64}(length(simulation.grains)),
                         ## tensile_heal_rate
                         Array{Float64}(length(simulation.grains)),
-                        ## compressive_strength_prefactor
+                        ## fracture_toughness
                         Array{Float64}(length(simulation.grains)),
 
                         # Ocean/atmosphere interaction parameters
@@ -492,8 +492,8 @@ function convertGrainDataToArrays(simulation::Simulation)
         ifarr.poissons_ratio[i] = simulation.grains[i].poissons_ratio
         ifarr.tensile_strength[i] = simulation.grains[i].tensile_strength
         ifarr.tensile_heal_rate[i] = simulation.grains[i].tensile_heal_rate
-        ifarr.compressive_strength_prefactor[i] = 
-            simulation.grains[i].compressive_strength_prefactor
+        ifarr.fracture_toughness[i] = 
+            simulation.grains[i].fracture_toughness
 
         ifarr.ocean_drag_coeff_vert[i] = 
             simulation.grains[i].ocean_drag_coeff_vert
@@ -564,7 +564,7 @@ function deleteGrainArrays!(ifarr::GrainArrays)
     ifarr.poissons_ratio = f1
     ifarr.tensile_strength = f1
     ifarr.tensile_heal_rate = f1
-    ifarr.compressive_strength_prefactor = f1
+    ifarr.fracture_toughness = f1
 
     ifarr.ocean_drag_coeff_vert = f1
     ifarr.ocean_drag_coeff_horiz = f1
@@ -625,10 +625,10 @@ function printGrainInfo(f::GrainCylindrical)
     println("  μ_s:    $(f.contact_static_friction)")
     println("  μ_d:    $(f.contact_dynamic_friction)\n")
 
-    println("  E:      $(f.youngs_modulus) Pa")
-    println("  ν:      $(f.poissons_ratio)")
-    println("  σ_t:    $(f.tensile_strength) Pa")
-    println("  c(σ_c): $(f.compressive_strength_prefactor) m^0.5 Pa\n")
+    println("  E:                  $(f.youngs_modulus) Pa")
+    println("  ν:                  $(f.poissons_ratio)")
+    println("  tensile_strength:   $(f.tensile_strength) Pa")
+    println("  fracture_toughness: $(f.fracture_toughness) m^0.5 Pa\n")
 
     println("  c_o_v:  $(f.ocean_drag_coeff_vert)")
     println("  c_o_h:  $(f.ocean_drag_coeff_horiz)")
@@ -768,8 +768,8 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
     @test if1.poissons_ratio ≈ if2.poissons_ratio
     @test if1.tensile_strength ≈ if2.tensile_strength
     @test if1.tensile_heal_rate ≈ if2.tensile_heal_rate
-    @test if1.compressive_strength_prefactor ≈
-        if2.compressive_strength_prefactor
+    @test if1.fracture_toughness ≈
+        if2.fracture_toughness
 
     @test if1.ocean_drag_coeff_vert ≈ if2.ocean_drag_coeff_vert
     @test if1.ocean_drag_coeff_horiz ≈ if2.ocean_drag_coeff_horiz

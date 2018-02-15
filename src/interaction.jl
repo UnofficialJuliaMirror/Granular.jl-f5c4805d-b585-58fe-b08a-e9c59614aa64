@@ -205,9 +205,14 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         error("unknown contact_normal_rheology (k_n = $k_n, γ_n = $γ_n")
     end
 
-    # Contact tensile strength increases linearly with contact age until tensile 
-    # stress exceeds tensile strength
+    compressive_strength = min(simulation.grains[i].fracture_toughness * 
+                               sqrt(simulation.grains[i].thickness),
+                               simulation.grains[j].fracture_toughness * 
+                               sqrt(simulation.grains[j].thickness)) 
+    # Add tensile strength during extension or limit compressive strength
     if δ_n > 0.
+        # Contact tensile strength increases linearly with contact age until
+        # tensile stress exceeds tensile strength
 
         # linearly increase tensile strength with time until max. value
         tensile_strength = min(simulation.grains[i].contact_age[ic]/
@@ -223,6 +228,13 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
             simulation.grains[i].contacts[ic] = 0  # remove contact
             simulation.grains[i].n_contacts -= 1
             simulation.grains[j].n_contacts -= 1
+        end
+
+    elseif fracture_toughness > 0.
+        # Limit compressive stress if the prefactor is set to a positive value
+        if abs(force_n) >= compressive_strength
+
+
         end
     end
 
