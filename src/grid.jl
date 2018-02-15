@@ -1048,6 +1048,9 @@ function findPorosity!(sim::Simulation, grid::Any; verbose::Bool=true)
     ne = Vector{Float64}(2)
     nw = Vector{Float64}(2)
     cell_area = 0.0
+    p = zeros(2)
+    r = 0.0
+    A = 0.0
 
     for ix in 1:size(grid.xh, 1)
         for iy in 1:size(grid.xh, 2)
@@ -1060,22 +1063,57 @@ function findPorosity!(sim::Simulation, grid::Any; verbose::Bool=true)
 
             # Subtract grain area from cell area
             particle_area = 0.0
-            #=for ix_ = -1:1
+            for ix_ = -1:1
                 for iy_ = -1:1
 
+                    # Make sure cell check is within grid
                     if ix + ix_ < 1 || ix + ix_ > size(grid.xh, 1) ||
                         iy + iy_ < 1 || iy + iy_ > size(grid.xh, 2)
                         continue
                     end
 
-                    for i in grid.grain_list[ix + ix_, iy + iy_]=#
-                    for i in grid.grain_list[ix, iy]
-                            particle_area +=
-                                grainHorizontalSurfaceArea(sim.grains[i])
+                    # Traverse grain list
+                    for i in grid.grain_list[ix + ix_, iy + iy_]
+
+                        # Grain geometry
+                        p = sim.grains[i].lin_pos
+                        r = sim.grains[i].areal_radius
+                        A = grainHorizontalSurfaceArea(sim.grains[i])
+
+                        if sw[1] <= p[1] - r &&
+                            sw[2] <= p[2] - r &&
+                            ne[1] >= p[1] + r &&
+                            ne[2] >= p[2] + r
+                            # If particle is entirely contained within cell,
+                            # assuming a regular and orthogonal grid
+                            # TODO: Adjust coordinates with conformal mapping
+                            # for irregular grids.
+                            particle_area += A
+
+                        elseif sw[1] >= p[1] + r ||
+                            sw[2] >= p[2] + r ||
+                            ne[1] <= p[1] - r ||
+                            ne[2] <= p[2] - r
+                            # particle does not intersect with cell [ix,iy]
+                            continue
+
+
+                        elseif
+                            # (likely) intersection between grid and grain
+
+                            # 1. There is an intersection if one of the cell
+                            # corners lies within the circle. This occurs if the
+                            # distance between the cell center and corner is
+                            # less than the radii.
+
+                            # 2. There is an intersection if one of the cell
+                            # edges comes to a closer distance to the cell
+                            # center than the radius.
+
+                        end
                     end
-                    #=end
                 end
-            end=#
+            end
 
             grid.porosity[ix, iy] = (cell_area - particle_area)/cell_area
         end
