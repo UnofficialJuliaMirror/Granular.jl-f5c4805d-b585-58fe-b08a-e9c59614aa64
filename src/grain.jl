@@ -69,8 +69,9 @@ are optional, and come with default values.  The only required arguments are
     [Pa].
 * `tensile_heal_rate::Float64 = 0.`: rate at which contact-tensile bond strength
     is obtained [1/s].
-* `compressive_strength_prefactor::Float64 = 1285e3`: maximum compressive
-    strength on granular contact (not currently enforced) [m*Pa].
+* `compressive_strength_prefactor::Float64 = 0.`: maximum compressive
+    strength on granular contact (not currently enforced) [m^{1/2}*Pa]. A value
+    of 1.285e3 m^{1/2}*Pa is used for sea ice by Hopkins 2004.
 * `ocean_drag_coeff_vert::Float64 = 0.85`: vertical drag coefficient for ocean
     against grain sides [-].
 * `ocean_drag_coeff_horiz::Float64 = 5e-4`: horizontal drag coefficient for
@@ -148,19 +149,14 @@ function addGrainCylindrical!(simulation::Simulation,
                                 contact_static_friction::Float64 = 0.4,
                                 contact_dynamic_friction::Float64 = 0.4,
                                 youngs_modulus::Float64 = 2e7,
-                                #youngs_modulus::Float64 = 2e9,  # Hopkins 2004
                                 poissons_ratio::Float64 = 0.185,  # Hopkins 2004
-                                #tensile_strength::Float64 = 500e3,  # Hopkins2004
                                 tensile_strength::Float64 = 0.,
                                 tensile_heal_rate::Float64 = 0.,
-                                compressive_strength_prefactor::Float64 = 1285e3,  
-                                    # Hopkins 2004
+                                compressive_strength_prefactor::Float64 = 0.,  
                                 ocean_drag_coeff_vert::Float64 = 0.85, # H&C 2011
                                 ocean_drag_coeff_horiz::Float64 = 5e-4, # H&C 2011
-                                atmosphere_drag_coeff_vert::Float64 = 0.4,
-                                    # H&C 2011
-                                atmosphere_drag_coeff_horiz::Float64 = 2.5e-4,
-                                    # H&C2011
+                                atmosphere_drag_coeff_vert::Float64 = 0.4, # H&C 2011
+                                atmosphere_drag_coeff_horiz::Float64 = 2.5e-4, # H&C2011
                                 pressure::Float64 = 0.,
                                 fixed::Bool = false,
                                 allow_x_acc::Bool = false,
