@@ -205,10 +205,17 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         error("unknown contact_normal_rheology (k_n = $k_n, γ_n = $γ_n")
     end
 
-    compressive_strength = min(simulation.grains[i].fracture_toughness * 
-                               sqrt(simulation.grains[i].thickness),
-                               simulation.grains[j].fracture_toughness * 
-                               sqrt(simulation.grains[j].thickness)) 
+    # Determine which grain is the weakest
+    compressive_strength = simulation.grains[i].fracture_toughness * 
+                           sqrt(simulation.grains[i].thickness
+    compressive_strength_j = simulation.grains[j].fracture_toughness * 
+                             sqrt(simulation.grains[j].thickness
+    idx_weakest = i
+    if compressive_strength_j < compressive_strength
+        compressive_strength = compressive_strength_j
+        idx_weakest = j
+    end
+
     # Add tensile strength during extension or limit compressive strength
     if δ_n > 0.
         # Contact tensile strength increases linearly with contact age until
@@ -230,12 +237,19 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
             simulation.grains[j].n_contacts -= 1
         end
 
-    elseif fracture_toughness > 0.
-        # Limit compressive stress if the prefactor is set to a positive value
-        if abs(force_n) >= compressive_strength
+    # Limit compressive stress if the prefactor is set to a positive value
+    elseif compressize_strength > 0. && abs(force_n) >= compressive_strength
 
+        # Determine the overlap distance where yeild stress is reached
+        δ_n_yield = -compressive_strength*A_ij/k_n
 
-        end
+        # Determine the excess overlap distance relative to yield
+        Δr = abs(δ_n) - abs(δ_n_yield)
+        
+        # Adjust radius and thickness of the weakest grain
+        simulation.grains[idx_weakest].contact_radius -= Δr
+        simulation.grains[idx_weakest].areal_radius -= Δr
+        simulation.grains[idx_weakest].thickness += 1.0/(π*Δr)
     end
 
     if k_t ≈ 0. && γ_t ≈ 0.
