@@ -1098,7 +1098,8 @@ function findPorosity!(sim::Simulation, grid::Any; verbose::Bool=true)
                             continue
 
 
-                        elseif
+                        else
+                            continue
                             # (likely) intersection between grid and grain
 
                             # 1. There is an intersection if one of the cell
