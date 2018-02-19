@@ -21,6 +21,7 @@ by the `n` vector.
     [Wikipedia](https://en.wikipedia.org/wiki/Circle_packing#Uniform_packings)).
 * `padding_factor::Real`: percentage-wise padding around each grain to allow for
     random perturbations to grain position.
+* `origo::Vector{Real}`: spatial offset for the packing (default `[0.0, 0.0]`).
 * `size_distribution::String`: grain-size distribution to sample. Valid values
     are "powerlaw" and "uniform".
 * `size_distribution_parameter::Real`: parameter to pass to the grain-size
@@ -33,6 +34,7 @@ function regularPacking!(simulation::Simulation,
                          r_max::Real;
                          tiling::String="square",
                          padding_factor::Real=.1,
+                         origo::Vector{Float64}=[0.0, 0.0],
                          size_distribution::String="powerlaw",
                          size_distribution_parameter::Real=-1.8,
                          seed::Integer=1)
@@ -59,15 +61,16 @@ function regularPacking!(simulation::Simulation,
                 # Determine position from grid index and sample randomly from
                 # within padding
                 pos = [ix*dx - .5*dx, iy*dx - .5*dx] .+
-                    rand(2) .* dx_padding .- .5*dx_padding
+                    rand(2) .* dx_padding .- .5*dx_padding .+ origo
 
                 addGrainCylindrical!(simulation, pos, r_rand, h, verbose=false)
             end
         end
 
     elseif tiling == "triangular"
+
         dx = r_max * 2. * (1. + padding_factor)  # cell size
-        dy = r_max * 2. * (1. + padding_factor) * cos(2π/3.0)
+        dy = r_max * 2. * (1. + padding_factor) * sin(π/3)
         dx_padding = r_max * 2. * padding_factor
         for iy in 1:n[2]
             for ix in 1:n[1]
@@ -83,11 +86,11 @@ function regularPacking!(simulation::Simulation,
                 # Determine position from grid index and sample randomly from
                 # within padding
                 if iy%2 == 0
-                    pos = [ix*dx - .5*dx, iy*dy - .5*dy] .+
-                    rand(2) .* dx_padding .- .5*dx_padding
+                    pos = [ix*dx - .5*dx, (iy - 1)*dy + .5*dx] .+
+                    rand(2) .* dx_padding .- .5*dx_padding .+ origo
                 else
-                    pos = [ix*dx, iy*dy - .5*dy] .+
-                    rand(2) .* dx_padding .- .5*dx_padding
+                    pos = [ix*dx, (iy - 1)*dy + .5*dx] .+
+                    rand(2) .* dx_padding .- .5*dx_padding .+ origo
                 end
 
                 addGrainCylindrical!(simulation, pos, r_rand, h, verbose=false)
@@ -95,7 +98,7 @@ function regularPacking!(simulation::Simulation,
         end
 
     else
-        error("tiling method "$tiling" not understood")
+        error("tiling method '$tiling' not understood")
     end
 
 end

@@ -135,3 +135,10 @@ Granular.rasterPacking!(sim, 0.02, 0.04, size_distribution="uniform",
                         verbose=verbose)
 @test np_init < length(sim.grains)
 #Granular.plotGrains(sim, filetype="uniform.png", show_figure=false)
+
+info("Tesing triangular packing")
+sim = Granular.createSimulation()
+Granular.regularPacking!(sim, [8,4], 1.0, 1.0, tiling="triangular",
+                        padding_factor=0.0)
+@test length(sim.grains) == 8*4
+#Granular.plotGrains(sim, filetype="triangular.png", show_figure=false)
