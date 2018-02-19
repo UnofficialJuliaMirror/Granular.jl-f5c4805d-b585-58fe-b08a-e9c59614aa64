@@ -207,9 +207,9 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
 
     # Determine which grain is the weakest
     compressive_strength = simulation.grains[i].fracture_toughness * 
-                           sqrt(simulation.grains[i].thickness
+                           sqrt(simulation.grains[i].thickness)
     compressive_strength_j = simulation.grains[j].fracture_toughness * 
-                             sqrt(simulation.grains[j].thickness
+                             sqrt(simulation.grains[j].thickness)
     idx_weakest = i
     if compressive_strength_j < compressive_strength
         compressive_strength = compressive_strength_j
