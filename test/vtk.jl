@@ -29,7 +29,7 @@ end
 
 grainpath = "test/test.grains.1.vtu"
 grainchecksum = 
-"f5a5106bffaaa2fd556ab0cac602127aecdb9cd9fc74141b75d1a7e7f39e21d6  " *
+"e0c5bb80eed2654118d3ba697a899892ce3958f40d6aef83f3c7be2b70321e87  " *
 grainpath * "\n"
 
 graininteractionpath = "test/test.grain-interaction.1.vtp"
