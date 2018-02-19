@@ -3,7 +3,7 @@
 export regularPacking!
 """
 
-    regularPacking!(simulation, n, r_min, r_max[, padding_factor,
+    regularPacking!(simulation, n, r_min, r_max[, tiling, padding_factor,
                     size_distribution, size_distribution_parameter, seed])
 
 Create a grid-based regular packing with grain numbers along each axis specified
@@ -16,6 +16,9 @@ by the `n` vector.
     `x` and `y` axes.
 * `r_min::Real`: minimum desired grain radius.
 * `r_max::Real`: maximum desired grain radius.
+* `tiling::String`: the packing method to use, valid values are `"square"`
+    (default) and `"triangular"` (see
+    [Wikipedia](https://en.wikipedia.org/wiki/Circle_packing#Uniform_packings)).
 * `padding_factor::Real`: percentage-wise padding around each grain to allow for
     random perturbations to grain position.
 * `size_distribution::String`: grain-size distribution to sample. Valid values
@@ -28,6 +31,7 @@ function regularPacking!(simulation::Simulation,
                          n::Vector{Int},
                          r_min::Real,
                          r_max::Real;
+                         tiling::String="square",
                          padding_factor::Real=.1,
                          size_distribution::String="powerlaw",
                          size_distribution_parameter::Real=-1.8,
@@ -36,27 +40,62 @@ function regularPacking!(simulation::Simulation,
     r_rand = 0.
     pos = zeros(2)
     h = .5   # disc tickness
-    dx = r_max * 2. * (1. + padding_factor)  # cell size
-    dx_padding = r_max * 2. * padding_factor
     srand(seed)
 
-    for iy in 1:n[2]
-        for ix in 1:n[1]
+    if tiling == "square"
+        dx = r_max * 2. * (1. + padding_factor)  # cell size
+        dx_padding = r_max * 2. * padding_factor
+        for iy in 1:n[2]
+            for ix in 1:n[1]
 
-            if size_distribution == "powerlaw"
-                r_rand = Granular.randpower(1, size_distribution_parameter,
-                                            r_min, r_max)
-            elseif size_distribution == "uniform"
-                r_rand = rand()*(r_max - r_min) + r_min
+                if size_distribution == "powerlaw"
+                    r_rand = Granular.randpower(1,
+                                                size_distribution_parameter,
+                                                r_min, r_max)
+                elseif size_distribution == "uniform"
+                    r_rand = rand()*(r_max - r_min) + r_min
+                end
+
+                # Determine position from grid index and sample randomly from
+                # within padding
+                pos = [ix*dx - .5*dx, iy*dx - .5*dx] .+
+                    rand(2) .* dx_padding .- .5*dx_padding
+
+                addGrainCylindrical!(simulation, pos, r_rand, h, verbose=false)
             end
-
-            # Determine position from grid index and sample randomly from within
-            # padding
-            pos = [ix*dx - .5*dx, iy*dx - .5*dx] .+
-                rand(2) .* dx_padding .- .5*dx_padding
-
-            addGrainCylindrical!(simulation, pos, r_rand, h, verbose=false)
         end
+
+    elseif tiling == "triangular"
+        dx = r_max * 2. * (1. + padding_factor)  # cell size
+        dy = r_max * 2. * (1. + padding_factor) * cos(2π/3.0)
+        dx_padding = r_max * 2. * padding_factor
+        for iy in 1:n[2]
+            for ix in 1:n[1]
+
+                if size_distribution == "powerlaw"
+                    r_rand = Granular.randpower(1,
+                                                size_distribution_parameter,
+                                                r_min, r_max)
+                elseif size_distribution == "uniform"
+                    r_rand = rand()*(r_max - r_min) + r_min
+                end
+
+                # Determine position from grid index and sample randomly from
+                # within padding
+                if iy%2 == 0
+                    pos = [ix*dx - .5*dx, iy*dy - .5*dy] .+
+                    rand(2) .* dx_padding .- .5*dx_padding
+                else
+                    pos = [ix*dx, iy*dy - .5*dy] .+
+                    rand(2) .* dx_padding .- .5*dx_padding
+                end
+
+                addGrainCylindrical!(simulation, pos, r_rand, h, verbose=false)
+            end
+        end
+
+    else
+        error("tiling method "$tiling" not understood")
     end
 
 end

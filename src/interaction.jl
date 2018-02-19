@@ -238,7 +238,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         end
 
     # Limit compressive stress if the prefactor is set to a positive value
-    elseif compressize_strength > 0. && abs(force_n) >= compressive_strength
+    elseif compressive_strength > 0. && abs(force_n) >= compressive_strength
 
         # Determine the overlap distance where yeild stress is reached
         δ_n_yield = -compressive_strength*A_ij/k_n
