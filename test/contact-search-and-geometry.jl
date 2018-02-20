@@ -268,10 +268,29 @@ for i=1:9
     @test sim.grains[i].n_contacts == 0
 end
 
+info("Test contact search in regular square grid (all to all)")
 sim = Granular.createSimulation()
-nx = 16; ny = 15
+nx = 60; ny = 50
 Granular.regularPacking!(sim, [nx, ny], 1., 1., padding_factor=0,
                          tiling="square")
+for grain in sim.grains
+    grain.contact_radius *= 1.00001
+end
+Granular.findContacts!(sim)
+#Granular.plotGrains(sim)
+for j=2:(ny-1)
+    for i=2:(nx-1)
+        idx = (j - 1)*nx + i
+        @test sim.grains[idx].n_contacts == 4
+    end
+end
+
+info("Test contact search in regular square grid (sorting grid)")
+sim = Granular.createSimulation()
+nx = 60; ny = 50
+Granular.regularPacking!(sim, [nx, ny], 1., 1., padding_factor=0,
+                         tiling="square")
+Granular.fitGridToGrains!(sim, sim.ocean, verbose=false)
 for grain in sim.grains
     grain.contact_radius *= 1.00001
 end
