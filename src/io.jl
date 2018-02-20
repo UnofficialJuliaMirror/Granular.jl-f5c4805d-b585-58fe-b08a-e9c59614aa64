@@ -1406,7 +1406,7 @@ function plotGrains(sim::Simulation;
                     if tensile_stress[i] > 0
                         write(f, "nohead ")
                     else
-                        write(f, "doublehead ")
+                        write(f, "heads ")
                     end
                     write(f, "lw $(abs(tensile_stress[i])/
                                    max_tensile_stress*max_line_width) ")
