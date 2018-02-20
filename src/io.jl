@@ -1394,7 +1394,7 @@ function plotGrains(sim::Simulation;
 
         if length(i1) > 0
             max_tensile_stress = maximum(abs.(tensile_stress))
-            max_line_with = 5.
+            max_line_width = 5.
             if plot_interactions
                 write(f, "set cbrange [-$max_tensile_stress:$max_tensile_stress]\n")
                 for i=1:length(i1)
