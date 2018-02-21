@@ -258,6 +258,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         force_t = abs(γ_t * vel_t)
         if force_t > μ_d_minimum*abs(force_n)
             force_t = μ_d_minimum*abs(force_n)
+            simulation.grains[i].contact_age[ic] = -simulation.time_step
         end
         if vel_t > 0.
             force_t = -force_t
@@ -270,6 +271,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         if abs(force_t) > μ_d_minimum*abs(force_n)
             force_t = μ_d_minimum*abs(force_n)*force_t/abs(force_t)
             δ_t = (-force_t - γ_t*vel_t)/k_t
+            simulation.grains[i].contact_age[ic] = -simulation.time_step
         end
 
     else
