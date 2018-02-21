@@ -151,7 +151,7 @@ function addGrainCylindrical!(simulation::Simulation,
                                 youngs_modulus::Float64 = 2e7,
                                 poissons_ratio::Float64 = 0.185,  # Hopkins 2004
                                 tensile_strength::Float64 = 0.,
-                                tensile_heal_rate::Float64 = 0.,
+                                tensile_heal_rate::Float64 = Inf,
                                 fracture_toughness::Float64 = 0.,  
                                 ocean_drag_coeff_vert::Float64 = 0.85, # H&C 2011
                                 ocean_drag_coeff_horiz::Float64 = 5e-4, # H&C 2011

@@ -222,10 +222,9 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         # tensile stress exceeds tensile strength
 
         # linearly increase tensile strength with time until max. value
-        tensile_strength = min(simulation.grains[i].contact_age[ic]/
-                               max(simulation.grains[i].tensile_heal_rate,
-                                   1e-12), 1.)*
-                               simulation.grains[i].tensile_strength
+        tensile_strength = min(simulation.grains[i].contact_age[ic]*
+                               simulation.grains[i].tensile_heal_rate,
+                               simulation.grains[i].tensile_strength)
         
 
         # break bond
