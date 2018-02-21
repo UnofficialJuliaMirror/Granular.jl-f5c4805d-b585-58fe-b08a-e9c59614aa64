@@ -1,4 +1,6 @@
 #!/usr/bin/env julia
+using Compat.Test
+import Granular
 
 # Check for conservation of kinetic energy (=momentum) during a normal collision 
 # between two ice cylindrical grains 
