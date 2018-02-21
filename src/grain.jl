@@ -68,7 +68,7 @@ are optional, and come with default values.  The only required arguments are
 * `tensile_strength::Float64 = 0.`: contact-tensile (cohesive) bond strength
     [Pa].
 * `tensile_heal_rate::Float64 = 0.`: rate at which contact-tensile bond strength
-    is obtained [1/s].
+    is obtained [Pa/s].
 * `fracture_toughness::Float64 = 0.`: maximum compressive
     strength on granular contact (not currently enforced) [m^{1/2}*Pa]. A value
     of 1.285e3 m^{1/2}*Pa is used for sea ice by Hopkins 2004.
