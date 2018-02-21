@@ -25,7 +25,9 @@ export addGrainCylindrical!
                                     rotating, enabled, verbose,
                                     ocean_grid_pos, atmosphere_grid_pos,
                                     n_contact, granular_stress, ocean_stress,
-                                    atmosphere_stress])
+                                    atmosphere_stress,
+                                    thermal_energy,
+                                    color])
 
 Creates and adds a cylindrical grain to a simulation. Most of the arguments 
 are optional, and come with default values.  The only required arguments are 
@@ -99,6 +101,7 @@ are optional, and come with default values.  The only required arguments are
     ocean drag [Pa].
 * `atmosphere_stress::Vector{Float64} = [0., 0.]`: resultant stress on grain
     from atmosphere drag [Pa].
+* `thermal_energy::Float64 = 0.0`: thermal energy of grain [J].
 * `color::Int=0`: type number, usually used for associating a color to the grain
     during visualization.
 
@@ -170,6 +173,7 @@ function addGrainCylindrical!(simulation::Simulation,
                                 granular_stress::Vector{Float64} = [0., 0.],
                                 ocean_stress::Vector{Float64} = [0., 0.],
                                 atmosphere_stress::Vector{Float64} = [0., 0.],
+                                thermal_energy::Float64 = 0.,
                                 color::Int = 0)
 
     # Check input values
@@ -266,6 +270,8 @@ function addGrainCylindrical!(simulation::Simulation,
                                  granular_stress,
                                  ocean_stress,
                                  atmosphere_stress,
+
+                                 thermal_energy,
 
                                  color
                                 )
@@ -435,6 +441,9 @@ function convertGrainDataToArrays(simulation::Simulation)
                         ## atmosphere_stress
                         zeros(Float64, 3, length(simulation.grains)),
 
+                        ## thermal_energy
+                        Array{Float64}(length(simulation.grains)),
+
                         # Visualization parameters
                         ## color
                         Array{Int}(length(simulation.grains)),
@@ -512,6 +521,8 @@ function convertGrainDataToArrays(simulation::Simulation)
         ifarr.atmosphere_stress[1:2, i] =
             simulation.grains[i].atmosphere_stress
 
+        ifarr.thermal_energy[i] = simulation.grains[i].thermal_energy
+
         ifarr.color[i] = simulation.grains[i].color
     end
 
@@ -578,6 +589,8 @@ function deleteGrainArrays!(ifarr::GrainArrays)
     ifarr.ocean_stress = f2
     ifarr.atmosphere_stress = f2
 
+    ifarr.thermal_energy = f1
+
     ifarr.color = i1
     gc()
     nothing
@@ -643,7 +656,9 @@ function printGrainInfo(f::GrainCylindrical)
 
     println("  granular_stress:   $(f.granular_stress) Pa")
     println("  ocean_stress:      $(f.ocean_stress) Pa")
-    println("  atmosphere_stress: $(f.atmosphere_stress) Pa")
+    println("  atmosphere_stress: $(f.atmosphere_stress) Pa\n")
+
+    println("  thermal_energy:    $(f.thermal_energy) J\n")
 
     println("  color:  $(f.color)\n")
     nothing
@@ -686,6 +701,26 @@ function totalGrainKineticRotationalEnergy(simulation::Simulation)
     E_sum = 0.
     for grain in simulation.grains
         E_sum += grainKineticRotationalEnergy(grain)
+    end
+    return E_sum
+end
+
+export grainThermalEnergy
+"Returns the thermal energy of the grain, produced by Coulomb slip"
+function grainThermalEnergy(grain::GrainCylindrical)
+    return grain.thermal_energy
+end
+
+export totalGrainThermalEnergy
+"""
+    totalGrainKineticTranslationalEnergy(simulation)
+
+Returns the sum of thermal energy of all grains in a simulation
+"""
+function totalGrainThermalEnergy(simulation::Simulation)
+    E_sum = 0.
+    for grain in simulation.grains
+        E_sum += grainThermalEnergy(grain)
     end
     return E_sum
 end
@@ -790,6 +825,8 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
     @test if1.granular_stress ≈ if2.granular_stress
     @test if1.ocean_stress ≈ if2.ocean_stress
     @test if1.atmosphere_stress ≈ if2.atmosphere_stress
+
+    @test if1.thermal_energy ≈ if2.thermal_energy
 
     @test if1.color ≈ if2.color
     nothing

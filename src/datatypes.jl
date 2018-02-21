@@ -70,6 +70,8 @@ mutable struct GrainCylindrical
     ocean_stress::Vector{Float64}
     atmosphere_stress::Vector{Float64}
 
+    thermal_energy::Float64
+
     # Visualization parameters
     color::Int
 end
@@ -152,6 +154,8 @@ mutable struct GrainArrays
     granular_stress::Array{Float64, 2}
     ocean_stress::Array{Float64, 2}
     atmosphere_stress::Array{Float64, 2}
+
+    thermal_energy::Vector{Float64}
 
     color::Vector{Int}
 end

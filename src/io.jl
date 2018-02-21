@@ -428,6 +428,9 @@ function writeGrainVTK(simulation::Simulation,
     WriteVTK.vtk_point_data(vtkfile, ifarr.atmosphere_stress,
                             "Atmosphere stress [Pa]")
 
+    WriteVTK.vtk_point_data(vtkfile, ifarr.thermal_energy,
+                            "Thermal energy [J]")
+
     WriteVTK.vtk_point_data(vtkfile, ifarr.color,
                             "Color [-]")
 
