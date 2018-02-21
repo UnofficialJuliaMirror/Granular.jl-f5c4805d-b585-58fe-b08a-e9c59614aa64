@@ -261,7 +261,12 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         if force_t > μ_d_minimum*abs(force_n)
             force_t = μ_d_minimum*abs(force_n)
             simulation.grains[i].contact_age[ic] = 0.0
-            E_shear = abs(force_t)*vel_t*simulation.time_step
+
+            # Nguyen et al 2009 "Thermomechanical modelling of friction effects
+            # in granular flows using the discrete element method"
+            E_shear = abs(force_t)*abs(vel_t)*simulation.time_step
+
+            # Assume equal thermal properties
             simulation.grains[i].thermal_energy += 0.5*E_shear
             simulation.grains[j].thermal_energy += 0.5*E_shear
         end
@@ -278,7 +283,12 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
             force_t = μ_d_minimum*abs(force_n)*force_t/abs(force_t)
             δ_t = (-force_t - γ_t*vel_t)/k_t
             simulation.grains[i].contact_age[ic] = 0.0
-            E_shear = abs(force_t)*vel_t*simulation.time_step
+
+            # Nguyen et al 2009 "Thermomechanical modelling of friction effects
+            # in granular flows using the discrete element method"
+            E_shear = abs(force_t)*abs(vel_t)*simulation.time_step
+
+            # Assume equal thermal properties
             simulation.grains[i].thermal_energy += 0.5*E_shear
             simulation.grains[j].thermal_energy += 0.5*E_shear
         end
