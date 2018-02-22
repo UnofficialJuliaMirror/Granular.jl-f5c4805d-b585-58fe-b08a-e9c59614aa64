@@ -29,12 +29,12 @@ end
 
 grainpath = "test/test.grains.1.vtu"
 grainchecksum = 
-"f8aa4ab923b2466d7a6ffb835bfff4d0e0ff0a168ff267431a082bb3018caaa1  " *
+"eff130f14975dd5da06186c5b61c0c1a9d679f2188d03019c8144898ddc902b6  " *
 grainpath * "\n"
 
 graininteractionpath = "test/test.grain-interaction.1.vtp"
 graininteractionchecksum = 
-"881598f8f7279ece4301f6c94cb8f9146eb695f8c710edb446f49c1f7a061b84  " *
+"c61f314a997c4405eaa98e6a4e3f81368ab2e1c60d06d9a0d998b69d7c8fb1bf  " *
 graininteractionpath * "\n"
 
 oceanpath = "test/test.ocean.1.vts"

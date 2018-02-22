@@ -402,8 +402,10 @@ function writeGrainVTK(simulation::Simulation,
                             "Poisson's ratio [-]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.tensile_strength,
                             "Tensile strength [Pa]")
-    WriteVTK.vtk_point_data(vtkfile, ifarr.tensile_heal_rate,
-                            "Tensile healing rate [1/s]")
+    WriteVTK.vtk_point_data(vtkfile, ifarr.shear_strength,
+                            "Shear strength [Pa]")
+    WriteVTK.vtk_point_data(vtkfile, ifarr.strength_heal_rate,
+                            "Bond strength healing rate [Pa/s]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.fracture_toughness,
                             "Fracture toughness [m^0.5 Pa]")
 
@@ -467,6 +469,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
     contact_stiffness = Float64[]
     tensile_stress = Float64[]
     shear_displacement = Vector{Float64}[]
+    contact_rotation = Float64[]
     contact_age = Float64[]
 
     for i=1:length(simulation.grains)
@@ -528,8 +531,10 @@ function writeGrainInteractionVTK(simulation::Simulation,
                 push!(contact_stiffness, k_n)
                 push!(tensile_stress, k_n*δ_n/A_ij)
 
-                push!(shear_displacement, simulation.grains[i].
-                      contact_parallel_displacement[ic])
+                push!(shear_displacement,
+                      simulation.grains[i]. contact_parallel_displacement[ic])
+                push!(contact_rotation,
+                      simulation.grains[i].contact_rotation[ic])
 
                 push!(contact_age, simulation.grains[i].contact_age[ic])
             end
@@ -615,6 +620,15 @@ function writeGrainInteractionVTK(simulation::Simulation,
               "NumberOfComponents=\"1\" format=\"ascii\">\n")
         for i=1:length(i1)
             @inbounds write(f, "$(tensile_stress[i]) ")
+        end
+        write(f, "\n")
+        write(f, "        </DataArray>\n")
+
+        write(f, "        <DataArray type=\"Float32\" " *
+              "Name=\"Contact rotation [rad]\" NumberOfComponents=\"1\" 
+        format=\"ascii\">\n")
+        for i=1:length(i1)
+            @inbounds write(f, "$(contact_rotation[i]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")
@@ -853,7 +867,8 @@ imagegrains.PointArrayStatus = [
 "Young's modulus [Pa]",
 "Poisson's ratio [-]",
 'Tensile strength [Pa]'
-'Tensile heal rate [1/s]'
+'Shear strength [Pa]'
+'Strength heal rate [Pa/s]'
 'Compressive strength prefactor [m^0.5 Pa]',
 'Ocean drag coefficient (vertical) [-]',
 'Ocean drag coefficient (horizontal) [-]',
@@ -1278,6 +1293,7 @@ function plotGrains(sim::Simulation;
         contact_stiffness = Float64[]
         tensile_stress = Float64[]
         shear_displacement = Vector{Float64}[]
+        contact_rotation = Float64[]
         contact_age = Float64[]
         for i=1:length(sim.grains)
             for ic=1:sim.Nc_max
@@ -1324,8 +1340,10 @@ function plotGrains(sim::Simulation;
                     push!(contact_stiffness, k_n)
                     push!(tensile_stress, k_n*δ_n/A_ij)
 
-                    push!(shear_displacement, sim.grains[i].
-                          contact_parallel_displacement[ic])
+                    push!(shear_displacement,
+                          sim.grains[i].contact_parallel_displacement[ic])
+                    push!(contact_rotation,
+                          sim.grains[i].contact_rotation[ic])
 
                     push!(contact_age, sim.grains[i].contact_age[ic])
                 end

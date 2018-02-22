@@ -125,46 +125,51 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
 
     # Inter-position vector, use stored value which is corrected for boundary
     # periodicity
-    p = simulation.grains[i].position_vector[ic]
-    dist = norm(p)
+    const p = simulation.grains[i].position_vector[ic]
+    const dist = norm(p)
 
-    r_i = simulation.grains[i].contact_radius
-    r_j = simulation.grains[j].contact_radius
+    const r_i = simulation.grains[i].contact_radius
+    const r_j = simulation.grains[j].contact_radius
 
     # Floe distance; <0: compression, >0: tension
-    δ_n = dist - (r_i + r_j)
+    const δ_n = dist - (r_i + r_j)
 
     # Local axes
-    n = p/dist
-    t = [-n[2], n[1]]
+    const n = p/dist
+    const t = [-n[2], n[1]]
 
     # Contact kinematics
-    vel_lin = simulation.grains[i].lin_vel -
+    const vel_lin = simulation.grains[i].lin_vel -
         simulation.grains[j].lin_vel
-    vel_n = dot(vel_lin, n)
-    vel_t = dot(vel_lin, t) -
+    const vel_n = dot(vel_lin, n)
+    const vel_t = dot(vel_lin, t) -
         harmonicMean(r_i, r_j)*(simulation.grains[i].ang_vel +
                                 simulation.grains[j].ang_vel)
 
     # Correct old tangential displacement for contact rotation and add new
-    δ_t0 = simulation.grains[i].contact_parallel_displacement[ic]
-    δ_t = dot(t, δ_t0 - (n*dot(n, δ_t0))) + vel_t*simulation.time_step
+    const δ_t0 = simulation.grains[i].contact_parallel_displacement[ic]
+    const δ_t = dot(t, δ_t0 - (n*dot(n, δ_t0))) + vel_t*simulation.time_step
+
+    # Determine the contact rotation
+    const θ_t = simulation.grains[i].contact_rotation[ic] +
+        (simulation.grains[j].ang_vel - simulation.grains[i].ang_vel) *
+        simulation.time_step
 
     # Effective radius
-    R_ij = harmonicMean(r_i, r_j)
+    const R_ij = harmonicMean(r_i, r_j)
 
     # Contact area
-    A_ij = R_ij*min(simulation.grains[i].thickness, 
-                    simulation.grains[j].thickness)
+    const A_ij = R_ij*min(simulation.grains[i].thickness, 
+                          simulation.grains[j].thickness)
 
     # Contact mechanical parameters
     if simulation.grains[i].youngs_modulus > 0. &&
         simulation.grains[j].youngs_modulus > 0.
 
-        E = harmonicMean(simulation.grains[i].youngs_modulus,
-                         simulation.grains[j].youngs_modulus)
-        ν = harmonicMean(simulation.grains[i].poissons_ratio,
-                         simulation.grains[j].poissons_ratio)
+        const E = harmonicMean(simulation.grains[i].youngs_modulus,
+                               simulation.grains[j].youngs_modulus)
+        const ν = harmonicMean(simulation.grains[i].poissons_ratio,
+                               simulation.grains[j].poissons_ratio)
 
         # Effective normal and tangential stiffness
         k_n = E * A_ij/R_ij
@@ -179,14 +184,14 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
                            simulation.grains[j].contact_stiffness_tangential)
     end
 
-    γ_n = harmonicMean(simulation.grains[i].contact_viscosity_normal,
-                           simulation.grains[j].contact_viscosity_normal)
+    const γ_n = harmonicMean(simulation.grains[i].contact_viscosity_normal,
+                             simulation.grains[j].contact_viscosity_normal)
 
-    γ_t = harmonicMean(simulation.grains[i].contact_viscosity_tangential,
-                       simulation.grains[j].contact_viscosity_tangential)
+    const γ_t = harmonicMean(simulation.grains[i].contact_viscosity_tangential,
+                             simulation.grains[j].contact_viscosity_tangential)
 
-    μ_d_minimum = min(simulation.grains[i].contact_dynamic_friction,
-                       simulation.grains[j].contact_dynamic_friction)
+    const μ_d_minimum = min(simulation.grains[i].contact_dynamic_friction,
+                            simulation.grains[j].contact_dynamic_friction)
 
     # Determine contact forces
     if k_n ≈ 0. && γ_n ≈ 0.  # No interaction
@@ -216,28 +221,39 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         idx_weakest = j
     end
 
-    # Add tensile strength during extension or limit compressive strength
-    if δ_n > 0.
-        # Contact tensile strength increases linearly with contact age until
-        # tensile stress exceeds tensile strength
+    # Grain-pair moment of inertia [m^4]
+    const I_ij = 2.0/3.0*R_ij^3*min(simulation.grains[i].thickness,
+                                 simulation.grains[j].thickness)
 
-        # linearly increase tensile strength with time until max. value
-        tensile_strength = min(simulation.grains[i].contact_age[ic]*
-                               simulation.grains[i].tensile_heal_rate,
-                               simulation.grains[i].tensile_strength)
-        
 
-        # break bond
-        if abs(force_n) >= tensile_strength*A_ij
-            force_n = 0.
-            force_t = 0.
-            simulation.grains[i].contacts[ic] = 0  # remove contact
-            simulation.grains[i].n_contacts -= 1
-            simulation.grains[j].n_contacts -= 1
-        end
+    # Contact tensile strength increases linearly with contact age until
+    # tensile stress exceeds tensile strength.
+    tensile_strength = min(simulation.grains[i].contact_age[ic]*
+                           simulation.grains[i].strength_heal_rate,
+                           simulation.grains[i].tensile_strength)
+    shear_strength = min(simulation.grains[i].contact_age[ic]*
+                         simulation.grains[i].strength_heal_rate,
+                         simulation.grains[i].shear_strength)
+    M_t = 0.0
+    if tensile_strength > 0.0
+        # Determine bending momentum on contact [N*m],
+        # (converting k_n to E to bar(k_n))
+        M_t = -(k_n*R_ij/(A_ij*(simulation.grains[i].contact_radius +
+                                simulation.grains[j].contact_radius)))*I_ij*θ_t
+    end
+
+    # Reset contact age (breaking bond) if bond strength is exceeded
+    if δ_n > 0.0 && abs(force_n)/A_ij + abs(M_t)*R_ij/I_ij > tensile_strength
+        force_n = 0.
+        force_t = 0.
+        simulation.grains[i].contacts[ic] = 0  # remove contact
+        simulation.grains[i].n_contacts -= 1
+        simulation.grains[j].n_contacts -= 1
+    end
 
     # Limit compressive stress if the prefactor is set to a positive value
-    elseif compressive_strength > 0. && abs(force_n) >= compressive_strength
+    if δ_n < 0.0 && compressive_strength > 0. &&
+        abs(force_n) >= compressive_strength
 
         # Determine the overlap distance where yeild stress is reached
         δ_n_yield = -compressive_strength*A_ij/k_n
@@ -260,7 +276,6 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         # Coulomb slip
         if force_t > μ_d_minimum*abs(force_n)
             force_t = μ_d_minimum*abs(force_n)
-            simulation.grains[i].contact_age[ic] = 0.0
 
             # Nguyen et al 2009 "Thermomechanical modelling of friction effects
             # in granular flows using the discrete element method"
@@ -282,7 +297,6 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         if abs(force_t) > μ_d_minimum*abs(force_n)
             force_t = μ_d_minimum*abs(force_n)*force_t/abs(force_t)
             δ_t = (-force_t - γ_t*vel_t)/k_t
-            simulation.grains[i].contact_age[ic] = 0.0
 
             # Nguyen et al 2009 "Thermomechanical modelling of friction effects
             # in granular flows using the discrete element method"
@@ -297,14 +311,23 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         error("unknown contact_tangential_rheology (k_t = $k_t, γ_t = $γ_t")
     end
 
+    if shear_strength > 0.0 && abs(force_t)/A > shear_strength
+        force_n = 0.
+        force_t = 0.
+        simulation.grains[i].contacts[ic] = 0  # remove contact
+        simulation.grains[i].n_contacts -= 1
+        simulation.grains[j].n_contacts -= 1
+    end
+
     simulation.grains[i].contact_parallel_displacement[ic] = δ_t*t
+    simulation.grains[i].contact_rotation[ic] = θ_t
     simulation.grains[i].contact_age[ic] += simulation.time_step
 
     simulation.grains[i].force += force_n*n + force_t*t;
     simulation.grains[j].force -= force_n*n + force_t*t;
 
-    simulation.grains[i].torque += -force_t*R_ij
-    simulation.grains[j].torque += -force_t*R_ij
+    simulation.grains[i].torque += -force_t*R_ij + M_t
+    simulation.grains[j].torque += -force_t*R_ij - M_t
 
     simulation.grains[i].pressure += 
         force_n/simulation.grains[i].side_surface_area;

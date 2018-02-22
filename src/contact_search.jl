@@ -323,6 +323,7 @@ function checkAndAddContact!(sim::Simulation, i::Int, j::Int,
                             position_ij
                         @inbounds fill!(sim.grains[i].
                               contact_parallel_displacement[ic] , 0.)
+                        @inbounds sim.grains[i].contact_rotation[ic] = 0.
                         @inbounds sim.grains[i].contact_age[ic] = 0.
                         break
                     end

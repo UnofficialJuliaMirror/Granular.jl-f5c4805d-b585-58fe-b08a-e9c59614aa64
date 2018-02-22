@@ -37,3 +37,18 @@ Granular.run!(sim, verbose=verbose)
 @test sim.grains[2].lin_vel[2] ≈ 0.
 @test sim.grains[1].ang_vel ≈ 0.
 @test sim.grains[2].ang_vel ≈ 0.
+
+info("# Add shear strength")
+sim = Granular.createSimulation(id="cohesion")
+Granular.addGrainCylindrical!(sim, [0., 0.], 10., 1., tensile_strength=500e3)
+Granular.addGrainCylindrical!(sim, [20.1, 0.], 10., 1., tensile_strength=500e3)
+sim.grains[1].lin_vel[1] = 0.1
+Granular.setTimeStep!(sim)
+Granular.setTotalTime!(sim, 10.)
+Granular.run!(sim, verbose=verbose)
+@test sim.grains[1].lin_vel[1] > 0.
+@test sim.grains[1].lin_vel[2] ≈ 0.
+@test sim.grains[2].lin_vel[1] > 0.
+@test sim.grains[2].lin_vel[2] ≈ 0.
+@test sim.grains[1].ang_vel ≈ 0.
+@test sim.grains[2].ang_vel ≈ 0.

@@ -14,7 +14,8 @@ export addGrainCylindrical!
                                     contact_static_friction,
                                     contact_dynamic_friction,
                                     youngs_modulus, poissons_ratio,
-                                    tensile_strength, tensile_heal_rate,
+                                    tensile_strength, shear_strength,
+                                    strength_heal_rate,
                                     fracture_toughness,
                                     ocean_drag_coeff_vert,
                                     ocean_drag_coeff_horiz,
@@ -69,8 +70,9 @@ are optional, and come with default values.  The only required arguments are
     contact-tangential stiffness from `youngs_modulus` [-].
 * `tensile_strength::Float64 = 0.`: contact-tensile (cohesive) bond strength
     [Pa].
-* `tensile_heal_rate::Float64 = 0.`: rate at which contact-tensile bond strength
-    is obtained [Pa/s].
+* `shear_strength::Float64 = 0.`: shear strength of bonded contacts [Pa].
+* `strength_heal_rate::Float64 = 0.`: rate at which contact bond
+    strength is obtained [Pa/s].
 * `fracture_toughness::Float64 = 0.`: maximum compressive
     strength on granular contact (not currently enforced) [m^{1/2}*Pa]. A value
     of 1.285e3 m^{1/2}*Pa is used for sea ice by Hopkins 2004.
@@ -114,12 +116,13 @@ meter:
 Granular.addGrainCylindrical!(sim, [1., 2.], 1., .5)
 ```
 
-The following example will create a grain with tensile strength (cohesion),
-and a velocity of 0.5 m/s towards -x:
+The following example will create a grain with tensile and shear strength, and a
+velocity of 0.5 m/s towards -x:
 
 ```julia
 Granular.addGrainCylindrical!(sim, [4., 2.], 1., .5,
                               tensile_strength = 200e3,
+                              shear_strength = 100e3,
                               lin_vel = [-.5, 0.])
 ```
 
@@ -154,7 +157,8 @@ function addGrainCylindrical!(simulation::Simulation,
                                 youngs_modulus::Float64 = 2e7,
                                 poissons_ratio::Float64 = 0.185,  # Hopkins 2004
                                 tensile_strength::Float64 = 0.,
-                                tensile_heal_rate::Float64 = Inf,
+                                shear_strength::Float64 = 0.,
+                                strength_heal_rate::Float64 = Inf,
                                 fracture_toughness::Float64 = 0.,  
                                 ocean_drag_coeff_vert::Float64 = 0.85, # H&C 2011
                                 ocean_drag_coeff_horiz::Float64 = 5e-4, # H&C 2011
@@ -203,6 +207,7 @@ function addGrainCylindrical!(simulation::Simulation,
     contacts::Array{Int, 1} = zeros(Int, simulation.Nc_max)
     position_vector = Vector{Vector{Float64}}(simulation.Nc_max)
     contact_parallel_displacement = Vector{Vector{Float64}}(simulation.Nc_max)
+    contact_rotation::Vector{Float64} = zeros(Float64, simulation.Nc_max)
     contact_age::Vector{Float64} = zeros(Float64, simulation.Nc_max)
     for i=1:simulation.Nc_max
         position_vector[i] = zeros(2)
@@ -250,7 +255,8 @@ function addGrainCylindrical!(simulation::Simulation,
                                  youngs_modulus,
                                  poissons_ratio,
                                  tensile_strength,
-                                 tensile_heal_rate,
+                                 shear_strength,
+                                 strength_heal_rate,
                                  fracture_toughness,
 
                                  ocean_drag_coeff_vert,
@@ -265,6 +271,7 @@ function addGrainCylindrical!(simulation::Simulation,
                                  contacts,
                                  position_vector,
                                  contact_parallel_displacement,
+                                 contact_rotation,
                                  contact_age,
 
                                  granular_stress,
@@ -413,7 +420,9 @@ function convertGrainDataToArrays(simulation::Simulation)
                         Array{Float64}(length(simulation.grains)),
                         ## tensile_strength
                         Array{Float64}(length(simulation.grains)),
-                        ## tensile_heal_rate
+                        ## shear_strength
+                        Array{Float64}(length(simulation.grains)),
+                        ## strength_heal_rate
                         Array{Float64}(length(simulation.grains)),
                         ## fracture_toughness
                         Array{Float64}(length(simulation.grains)),
@@ -500,7 +509,8 @@ function convertGrainDataToArrays(simulation::Simulation)
         ifarr.youngs_modulus[i] = simulation.grains[i].youngs_modulus
         ifarr.poissons_ratio[i] = simulation.grains[i].poissons_ratio
         ifarr.tensile_strength[i] = simulation.grains[i].tensile_strength
-        ifarr.tensile_heal_rate[i] = simulation.grains[i].tensile_heal_rate
+        ifarr.shear_strength[i] = simulation.grains[i].shear_strength
+        ifarr.strength_heal_rate[i] = simulation.grains[i].strength_heal_rate
         ifarr.fracture_toughness[i] = 
             simulation.grains[i].fracture_toughness
 
@@ -574,7 +584,8 @@ function deleteGrainArrays!(ifarr::GrainArrays)
     ifarr.youngs_modulus = f1
     ifarr.poissons_ratio = f1
     ifarr.tensile_strength = f1
-    ifarr.tensile_heal_rate = f1
+    ifarr.shear_strength = f1
+    ifarr.strength_heal_rate = f1
     ifarr.fracture_toughness = f1
 
     ifarr.ocean_drag_coeff_vert = f1
@@ -641,6 +652,8 @@ function printGrainInfo(f::GrainCylindrical)
     println("  E:                  $(f.youngs_modulus) Pa")
     println("  ν:                  $(f.poissons_ratio)")
     println("  tensile_strength:   $(f.tensile_strength) Pa")
+    println("  shear_strength:     $(f.shear_strength) Pa")
+    println("  strength_heal_rate: $(f.strength_heal_rate) Pa/s")
     println("  fracture_toughness: $(f.fracture_toughness) m^0.5 Pa\n")
 
     println("  c_o_v:  $(f.ocean_drag_coeff_vert)")
@@ -652,7 +665,8 @@ function printGrainInfo(f::GrainCylindrical)
     println("  n_contacts: $(f.n_contacts)")
     println("  contacts:   $(f.contacts)")
     println("  pos_ij:     $(f.position_vector)\n")
-    println("  delta_t:    $(f.contact_parallel_displacement)\n")
+    println("  δ_t:        $(f.contact_parallel_displacement)\n")
+    println("  θ_t:        $(f.contact_rotation)\n")
 
     println("  granular_stress:   $(f.granular_stress) Pa")
     println("  ocean_stress:      $(f.ocean_stress) Pa")
@@ -802,7 +816,8 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
     @test if1.youngs_modulus ≈ if2.youngs_modulus
     @test if1.poissons_ratio ≈ if2.poissons_ratio
     @test if1.tensile_strength ≈ if2.tensile_strength
-    @test if1.tensile_heal_rate ≈ if2.tensile_heal_rate
+    @test if1.shear_strength ≈ if2.shear_strength
+    @test if1.strength_heal_rate ≈ if2.strength_heal_rate
     @test if1.fracture_toughness ≈
         if2.fracture_toughness
 
@@ -820,6 +835,7 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
     @test if1.position_vector == if2.position_vector
     @test if1.contact_parallel_displacement == 
         if2.contact_parallel_displacement
+    @test if1.contact_rotation == if2.contact_rotation
     @test if1.contact_age ≈ if2.contact_age
 
     @test if1.granular_stress ≈ if2.granular_stress
