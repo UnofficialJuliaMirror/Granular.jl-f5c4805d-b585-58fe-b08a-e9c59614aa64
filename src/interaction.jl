@@ -238,12 +238,12 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
     if tensile_strength > 0.0
         # Determine bending momentum on contact [N*m],
         # (converting k_n to E to bar(k_n))
-        M_t = -(k_n*R_ij/(A_ij*(simulation.grains[i].contact_radius +
-                                simulation.grains[j].contact_radius)))*I_ij*θ_t
+        M_t = (k_n*R_ij/(A_ij*(simulation.grains[i].contact_radius +
+                               simulation.grains[j].contact_radius)))*I_ij*θ_t
     end
 
     # Reset contact age (breaking bond) if bond strength is exceeded
-    if δ_n > 0.0 && abs(force_n)/A_ij + abs(M_t)*R_ij/I_ij > tensile_strength
+    if δ_n >= 0.0 && abs(force_n)/A_ij + abs(M_t)*R_ij/I_ij > tensile_strength
         force_n = 0.
         force_t = 0.
         simulation.grains[i].contacts[ic] = 0  # remove contact
@@ -252,7 +252,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
     end
 
     # Limit compressive stress if the prefactor is set to a positive value
-    if δ_n < 0.0 && compressive_strength > 0. &&
+    if δ_n <= 0.0 && compressive_strength > 0. &&
         abs(force_n) >= compressive_strength
 
         # Determine the overlap distance where yeild stress is reached
@@ -311,7 +311,10 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         error("unknown contact_tangential_rheology (k_t = $k_t, γ_t = $γ_t")
     end
 
-    if shear_strength > 0.0 && abs(force_t)/A > shear_strength
+    # Break bond under extension through bending failure
+    if δ_n < 0.0 && tensile_strength > 0.0 && shear_strength > 0.0 &&
+        abs(force_t)/A_ij > shear_strength
+
         force_n = 0.
         force_t = 0.
         simulation.grains[i].contacts[ic] = 0  # remove contact
