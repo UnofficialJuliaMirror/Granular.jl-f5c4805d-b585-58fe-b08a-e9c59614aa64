@@ -1,10 +1,11 @@
 import WriteVTK
-import NetCDF
+
 hasJLD = false
 if typeof(Pkg.installed("JLD")) == VersionNumber
     import JLD
     hasJLD = true
 end
+
 import Compat
 using Compat.DelimitedFiles
 using Compat.Dates

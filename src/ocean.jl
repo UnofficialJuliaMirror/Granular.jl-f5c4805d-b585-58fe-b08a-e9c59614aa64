@@ -1,3 +1,16 @@
+hasNetCDF = false
+if typeof(Pkg.installed("NetCDF")) == VersionNumber
+    import NetCDF
+    hasNetCDF = true
+else
+    if !hasNetCDF
+        warn("Package NetCDF not found. " *
+             "Ocean/atmosphere grid read not supported. " * 
+             "Please install NetCDF and its " *
+             "requirements with `Pkg.add(\"NetCDF\")`.")
+    end
+end
+
 using Compat.Test
 
 export createEmptyOcean
@@ -41,39 +54,46 @@ structure.
 function readOceanNetCDF(velocity_file::String, grid_file::String;
                          regular_grid::Bool=false)
 
-    time, u, v, h, e, zl, zi = readOceanStateNetCDF(velocity_file)
-    xh, yh, xq, yq = readOceanGridNetCDF(grid_file)
+    if !hasNetCDF
+        warn("Package NetCDF not found. Ocean/atmosphere grid read not supported. " * 
+             "Please install NetCDF and its " *
+             "requirements with `Pkg.add(\"NetCDF\")`.")
+    else
 
-    if size(u[:,:,1,1]) != size(xq) || size(v[:,:,1,1]) != size(xq) ||
-        size(xq) != size(yq)
-        error("size mismatch between velocities and grid
-              (u: $(size(u[:,:,1,1])), v: $(size(v[:,:,1,1])),
-              xq: $(size(xq)), yq: $(size(yq)))")
+        time, u, v, h, e, zl, zi = readOceanStateNetCDF(velocity_file)
+        xh, yh, xq, yq = readOceanGridNetCDF(grid_file)
+
+        if size(u[:,:,1,1]) != size(xq) || size(v[:,:,1,1]) != size(xq) ||
+            size(xq) != size(yq)
+            error("size mismatch between velocities and grid
+                  (u: $(size(u[:,:,1,1])), v: $(size(v[:,:,1,1])),
+                  xq: $(size(xq)), yq: $(size(yq)))")
+        end
+
+        ocean = Ocean([grid_file, velocity_file],
+
+                      time,
+
+                      xq,
+                      yq,
+                      xh,
+                      yh,
+
+                      zl,
+                      zi,
+
+                      u,
+                      v,
+                      h,
+                      e,
+                      Array{Array{Int, 1}}(size(xh, 1), size(xh, 2)),
+                      zeros(size(xh)),
+                      1, 1, 1, 1,
+
+                      false, [0.,0.,0.], [1.,1.,1.], [1,1,1], [1.,1.,1.]
+                     )
+        return ocean
     end
-
-    ocean = Ocean([grid_file, velocity_file],
-
-                  time,
-
-                  xq,
-                  yq,
-                  xh,
-                  yh,
-
-                  zl,
-                  zi,
-
-                  u,
-                  v,
-                  h,
-                  e,
-                  Array{Array{Int, 1}}(size(xh, 1), size(xh, 2)),
-                  zeros(size(xh)),
-                  1, 1, 1, 1,
-
-                  false, [0.,0.,0.], [1.,1.,1.], [1,1,1], [1.,1.,1.]
-                 )
-    return ocean
 end
 
 export readOceanStateNetCDF
@@ -97,23 +117,30 @@ layer thicknesses, interface heights, and vertical coordinates.
 """
 function readOceanStateNetCDF(filename::String)
 
-    if !isfile(filename)
-        error("$(filename) could not be opened")
+    if !hasNetCDF
+        warn("Package NetCDF not found. Ocean/atmosphere grid read not supported. " * 
+             "Please install NetCDF and its " *
+             "requirements with `Pkg.add(\"NetCDF\")`.")
+    else
+
+        if !isfile(filename)
+            error("$(filename) could not be opened")
+        end
+
+        u_staggered = convert(Array{Float64, 4}, NetCDF.ncread(filename, "u"))
+        v_staggered = convert(Array{Float64, 4}, NetCDF.ncread(filename, "v"))
+        u, v = interpolateOceanVelocitiesToCorners(u_staggered, v_staggered)
+
+        time = convert(Vector{Float64},
+                       NetCDF.ncread(filename, "time") .* 24. * 60. * 60.)
+        h = convert(Array{Float64, 4}, NetCDF.ncread(filename, "h"))
+        e = convert(Array{Float64, 4}, NetCDF.ncread(filename, "e"))
+
+        zl = convert(Vector{Float64}, NetCDF.ncread(filename, "zl"))
+        zi = convert(Vector{Float64}, NetCDF.ncread(filename, "zi"))
+
+        return time, u, v, h, e, zl, zi
     end
-
-    u_staggered = convert(Array{Float64, 4}, NetCDF.ncread(filename, "u"))
-    v_staggered = convert(Array{Float64, 4}, NetCDF.ncread(filename, "v"))
-    u, v = interpolateOceanVelocitiesToCorners(u_staggered, v_staggered)
-
-    time = convert(Vector{Float64},
-                   NetCDF.ncread(filename, "time") .* 24. * 60. * 60.)
-    h = convert(Array{Float64, 4}, NetCDF.ncread(filename, "h"))
-    e = convert(Array{Float64, 4}, NetCDF.ncread(filename, "e"))
-
-    zl = convert(Vector{Float64}, NetCDF.ncread(filename, "zl"))
-    zi = convert(Vector{Float64}, NetCDF.ncread(filename, "zi"))
-
-    return time, u, v, h, e, zl, zi
 end
 
 export readOceanGridNetCDF
@@ -130,19 +157,26 @@ located in the simulation `INPUT/` subdirectory.
 """
 function readOceanGridNetCDF(filename::String)
 
-    if !isfile(filename)
-        error("$(filename) could not be opened")
+    if !hasNetCDF
+        warn("Package NetCDF not found. Ocean/atmosphere grid read not supported. " * 
+             "Please install NetCDF and its " *
+             "requirements with `Pkg.add(\"NetCDF\")`.")
+    else
+
+        if !isfile(filename)
+            error("$(filename) could not be opened")
+        end
+        x = convert(Array{Float64, 2}, NetCDF.ncread(filename, "x"))
+        y = convert(Array{Float64, 2}, NetCDF.ncread(filename, "y"))
+
+        xh = x[2:2:end, 2:2:end]
+        yh = y[2:2:end, 2:2:end]
+
+        xq = x[1:2:end, 1:2:end]
+        yq = y[1:2:end, 1:2:end]
+
+        return xh, yh, xq, yq
     end
-    x = convert(Array{Float64, 2}, NetCDF.ncread(filename, "x"))
-    y = convert(Array{Float64, 2}, NetCDF.ncread(filename, "y"))
-
-    xh = x[2:2:end, 2:2:end]
-    yh = y[2:2:end, 2:2:end]
-
-    xq = x[1:2:end, 1:2:end]
-    yq = y[1:2:end, 1:2:end]
-
-    return xh, yh, xq, yq
 end
 
 export interpolateOceanVelocitiesToCorners
