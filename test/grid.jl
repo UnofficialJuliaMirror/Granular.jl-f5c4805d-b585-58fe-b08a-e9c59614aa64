@@ -148,6 +148,9 @@ sim.ocean.u[:,:,1,1] = 5.
 Granular.addGrainCylindrical!(sim, [2.5, 3.5], 1., 1., verbose=verbose)
 Granular.addGrainCylindrical!(sim, [2.6, 2.5], 1., 1., verbose=verbose)
 Granular.sortGrainsInGrid!(sim, sim.ocean, verbose=verbose)
+if !Granular.hasNetCDF
+    ocean = sim.ocean
+end
 sim.time = ocean.time[1]
 Granular.addOceanDrag!(sim)
 @test sim.grains[1].force[1] > 0.
