@@ -7,137 +7,139 @@ verbose = false
 
 info("#### $(basename(@__FILE__)) ####")
 
-ocean = Granular.readOceanNetCDF("Baltic/00010101.ocean_month.nc",
-                               "Baltic/ocean_hgrid.nc")
-
-info("Testing coordinate retrieval functions")
-sw, se, ne, nw = Granular.getCellCornerCoordinates(ocean.xq, ocean.yq, 1, 1)
-@test sw ≈ [6., 53.]
-@test se ≈ [7., 53.]
-@test ne ≈ [7., 54.]
-@test nw ≈ [6., 54.]
-@test Granular.getCellCenterCoordinates(ocean.xh, ocean.yh, 1, 1) ≈ [6.5, 53.5]
-
-info("Testing area-determination methods")
-@test Granular.areaOfTriangle([0., 0.], [1., 0.], [0., 1.]) ≈ .5
-@test Granular.areaOfTriangle([1., 0.], [0., 1.], [0., 0.]) ≈ .5
-@test Granular.areaOfQuadrilateral([1., 0.], [0., 1.], [0., 0.], [1., 1.]) ≈ 1.
-
-info("Testing area-based cell content determination")
-@test Granular.isPointInCell(ocean, 1, 1, [6.5, 53.5], sw, se, ne, nw) == true
-@test Granular.isPointInCell(ocean, 1, 1, [6.5, 53.5]) == true
-@test Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [6.5, 53.5]) ≈
-    [.5, .5]
-@test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.5], sw, se, ne, nw) == true
-@test Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [6.1, 53.5]) ≈
-    [.1, .5]
-@test Granular.isPointInCell(ocean, 1, 1, [6.0, 53.5], sw, se, ne, nw) == true
-@test Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [6.0, 53.5]) ≈
-    [.0, .5]
-@test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.7], sw, se, ne, nw) == true
-@test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.9], sw, se, ne, nw) == true
-@test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.99999], sw, se, ne, nw) == true
-@test Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [6.1, 53.99999]) ≈
-    [.1, .99999]
-@test Granular.isPointInCell(ocean, 1, 1, [7.5, 53.5], sw, se, ne, nw) == false
-@test Granular.isPointInCell(ocean, 1, 1, [0.0, 53.5], sw, se, ne, nw) == false
-x_tilde, _ = Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [0., 53.5])
-@test x_tilde < 0.
-
-info("Testing conformal mapping methods")
-@test Granular.conformalQuadrilateralCoordinates([0., 0.],
-                                               [5., 0.],
-                                               [5., 3.],
-                                               [0., 3.],
-                                               [2.5, 1.5]) ≈ [0.5, 0.5]
-@test Granular.conformalQuadrilateralCoordinates([0., 0.],
-                                               [5., 0.],
-                                               [5., 3.],
-                                               [0., 3.],
-                                               [7.5, 1.5]) ≈ [1.5, 0.5]
-@test Granular.conformalQuadrilateralCoordinates([0., 0.],
-                                               [5., 0.],
-                                               [5., 3.],
-                                               [0., 3.],
-                                               [7.5,-1.5]) ≈ [1.5,-0.5]
-@test_throws ErrorException Granular.conformalQuadrilateralCoordinates([0., 0.],
-                                                                     [5., 3.],
-                                                                     [0., 3.],
-                                                                     [5., 0.],
-                                                                     [7.5,-1.5])
-
-info("Checking cell content using conformal mapping methods")
-@test Granular.isPointInCell(ocean, 1, 1, [6.4, 53.4], sw, se, ne, nw, 
-                           method="Conformal") == true
-@test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.5], sw, se, ne, nw, 
-                           method="Conformal") == true
-@test Granular.isPointInCell(ocean, 1, 1, [6.0, 53.5], sw, se, ne, nw, 
-                           method="Conformal") == true
-@test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.7], sw, se, ne, nw, 
-                           method="Conformal") == true
-@test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.9], sw, se, ne, nw, 
-                           method="Conformal") == true
-@test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.99999], sw, se, ne, nw,
-                           method="Conformal") == true
-@test Granular.isPointInCell(ocean, 1, 1, [7.5, 53.5], sw, se, ne, nw,
-                           method="Conformal") == false
-@test Granular.isPointInCell(ocean, 1, 1, [0.0, 53.5], sw, se, ne, nw,
-                           method="Conformal") == false
-
-info("Testing bilinear interpolation scheme on conformal mapping")
-ocean.u[1, 1, 1, 1] = 1.0
-ocean.u[2, 1, 1, 1] = 1.0
-ocean.u[2, 2, 1, 1] = 0.0
-ocean.u[1, 2, 1, 1] = 0.0
-val = [NaN, NaN]
-Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1],
-                              .5, .5, 1, 1)
-@time Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1], .5, 
-                              .5, 1, 1)
-@test val[1] ≈ .5
-@test val[2] ≈ .5
-Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1], 1., 1., 
-1, 1)
-@test val[1] ≈ .0
-@test val[2] ≈ .0
-Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1], 0., 0., 
-1, 1)
-@test val[1] ≈ 1.
-@test val[2] ≈ 1.
-Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1], .25, .25, 
-1, 1)
-@test val[1] ≈ .75
-@test val[2] ≈ .75
-Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1], .75, .75, 
-1, 1)
-@test val[1] ≈ .25
-@test val[2] ≈ .25
-
-info("Testing cell binning - Area-based approach")
-@test Granular.findCellContainingPoint(ocean, [6.2,53.4], method="Area") == (1, 1)
-@test Granular.findCellContainingPoint(ocean, [7.2,53.4], method="Area") == (2, 1)
-@test Granular.findCellContainingPoint(ocean, [0.2,53.4], method="Area") == (0, 0)
-
-info("Testing cell binning - Conformal mapping")
-@test Granular.findCellContainingPoint(ocean, [6.2,53.4], method="Conformal") == 
-    (1, 1)
-@test Granular.findCellContainingPoint(ocean, [7.2,53.4], method="Conformal") == 
-    (2, 1)
-@test Granular.findCellContainingPoint(ocean, [0.2, 53.4], method="Conformal") ==
-    (0, 0)
-
-sim = Granular.createSimulation()
-sim.ocean = Granular.readOceanNetCDF("Baltic/00010101.ocean_month.nc",
+if Granular.hasNetCDF
+    ocean = Granular.readOceanNetCDF("Baltic/00010101.ocean_month.nc",
                                    "Baltic/ocean_hgrid.nc")
-Granular.addGrainCylindrical!(sim, [6.5, 53.5], 10., 1., verbose=verbose)
-Granular.addGrainCylindrical!(sim, [6.6, 53.5], 10., 1., verbose=verbose)
-Granular.addGrainCylindrical!(sim, [7.5, 53.5], 10., 1., verbose=verbose)
-Granular.sortGrainsInGrid!(sim, sim.ocean, verbose=verbose)
-@test sim.grains[1].ocean_grid_pos == [1, 1]
-@test sim.grains[2].ocean_grid_pos == [1, 1]
-@test sim.grains[3].ocean_grid_pos == [2, 1]
-@test sim.ocean.grain_list[1, 1] == [1, 2]
-@test sim.ocean.grain_list[2, 1] == [3]
+
+    info("Testing coordinate retrieval functions")
+    sw, se, ne, nw = Granular.getCellCornerCoordinates(ocean.xq, ocean.yq, 1, 1)
+    @test sw ≈ [6., 53.]
+    @test se ≈ [7., 53.]
+    @test ne ≈ [7., 54.]
+    @test nw ≈ [6., 54.]
+    @test Granular.getCellCenterCoordinates(ocean.xh, ocean.yh, 1, 1) ≈ [6.5, 53.5]
+
+    info("Testing area-determination methods")
+    @test Granular.areaOfTriangle([0., 0.], [1., 0.], [0., 1.]) ≈ .5
+    @test Granular.areaOfTriangle([1., 0.], [0., 1.], [0., 0.]) ≈ .5
+    @test Granular.areaOfQuadrilateral([1., 0.], [0., 1.], [0., 0.], [1., 1.]) ≈ 1.
+
+    info("Testing area-based cell content determination")
+    @test Granular.isPointInCell(ocean, 1, 1, [6.5, 53.5], sw, se, ne, nw) == true
+    @test Granular.isPointInCell(ocean, 1, 1, [6.5, 53.5]) == true
+    @test Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [6.5, 53.5]) ≈
+        [.5, .5]
+    @test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.5], sw, se, ne, nw) == true
+    @test Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [6.1, 53.5]) ≈
+        [.1, .5]
+    @test Granular.isPointInCell(ocean, 1, 1, [6.0, 53.5], sw, se, ne, nw) == true
+    @test Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [6.0, 53.5]) ≈
+        [.0, .5]
+    @test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.7], sw, se, ne, nw) == true
+    @test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.9], sw, se, ne, nw) == true
+    @test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.99999], sw, se, ne, nw) == true
+    @test Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [6.1, 53.99999]) ≈
+        [.1, .99999]
+    @test Granular.isPointInCell(ocean, 1, 1, [7.5, 53.5], sw, se, ne, nw) == false
+    @test Granular.isPointInCell(ocean, 1, 1, [0.0, 53.5], sw, se, ne, nw) == false
+    x_tilde, _ = Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [0., 53.5])
+    @test x_tilde < 0.
+
+    info("Testing conformal mapping methods")
+    @test Granular.conformalQuadrilateralCoordinates([0., 0.],
+                                                   [5., 0.],
+                                                   [5., 3.],
+                                                   [0., 3.],
+                                                   [2.5, 1.5]) ≈ [0.5, 0.5]
+    @test Granular.conformalQuadrilateralCoordinates([0., 0.],
+                                                   [5., 0.],
+                                                   [5., 3.],
+                                                   [0., 3.],
+                                                   [7.5, 1.5]) ≈ [1.5, 0.5]
+    @test Granular.conformalQuadrilateralCoordinates([0., 0.],
+                                                   [5., 0.],
+                                                   [5., 3.],
+                                                   [0., 3.],
+                                                   [7.5,-1.5]) ≈ [1.5,-0.5]
+    @test_throws ErrorException Granular.conformalQuadrilateralCoordinates([0., 0.],
+                                                                         [5., 3.],
+                                                                         [0., 3.],
+                                                                         [5., 0.],
+                                                                         [7.5,-1.5])
+
+    info("Checking cell content using conformal mapping methods")
+    @test Granular.isPointInCell(ocean, 1, 1, [6.4, 53.4], sw, se, ne, nw, 
+                               method="Conformal") == true
+    @test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.5], sw, se, ne, nw, 
+                               method="Conformal") == true
+    @test Granular.isPointInCell(ocean, 1, 1, [6.0, 53.5], sw, se, ne, nw, 
+                               method="Conformal") == true
+    @test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.7], sw, se, ne, nw, 
+                               method="Conformal") == true
+    @test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.9], sw, se, ne, nw, 
+                               method="Conformal") == true
+    @test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.99999], sw, se, ne, nw,
+                               method="Conformal") == true
+    @test Granular.isPointInCell(ocean, 1, 1, [7.5, 53.5], sw, se, ne, nw,
+                               method="Conformal") == false
+    @test Granular.isPointInCell(ocean, 1, 1, [0.0, 53.5], sw, se, ne, nw,
+                               method="Conformal") == false
+
+    info("Testing bilinear interpolation scheme on conformal mapping")
+    ocean.u[1, 1, 1, 1] = 1.0
+    ocean.u[2, 1, 1, 1] = 1.0
+    ocean.u[2, 2, 1, 1] = 0.0
+    ocean.u[1, 2, 1, 1] = 0.0
+    val = [NaN, NaN]
+    Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1],
+                                  .5, .5, 1, 1)
+    @time Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1], .5, 
+                                  .5, 1, 1)
+    @test val[1] ≈ .5
+    @test val[2] ≈ .5
+    Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1], 1., 1., 
+    1, 1)
+    @test val[1] ≈ .0
+    @test val[2] ≈ .0
+    Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1], 0., 0., 
+    1, 1)
+    @test val[1] ≈ 1.
+    @test val[2] ≈ 1.
+    Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1], .25, .25, 
+    1, 1)
+    @test val[1] ≈ .75
+    @test val[2] ≈ .75
+    Granular.bilinearInterpolation!(val, ocean.u[:,:,1,1], ocean.u[:,:,1,1], .75, .75, 
+    1, 1)
+    @test val[1] ≈ .25
+    @test val[2] ≈ .25
+
+    info("Testing cell binning - Area-based approach")
+    @test Granular.findCellContainingPoint(ocean, [6.2,53.4], method="Area") == (1, 1)
+    @test Granular.findCellContainingPoint(ocean, [7.2,53.4], method="Area") == (2, 1)
+    @test Granular.findCellContainingPoint(ocean, [0.2,53.4], method="Area") == (0, 0)
+
+    info("Testing cell binning - Conformal mapping")
+    @test Granular.findCellContainingPoint(ocean, [6.2,53.4], method="Conformal") == 
+        (1, 1)
+    @test Granular.findCellContainingPoint(ocean, [7.2,53.4], method="Conformal") == 
+        (2, 1)
+    @test Granular.findCellContainingPoint(ocean, [0.2, 53.4], method="Conformal") ==
+        (0, 0)
+
+    sim = Granular.createSimulation()
+    sim.ocean = Granular.readOceanNetCDF("Baltic/00010101.ocean_month.nc",
+                                       "Baltic/ocean_hgrid.nc")
+    Granular.addGrainCylindrical!(sim, [6.5, 53.5], 10., 1., verbose=verbose)
+    Granular.addGrainCylindrical!(sim, [6.6, 53.5], 10., 1., verbose=verbose)
+    Granular.addGrainCylindrical!(sim, [7.5, 53.5], 10., 1., verbose=verbose)
+    Granular.sortGrainsInGrid!(sim, sim.ocean, verbose=verbose)
+    @test sim.grains[1].ocean_grid_pos == [1, 1]
+    @test sim.grains[2].ocean_grid_pos == [1, 1]
+    @test sim.grains[3].ocean_grid_pos == [2, 1]
+    @test sim.ocean.grain_list[1, 1] == [1, 2]
+    @test sim.ocean.grain_list[2, 1] == [3]
+end
 
 info("Testing ocean drag")
 sim = Granular.createSimulation()
