@@ -26,6 +26,9 @@ install:
 # Run installer silently, output to C:\projects\julia
   - C:\projects\julia-binary.exe /S /D=C:\projects\julia
 
+before_build:
+  - C:\projects\julia\bin\julia -e "versioninfo(); Pkg.add(\"NetCDF\")"
+
 build_script:
 # Need to convert from shallow to complete for Pkg.clone to work
   - IF EXIST .git\shallow (git fetch --unshallow)
