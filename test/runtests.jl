@@ -15,6 +15,8 @@ include("packing.jl")
 include("util.jl")
 include("temporal.jl")
 include("cohesion.jl")
-include("netcdf.jl")
+if Granular.hasNetCDF
+    include("netcdf.jl")
+end
 include("vtk.jl")
 include("jld.jl")
