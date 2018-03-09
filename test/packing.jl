@@ -3,6 +3,7 @@ using Compat.Test
 import Granular
 
 verbose = true
+plot = false
 
 info("#### $(basename(@__FILE__)) ####")
 
@@ -21,6 +22,7 @@ for grain in sim.grains
     @test grain.contact_radius >= 1.
     @test grain.contact_radius <= 10.
 end
+plot && Granular.plotGrains(sim, filetype="regular-powerlaw.png", show_figure=false)
 
 info("Testing regular packing generation (uniform GSD)")
 sim = Granular.createSimulation()
@@ -37,6 +39,7 @@ for grain in sim.grains
     @test grain.contact_radius >= 1.
     @test grain.contact_radius <= 10.
 end
+plot && Granular.plotGrains(sim, filetype="regular-uniform.png", show_figure=false)
 
 
 plot_packings=false
@@ -120,13 +123,14 @@ occupied_ans = Array{Bool}([
 0 0 0 0 1 1 1 1 0 0 0 0])
 @test occupied == occupied_ans
 sim_init = deepcopy(sim)
+plot && Granular.plotGrains(sim, filetype="rastermap.png", show_figure=false)
 
 info("Testing raster-based mapping algorithm (power law GSD)")
 sim = deepcopy(sim_init)
 np_init = length(sim.grains)
 Granular.rasterPacking!(sim, 0.02, 0.04, verbose=verbose)
 @test np_init < length(sim.grains)
-#Granular.plotGrains(sim, filetype="powerlaw.png", show_figure=false)
+plot && Granular.plotGrains(sim, filetype="powerlaw.png", show_figure=false)
 
 info("Testing raster-based mapping algorithm (uniform GSD)")
 sim = deepcopy(sim_init)
@@ -134,11 +138,18 @@ np_init = length(sim.grains)
 Granular.rasterPacking!(sim, 0.02, 0.04, size_distribution="uniform",
                         verbose=verbose)
 @test np_init < length(sim.grains)
-#Granular.plotGrains(sim, filetype="uniform.png", show_figure=false)
+plot && Granular.plotGrains(sim, filetype="uniform.png", show_figure=false)
+
+info("Tesing square packing")
+sim = Granular.createSimulation()
+Granular.regularPacking!(sim, [5,6], 1.0, 1.0, tiling="square",
+                        padding_factor=0.0)
+@test length(sim.grains) == 5*6
+plot && Granular.plotGrains(sim, filetype="square.png", show_figure=false)
 
 info("Tesing triangular packing")
 sim = Granular.createSimulation()
-Granular.regularPacking!(sim, [8,4], 1.0, 1.0, tiling="triangular",
+Granular.regularPacking!(sim, [6,6], 1.0, 1.0, tiling="triangular",
                         padding_factor=0.0)
-@test length(sim.grains) == 8*4
-#Granular.plotGrains(sim, filetype="triangular.png", show_figure=false)
+@test length(sim.grains) == 6*6
+plot && Granular.plotGrains(sim, filetype="triangular.png", show_figure=false)
