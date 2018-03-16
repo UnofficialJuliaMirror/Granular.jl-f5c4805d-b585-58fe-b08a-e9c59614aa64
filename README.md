@@ -4,9 +4,10 @@
 
 A [Julia](https://julialang.org) package for granular mechanics.
 
-| Documentation | Chat | Stable Release | Development Version | Test Coverage |
-|:-------------:|:----:|:--------------:|:-------------------:|:-------------:|
-|[![Granular.jl Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://anders-dc.github.io/Granular.jl/stable) [![Granular.jl Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://anders-dc.github.io/Granular.jl/latest) | [![Chat at https://gitter.im/anders-dc/Granular.jl](https://badges.gitter.im/anders-dc/Granular.jl.svg)](https://gitter.im/anders-dc/Granular.jl?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) | [![Granular](http://pkg.julialang.org/badges/Granular_0.6.svg)](http://pkg.julialang.org/detail/Granular) | [![Build Status](https://travis-ci.org/anders-dc/Granular.jl.svg?branch=master)](https://travis-ci.org/anders-dc/Granular.jl) [![Build Status](https://ci.appveyor.com/api/projects/status/github/anders-dc/Granular.jl?svg=true)](https://ci.appveyor.com/project/anders-dc/seaice-jl/) | [![codecov.io](http://codecov.io/github/anders-dc/Granular.jl/coverage.svg?branch=master)](http://codecov.io/github/anders-dc/Granular.jl?branch=master) |
+| DOI | Documentation | Chat | Stable Release | Development Version | Test 
+Coverage |
+|:---:|:-------------:|:----:|:--------------:|:-------------------:|:-------------:|
+|[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1165989.svg)](https://doi.org/10.5281/zenodo.1165989)|[![Granular.jl Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://anders-dc.github.io/Granular.jl/stable) [![Granular.jl Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://anders-dc.github.io/Granular.jl/latest) | [![Chat at https://gitter.im/anders-dc/Granular.jl](https://badges.gitter.im/anders-dc/Granular.jl.svg)](https://gitter.im/anders-dc/Granular.jl?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) | [![Granular](http://pkg.julialang.org/badges/Granular_0.6.svg)](http://pkg.julialang.org/detail/Granular) | [![Build Status](https://travis-ci.org/anders-dc/Granular.jl.svg?branch=master)](https://travis-ci.org/anders-dc/Granular.jl) [![Build Status](https://ci.appveyor.com/api/projects/status/github/anders-dc/Granular.jl?svg=true)](https://ci.appveyor.com/project/anders-dc/seaice-jl/) | [![codecov.io](http://codecov.io/github/anders-dc/Granular.jl/coverage.svg?branch=master)](http://codecov.io/github/anders-dc/Granular.jl?branch=master) |
 
 ## Installation
 [Granular.jl](https://github.com/anders-dc/Granular.jl) is registered in the 
