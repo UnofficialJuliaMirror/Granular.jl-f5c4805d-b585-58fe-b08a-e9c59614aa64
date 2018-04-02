@@ -289,20 +289,22 @@ function createRegularOceanGrid(n::Vector{Int},
                                 bc_east::Integer = 1,
                                 bc_north::Integer = 1)
 
-    xq = repeat(Compat.range(origo[1], stop=origo[1] + L[1], length=n[1] + 1),
-                1, n[2] + 1)
-    yq = repeat(Compat.range(origo[2], stop=origo[2] + L[2], length=n[2] + 1)',
-                n[1] + 1, 1)
+    xq = Compat.repeat(Compat.range(origo[1], stop=origo[1] + L[1],
+                                    length=n[1] + 1),
+                       1, n[2] + 1)
+    yq = Compat.repeat(Compat.range(origo[2], stop=origo[2] + L[2],
+                                    length=n[2] + 1)',
+                       n[1] + 1, 1)
 
     dx = L./n
-    xh = repeat(Compat.range(origo[1] + .5*dx[1],
+    xh = Compat.repeat(Compat.range(origo[1] + .5*dx[1],
                              stop=origo[1] + L[1] - .5*dx[1],
                              length=n[1]),
-                1, n[2])
-    yh = repeat(Compat.range(origo[2] + .5*dx[2],
+                       1, n[2])
+    yh = Compat.repeat(Compat.range(origo[2] + .5*dx[2],
                              stop=origo[2] + L[2] - .5*dx[2],
                              length=n[2])',
-                n[1], 1)
+                       n[1], 1)
 
     zl = -Compat.range(.5*dx[3], stop=L[3] - .5*dx[3], length=n[3])
     zi = -Compat.range(0., stop=L[3], length=n[3] + 1)
