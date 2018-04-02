@@ -1,4 +1,6 @@
 ## Functions for creating grain packings
+import Compat
+using Compat.LinearAlgebra
 
 export regularPacking!
 """
@@ -42,7 +44,7 @@ function regularPacking!(simulation::Simulation,
     r_rand = 0.
     pos = zeros(2)
     h = .5   # disc tickness
-    srand(seed)
+    Compat.srand(seed)
 
     if tiling == "square"
         dx = r_max * 2. * (1. + padding_factor)  # cell size
@@ -176,7 +178,7 @@ function irregularPacking!(simulation::Simulation;
                            seed::Integer=1,
                            plot_during_packing::Bool=false,
                            verbose::Bool=true)
-    srand(seed)
+    Compat.srand(seed)
 
     active_list = Int[]  # list of points to originate search from
     i = 0
@@ -346,7 +348,7 @@ function irregularPacking!(simulation::Simulation;
     end  # end while !isempty(active_list)
 
     if verbose
-        info("Generated $(length(simulation.grains) - np_init) points")
+        Compat.@info "Generated $(length(simulation.grains) - np_init) points"
     end
 end
 
@@ -361,16 +363,16 @@ function rasterPacking!(sim::Simulation,
                         verbose::Bool=true)
 
     r_rand = 0.
-    const h = .5   # disc tickness
-    const dx = r_max * 2. * (1. + padding_factor)  # cell size
-    const dx_padding = r_max * 2. * padding_factor
-    srand(seed)
+    h = .5   # disc tickness
+    dx = r_max * 2. * (1. + padding_factor)  # cell size
+    dx_padding = r_max * 2. * padding_factor
+    Compat.srand(seed)
 
-    const np_init = length(sim.grains)
+    np_init = length(sim.grains)
 
     # Generate a grid spanning the entire domain, with cell width corresponding
     # to the largest grain to be inserted
-    const occupied = rasterMap(sim, dx)
+    occupied = rasterMap(sim, dx)
 
     # Add grains in unoccupied places
     pos = zeros(2)
@@ -398,7 +400,7 @@ function rasterPacking!(sim::Simulation,
         end
     end
     if verbose
-        info("Generated $(length(sim.grains) - np_init) points")
+        Compat.@info "Generated $(length(sim.grains) - np_init) points"
     end
 end
 
@@ -433,7 +435,7 @@ function rasterMap(sim::Simulation, dx::Real)
         L = [se[1] - sw[1], nw[2] - sw[2]]
         origo = [sw[1], sw[2]]
     end
-    const dims = floor.(L./dx)
+    dims = floor.(L./dx)
     occupied = zeros(Bool, dims[1], dims[2])
 
     # Loop over existing grains and mark their extent in the `occupied` array
@@ -441,7 +443,7 @@ function rasterMap(sim::Simulation, dx::Real)
     min_i = 0; min_j = 0
     max_i = 0; max_j = 0
     cell_mid_point = zeros(2)
-    const dist = sqrt(2.0*(dx/2.0)^2.)
+    dist = sqrt(2.0*(dx/2.0)^2.)
     for grain in sim.grains
         
         # Find center position in `occupied` grid

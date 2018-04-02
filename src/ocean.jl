@@ -1,17 +1,19 @@
+import Compat
+using Compat.Test
+using Compat.LinearAlgebra
+
 hasNetCDF = false
 if typeof(Pkg.installed("NetCDF")) == VersionNumber
     import NetCDF
     hasNetCDF = true
 else
     if !hasNetCDF
-        warn("Package NetCDF not found. " *
+        Compat.@warn "Package NetCDF not found. " *
              "Ocean/atmosphere grid read not supported. " * 
              "Please install NetCDF and its " *
-             "requirements with `Pkg.add(\"NetCDF\")`.")
+             "requirements with `Pkg.add(\"NetCDF\")`."
     end
 end
-
-using Compat.Test
 
 export createEmptyOcean
 "Returns empty ocean type for initialization purposes."
@@ -55,9 +57,10 @@ function readOceanNetCDF(velocity_file::String, grid_file::String;
                          regular_grid::Bool=false)
 
     if !hasNetCDF
-        warn("Package NetCDF not found. Ocean/atmosphere grid read not supported. " * 
+        Compat.@warn "Package NetCDF not found. " *
+            "Ocean/atmosphere grid read not supported. " * 
              "Please install NetCDF and its " *
-             "requirements with `Pkg.add(\"NetCDF\")`.")
+             "requirements with `Pkg.add(\"NetCDF\")`."
     else
 
         time, u, v, h, e, zl, zi = readOceanStateNetCDF(velocity_file)
@@ -118,9 +121,10 @@ layer thicknesses, interface heights, and vertical coordinates.
 function readOceanStateNetCDF(filename::String)
 
     if !hasNetCDF
-        warn("Package NetCDF not found. Ocean/atmosphere grid read not supported. " * 
+        Compat.@warn "Package NetCDF not found. " *
+            "Ocean/atmosphere grid read not supported. " * 
              "Please install NetCDF and its " *
-             "requirements with `Pkg.add(\"NetCDF\")`.")
+             "requirements with `Pkg.add(\"NetCDF\")`."
     else
 
         if !isfile(filename)
@@ -158,9 +162,10 @@ located in the simulation `INPUT/` subdirectory.
 function readOceanGridNetCDF(filename::String)
 
     if !hasNetCDF
-        warn("Package NetCDF not found. Ocean/atmosphere grid read not supported. " * 
+        Compat.@warn "Package NetCDF not found. " *
+            "Ocean/atmosphere grid read not supported. " * 
              "Please install NetCDF and its " *
-             "requirements with `Pkg.add(\"NetCDF\")`.")
+             "requirements with `Pkg.add(\"NetCDF\")`."
     else
 
         if !isfile(filename)
@@ -222,8 +227,8 @@ function interpolateOceanState(ocean::Ocean, t::Float64)
     if length(ocean.time) == 1
         return ocean.u, ocean.v, ocean.h, ocean.e
     elseif t < ocean.time[1] || t > ocean.time[end]
-        error("selected time (t = $(t)) is outside the range of time steps in 
-              the ocean data")
+        error("selected time (t = $(t)) is outside the range of time steps " *
+              "in the ocean data")
     end
 
     i = 1
@@ -284,17 +289,23 @@ function createRegularOceanGrid(n::Vector{Int},
                                 bc_east::Integer = 1,
                                 bc_north::Integer = 1)
 
-    xq = repmat(linspace(origo[1], origo[1] + L[1], n[1] + 1), 1, n[2] + 1)
-    yq = repmat(linspace(origo[2], origo[2] + L[2], n[2] + 1)', n[1] + 1, 1)
+    xq = repeat(Compat.range(origo[1], stop=origo[1] + L[1], length=n[1] + 1),
+                1, n[2] + 1)
+    yq = repeat(Compat.range(origo[2], stop=origo[2] + L[2], length=n[2] + 1)',
+                n[1] + 1, 1)
 
     dx = L./n
-    xh = repmat(linspace(origo[1] + .5*dx[1], origo[1] + L[1] - .5*dx[1],
-                         n[1]), 1, n[2])
-    yh = repmat(linspace(origo[2] + .5*dx[2], origo[2] + L[2] - .5*dx[2],
-                         n[2])', n[1], 1)
+    xh = repeat(Compat.range(origo[1] + .5*dx[1],
+                             stop=origo[1] + L[1] - .5*dx[1],
+                             length=n[1]),
+                1, n[2])
+    yh = repeat(Compat.range(origo[2] + .5*dx[2],
+                             stop=origo[2] + L[2] - .5*dx[2],
+                             length=n[2])',
+                n[1], 1)
 
-    zl = -linspace(.5*dx[3], L[3] - .5*dx[3], n[3])
-    zi = -linspace(0., L[3], n[3] + 1)
+    zl = -Compat.range(.5*dx[3], stop=L[3] - .5*dx[3], length=n[3])
+    zi = -Compat.range(0., stop=L[3], length=n[3] + 1)
 
     u = zeros(n[1] + 1, n[2] + 1, n[3], length(time))
     v = zeros(n[1] + 1, n[2] + 1, n[3], length(time))

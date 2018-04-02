@@ -1,5 +1,6 @@
 #!/usr/bin/env julia
 import Granular
+import Compat
 
 # Create the simulation object which, among other things, will hold all
 # imformation on the simulated grains.  You can call this object whatever you
@@ -35,8 +36,8 @@ Granular.run!(sim)
 E_kin_after = Granular.totalGrainKineticTranslationalEnergy(sim)
 
 # Report these values to console
-info("Kinetic energy before: $E_kin_before J")
-info("Kinetic energy after:  $E_kin_after J")
+Compat.@info "Kinetic energy before: $E_kin_before J"
+Compat.@info "Kinetic energy after:  $E_kin_after J"
 
 
 Granular.render(sim, animation=true)

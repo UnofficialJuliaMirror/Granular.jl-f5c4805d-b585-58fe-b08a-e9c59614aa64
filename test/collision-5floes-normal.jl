@@ -1,13 +1,14 @@
 #!/usr/bin/env julia
+using Compat.LinearAlgebra
 
 # Check for conservation of kinetic energy (=momentum) during a normal collision 
 # between two ice cylindrical grains 
 
-info("#### $(basename(@__FILE__)) ####")
+Compat.@info "#### $(basename(@__FILE__)) ####"
 
 verbose=false
 
-info("# One ice floe fixed")
+Compat.@info "# One ice floe fixed"
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [0., 0.], 10., 1., verbose=verbose)
 Granular.addGrainCylindrical!(sim, [20.05, 0.], 10., 1., verbose=verbose)
@@ -29,10 +30,10 @@ E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.setTotalTime!(sim, 10.0)
 sim_init = deepcopy(sim)
 
-info("Testing kinetic energy conservation with Two-term Taylor scheme")
+Compat.@info "Testing kinetic energy conservation with Two-term Taylor scheme"
 Granular.setTimeStep!(sim, epsilon=0.07)
 tol = 0.2
-info("Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)")
+Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbose)
 
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -41,16 +42,16 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_rot_init ≈ E_kin_rot_final
 @test 0. < norm(sim.grains[1].lin_vel)
 for i=2:5
-    info("testing ice floe $i")
+    Compat.@info "testing ice floe $i"
     @test 0. ≈ norm(sim.grains[i].lin_vel)
 end
 
 
-info("Testing kinetic energy conservation with Two-term Taylor scheme")
+Compat.@info "Testing kinetic energy conservation with Two-term Taylor scheme"
 sim = deepcopy(sim_init)
 Granular.setTimeStep!(sim, epsilon=0.007)
 tol = 0.02
-info("Relative tolerance: $(tol*100.)%")
+Compat.@info "Relative tolerance: $(tol*100.)%"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbose)
 
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -59,16 +60,16 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_rot_init ≈ E_kin_rot_final
 @test 0. < norm(sim.grains[1].lin_vel)
 for i=2:5
-    info("testing ice floe $i")
+    Compat.@info "testing ice floe $i"
     @test 0. ≈ norm(sim.grains[i].lin_vel)
 end
 
 
-info("Testing kinetic energy conservation with Three-term Taylor scheme")
+Compat.@info "Testing kinetic energy conservation with Three-term Taylor scheme"
 sim = deepcopy(sim_init)
 Granular.setTimeStep!(sim, epsilon=0.07)
 tol = 0.01
-info("Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)")
+Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
@@ -78,12 +79,12 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_rot_init ≈ E_kin_rot_final
 @test 0. < norm(sim.grains[1].lin_vel)
 for i=2:5
-    info("testing ice floe $i")
+    Compat.@info "testing ice floe $i"
     @test 0. ≈ norm(sim.grains[i].lin_vel)
 end
 
 
-info("# Ice floes free to move")
+Compat.@info "# Ice floes free to move"
 
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [0., 0.], 10., 1., verbose=verbose)
@@ -102,10 +103,10 @@ E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.setTotalTime!(sim, 40.0)
 sim_init = deepcopy(sim)
 
-info("Testing kinetic energy conservation with Two-term Taylor scheme")
+Compat.@info "Testing kinetic energy conservation with Two-term Taylor scheme"
 Granular.setTimeStep!(sim, epsilon=0.07)
 tol = 0.2
-info("Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)")
+Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbose)
 
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -113,16 +114,16 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
 @test E_kin_rot_init ≈ E_kin_rot_final
 for i=1:5
-    info("testing ice floe $i")
+    Compat.@info "testing ice floe $i"
     @test 0. < norm(sim.grains[i].lin_vel)
 end
 
 
-info("Testing kinetic energy conservation with Two-term Taylor scheme")
+Compat.@info "Testing kinetic energy conservation with Two-term Taylor scheme"
 sim = deepcopy(sim_init)
 Granular.setTimeStep!(sim, epsilon=0.007)
 tol = 0.02
-info("Relative tolerance: $(tol*100.)%")
+Compat.@info "Relative tolerance: $(tol*100.)%"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbose)
 
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -130,16 +131,16 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
 @test E_kin_rot_init ≈ E_kin_rot_final
 for i=1:5
-    info("testing ice floe $i")
+    Compat.@info "testing ice floe $i"
     @test 0. < norm(sim.grains[i].lin_vel)
 end
 
 
-info("Testing kinetic energy conservation with Three-term Taylor scheme")
+Compat.@info "Testing kinetic energy conservation with Three-term Taylor scheme"
 sim = deepcopy(sim_init)
 Granular.setTimeStep!(sim, epsilon=0.07)
 tol = 0.01
-info("Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)")
+Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
@@ -148,13 +149,13 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
 @test E_kin_rot_init ≈ E_kin_rot_final
 for i=1:5
-    info("testing ice floe $i")
+    Compat.@info "testing ice floe $i"
     @test 0. < norm(sim.grains[i].lin_vel)
 end
 
 
-info("# Adding contact-normal viscosity")
-info("# One ice floe fixed")
+Compat.@info "# Adding contact-normal viscosity"
+Compat.@info "# One ice floe fixed"
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [0., 0.], 10., 1., verbose=verbose)
 Granular.addGrainCylindrical!(sim, [20.05, 0.], 10., 1., verbose=verbose)
@@ -182,11 +183,11 @@ Granular.setTotalTime!(sim, 10.0)
 sim_init = deepcopy(sim)
 
 
-info("Testing kinetic energy conservation with Two-term Taylor scheme")
+Compat.@info "Testing kinetic energy conservation with Two-term Taylor scheme"
 sim = deepcopy(sim_init)
 Granular.setTimeStep!(sim, epsilon=0.007)
 tol = 0.02
-info("Relative tolerance: $(tol*100.)%")
+Compat.@info "Relative tolerance: $(tol*100.)%"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbose)
 
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -195,16 +196,16 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_rot_init ≈ E_kin_rot_final
 @test 0. < norm(sim.grains[1].lin_vel)
 for i=2:5
-    info("testing ice floe $i")
+    Compat.@info "testing ice floe $i"
     @test 0. ≈ norm(sim.grains[i].lin_vel)
 end
 
 
-info("Testing kinetic energy conservation with Three-term Taylor scheme")
+Compat.@info "Testing kinetic energy conservation with Three-term Taylor scheme"
 sim = deepcopy(sim_init)
 Granular.setTimeStep!(sim, epsilon=0.07)
 tol = 0.01
-info("Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)")
+Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
@@ -214,12 +215,12 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_rot_init ≈ E_kin_rot_final
 @test 0. < norm(sim.grains[1].lin_vel)
 for i=2:5
-    info("testing ice floe $i")
+    Compat.@info "testing ice floe $i"
     @test 0. ≈ norm(sim.grains[i].lin_vel)
 end
 
 
-info("# Ice floes free to move")
+Compat.@info "# Ice floes free to move"
 
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [0., 0.], 10., 1., verbose=verbose)
@@ -243,11 +244,11 @@ E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.setTotalTime!(sim, 10.0)
 sim_init = deepcopy(sim)
 
-info("Testing kinetic energy conservation with Two-term Taylor scheme")
+Compat.@info "Testing kinetic energy conservation with Two-term Taylor scheme"
 sim = deepcopy(sim_init)
 Granular.setTimeStep!(sim, epsilon=0.007)
 tol = 0.02
-info("Relative tolerance: $(tol*100.)%")
+Compat.@info "Relative tolerance: $(tol*100.)%"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbose)
 
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -255,16 +256,16 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init > E_kin_lin_final
 @test E_kin_rot_init ≈ E_kin_rot_final
 for i=1:5
-    info("testing ice floe $i")
+    Compat.@info "testing ice floe $i"
     @test 0. < norm(sim.grains[i].lin_vel)
 end
 
 
-info("Testing kinetic energy conservation with Three-term Taylor scheme")
+Compat.@info "Testing kinetic energy conservation with Three-term Taylor scheme"
 sim = deepcopy(sim_init)
 Granular.setTimeStep!(sim, epsilon=0.07)
 tol = 0.01
-info("Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)")
+Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
@@ -273,6 +274,6 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init > E_kin_lin_final
 @test E_kin_rot_init ≈ E_kin_rot_final
 for i=1:5
-    info("testing ice floe $i")
+    Compat.@info "testing ice floe $i"
     @test 0. < norm(sim.grains[i].lin_vel)
 end

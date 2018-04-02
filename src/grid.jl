@@ -1,3 +1,6 @@
+import Compat
+using Compat.LinearAlgebra
+
 """
     bilinearInterpolation(field, x_tilde, y_tilde, i, j, k, it)
 
@@ -211,8 +214,8 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
                   i > grid.n[1] || j > grid.n[2]))
 
                 if verbose
-                    info("Disabling grain $idx at pos (" *
-                         "$(simulation.grains[idx].lin_pos))")
+                    Compat.@info "Disabling grain $idx at pos (" *
+                         "$(simulation.grains[idx].lin_pos))"
                 end
                 disableGrain!(simulation, idx)
                 continue
@@ -220,9 +223,11 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
 
             # add cell to grain
             if typeof(grid) == Ocean
-                @inbounds simulation.grains[idx].ocean_grid_pos .= i, j
+                @inbounds simulation.grains[idx].ocean_grid_pos[1] = i
+                @inbounds simulation.grains[idx].ocean_grid_pos[2] = j
             elseif typeof(grid) == Atmosphere
-                @inbounds simulation.grains[idx].atmosphere_grid_pos .= i, j
+                @inbounds simulation.grains[idx].atmosphere_grid_pos[1] = i
+                @inbounds simulation.grains[idx].atmosphere_grid_pos[2] = j
             else
                 error("grid type not understood.")
             end
@@ -507,9 +512,9 @@ function conformalQuadrilateralCoordinates(A::Vector{Float64},
                 y_tilde = yy2
             end
         else
-            error("could not perform conformal mapping\n",
-                  "A = $(A), B = $(B), C = $(C), D = $(D), point = $(p),\n",
-                  "alpha = $(alpha), beta = $(beta), gamma = $(gamma), ",
+            error("could not perform conformal mapping\n" *
+                  "A = $(A), B = $(B), C = $(C), D = $(D), point = $(p),\n" *
+                  "alpha = $(alpha), beta = $(beta), gamma = $(gamma), " *
                   "delta = $(delta), epsilon = $(epsilon), kappa = $(kappa)")
         end
     else
@@ -526,10 +531,10 @@ function conformalQuadrilateralCoordinates(A::Vector{Float64},
     elseif !(b ≈ 0.)
         x_tilde = (dy - epsilon*y_tilde)/b
     else
-        error("could not determine non-dimensional position in quadrilateral ",
-              "(a = 0. and b = 0.)\n",
-              "A = $(A), B = $(B), C = $(C), D = $(D), point = $(p),\n",
-              "alpha = $(alpha), beta = $(beta), gamma = $(gamma), ",
+        error("could not determine non-dimensional position in quadrilateral " *
+              "(a = 0. and b = 0.)\n" *
+              "A = $(A), B = $(B), C = $(C), D = $(D), point = $(p),\n" *
+              "alpha = $(alpha), beta = $(beta), gamma = $(gamma), " *
               "delta = $(delta), epsilon = $(epsilon), kappa = $(kappa)")
     end
     return Float64[x_tilde, y_tilde]
@@ -580,13 +585,13 @@ function findEmptyPositionInGridCell(simulation::Simulation,
     for i_iter=1:n_iter
 
         overlap_found = false
-        srand(i*j*seed*i_iter)
+        Compat.srand(i*j*seed*i_iter)
         # generate random candidate position
         x_tilde = rand()
         y_tilde = rand()
         bilinearInterpolation!(pos, grid.xq, grid.yq, x_tilde, y_tilde, i, j)
         if verbose
-            info("trying position $pos in cell $i,$j")
+            Compat.@info "trying position $pos in cell $i,$j"
         end
 
         # do not penetrate outside of grid boundaries
@@ -620,7 +625,7 @@ function findEmptyPositionInGridCell(simulation::Simulation,
 
                         if overlap < 0.
                             if verbose
-                                info("overlap with $grain_idx in cell $i,$j")
+                                Compat.@info "overlap with $grain_idx in cell $i,$j"
                             end
                             overlap_found = true
                             break
@@ -642,13 +647,13 @@ function findEmptyPositionInGridCell(simulation::Simulation,
 
     if spot_found
         if verbose
-            info("Found position $pos in cell $i,$j")
+            Compat.@info "Found position $pos in cell $i,$j"
         end
         return pos
     else
         if verbose
-            warn("could not insert an grain into " *
-                 "$(typeof(grid)) grid cell ($i, $j)")
+            Compat.@warn "could not insert an grain into " *
+                 "$(typeof(grid)) grid cell ($i, $j)"
         end
         return false
     end
@@ -727,22 +732,22 @@ function setGridBoundaryConditions!(grid::Any,
         error("Mode '$mode' not recognized as a valid boundary condition type")
     end
 
-    if contains(grid_face, "west")
+    if Compat.occursin("west", grid_face)
         grid.bc_west = grid_bc_flags[mode]
         something_changed = true
     end
 
-    if contains(grid_face, "south")
+    if Compat.occursin("south", grid_face)
         grid.bc_south = grid_bc_flags[mode]
         something_changed = true
     end
 
-    if contains(grid_face, "east")
+    if Compat.occursin("east", grid_face)
         grid.bc_east = grid_bc_flags[mode]
         something_changed = true
     end
 
-    if contains(grid_face, "north")
+    if Compat.occursin("north", grid_face)
         grid.bc_north = grid_bc_flags[mode]
         something_changed = true
     end
@@ -756,8 +761,8 @@ function setGridBoundaryConditions!(grid::Any,
     end
 
     if !something_changed
-        error("grid_face string '$grid_face' not understood, must be east, " *
-              "west, north, and/or south.")
+        error("grid_face string '$grid_face' not understood, " *
+              "must be east, west, north, and/or south.")
     end
 
     if verbose
@@ -1028,9 +1033,9 @@ function fitGridToGrains!(simulation::Simulation, grid::Any;
     end
 
     if verbose
-        info("Created regular $(typeof(grid)) grid from " *
+        Compat.@info "Created regular $(typeof(grid)) grid from " *
              "[$min_x, $min_y] to [$max_x, $max_y] " *
-             "with a cell size of $dx ($n).")
+             "with a cell size of $dx ($n)."
     end
 
     nothing
@@ -1039,7 +1044,7 @@ end
 function findPorosity!(sim::Simulation, grid::Any; verbose::Bool=true)
 
     if !isassigned(grid.grain_list)
-        info("Sorting grains in grid")
+        Compat.@info "Sorting grains in grid"
         sortGrainsInGrid!(sim, grid, verbose=verbose)
     end
 

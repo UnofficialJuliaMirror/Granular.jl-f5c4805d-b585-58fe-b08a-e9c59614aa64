@@ -1,3 +1,5 @@
+import Compat
+
 export updateGrainKinematics!
 """
     updateGrainKinematics!(simulation::Simulation[,

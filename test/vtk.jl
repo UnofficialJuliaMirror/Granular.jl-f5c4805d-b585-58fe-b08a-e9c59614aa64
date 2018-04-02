@@ -3,9 +3,9 @@ import Compat
 
 # Check the contact search and geometry of a two-particle interaction
 
-info("#### $(basename(@__FILE__)) ####")
+Compat.@info "#### $(basename(@__FILE__)) ####"
 
-info("Writing simple simulation to VTK file")
+Compat.@info "Writing simple simulation to VTK file"
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.addGrainCylindrical!(sim, [18., 0.], 10., 1., verbose=false)
@@ -19,7 +19,7 @@ if Compat.Sys.islinux()
 elseif Compat.Sys.isapple()
     cmd = ["shasum", "-a", "256"]
 elseif Compat.Sys.iswindows()
-    info("checksum verification not yet implemented on Windows")
+    Compat.@info "checksum verification not yet implemented on Windows"
     exit()
     cmd = ["powershell", "-Command", "\"Get-FileHash", "-Algorithm", "SHA256"]
     cmd_post = "\""
@@ -49,7 +49,7 @@ oceanpath * "\n"
 
 Granular.removeSimulationFiles(sim)
 
-info("Testing VTK write during run!()")
+Compat.@info "Testing VTK write during run!()"
 Granular.setOutputFileInterval!(sim, 1e-9)
 Granular.setTotalTime!(sim, 1.5)
 Granular.setTimeStep!(sim)
@@ -61,13 +61,13 @@ Granular.run!(sim)
 
 Granular.status()
 
-info("Testing generation of Paraview Python script")
+Compat.@info "Testing generation of Paraview Python script"
 Granular.writeParaviewPythonScript(sim,
                                  save_animation=true,
                                  save_images=false)
 @test isfile("$(sim.id)/$(sim.id).py") && filesize("$(sim.id)/$(sim.id).py") > 0
 
-info("Testing Paraview rendering if `pvpython` is present")
+Compat.@info "Testing Paraview rendering if `pvpython` is present"
 try
     run(`pvpython $(sim.id)/$(sim.id).py`)
 catch return_signal

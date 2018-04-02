@@ -1,6 +1,8 @@
 ## Manage grains in the model
 
+import Compat
 using Compat.Test
+using Compat.LinearAlgebra
 
 export addGrainCylindrical!
 """
@@ -182,22 +184,24 @@ function addGrainCylindrical!(simulation::Simulation,
 
     # Check input values
     if length(lin_pos) != 2
-        error("Linear position must be a two-element array (lin_pos = ",
-              "$lin_pos)")
+        error("Linear position must be a two-element array " *
+              "(lin_pos = $lin_pos)")
     end
     if length(lin_vel) != 2
-        error("Linear velocity must be a two-element array (lin_vel = ",
-              "$lin_vel)")
+        error("Linear velocity must be a two-element array " *
+              "(lin_vel = $lin_vel)")
     end
     if length(lin_acc) != 2
-        error("Linear acceleration must be a two-element array (lin_acc = ",
-              "$lin_acc)")
+        error("Linear acceleration must be a two-element array " *
+              "(lin_acc = $lin_acc)")
     end
     if contact_radius <= 0.0
-        error("Radius must be greater than 0.0 (radius = $contact_radius m)")
+        error("Radius must be greater than 0.0 " *
+              "(radius = $contact_radius m)")
     end
     if density <= 0.0
-        error("Density must be greater than 0.0 (density = $density kg/m^3)")
+        error("Density must be greater than 0.0 " *
+              "(density = $density kg/m^3)")
     end
 
     if !areal_radius

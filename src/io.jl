@@ -1,4 +1,6 @@
 import WriteVTK
+import Compat
+using Compat.LinearAlgebra
 
 hasJLD = false
 if typeof(Pkg.installed("JLD")) == VersionNumber
@@ -28,9 +30,10 @@ function writeSimulation(simulation::Simulation;
                          folder::String=".",
                          verbose::Bool=true)
     if !hasJLD
-        warn("Package JLD not found. Simulation save/read not supported. " * 
+        Compat.@warn "Package JLD not found. " *
+            "Simulation save/read not supported. " * 
              "Please install JLD and its " *
-             "requirements with `Pkg.add(\"JLD\")`.")
+             "requirements with `Pkg.add(\"JLD\")`."
     else
         if filename == ""
             folder = folder * "/" * simulation.id
@@ -42,7 +45,7 @@ function writeSimulation(simulation::Simulation;
         JLD.save(filename, "simulation", simulation)
 
         if verbose
-            info("simulation written to $filename")
+            Compat.@info "simulation written to $filename"
         end
     end
     nothing
@@ -63,14 +66,15 @@ Return `Simulation` content read from disk using the JDL format.
 function readSimulation(filename::String;
                          verbose::Bool=true)
     if !hasJLD
-        warn("Package JLD not found. Simulation save/read not supported. " * 
+        Compat.@warn "Package JLD not found. " *
+            "Simulation save/read not supported. " * 
              "Please install JLD and its " *
-             "requirements with `Pkg.add(\"JLD\")`.")
+             "requirements with `Pkg.add(\"JLD\")`."
         nothing
     else
         return JLD.load(filename, "simulation")
         if verbose
-            info("Read simulation from $filename")
+            Compat.@info "Read simulation from $filename"
         end
     end
 end
@@ -93,9 +97,9 @@ function readSimulation(simulation::Simulation;
                          step::Integer = -1,
                          verbose::Bool = true)
     if !hasJLD
-        warn("Package JLD not found. Simulation save/read not supported. " * 
+        Compat.@warn "Package JLD not found. Simulation save/read not supported. " * 
              "Please install JLD and its " *
-             "requirements with `Pkg.add(\"JLD\")`.")
+             "requirements with `Pkg.add(\"JLD\")`."
         nothing
     else
         if step == -1
@@ -103,7 +107,7 @@ function readSimulation(simulation::Simulation;
         end
         filename = string(simulation.id, "/", simulation.id, ".$step.jld")
         if verbose
-            info("Read simulation from $filename")
+            Compat.@info "Read simulation from $filename"
         end
         return JLD.load(filename, "simulation")
     end
@@ -128,7 +132,7 @@ function writeSimulationStatus(simulation::Simulation;
                         simulation.time/simulation.time_total*100.
                         float(simulation.file_number)])
     if verbose
-        info("Wrote status to $filename")
+        Compat.@info "Wrote status to $filename"
     end
     nothing
 end
@@ -154,10 +158,10 @@ function readSimulationStatus(simulation_id::String;
 
     data = readdlm(filename)
     if verbose
-        info("$simulation_id:\n" *
+        Compat.@info "$simulation_id:\n" *
              "  time:             $(data[1]) s\n" *
              "  complete:         $(data[2])%\n" *
-             "  last output file: $(Int(round(data[3])))\n")
+             "  last output file: $(Int(round(data[3])))\n"
     end
     return Int(round(data[3]))
 """
@@ -226,7 +230,7 @@ function status(folder::String=".";
         for (root, dirs, files) in walkdir(folder, follow_symlinks=false)
 
             for file in files
-                if contains(file, ".status.txt")
+                if Compat.occursin(".status.txt", file)
                     push!(status_files, joinpath(root, file))
                 end
             end
@@ -272,7 +276,7 @@ function status(folder::String=".";
                         "--------------------------------------")
             end
         else
-            warn("no simulations found in $(pwd())/$folder")
+            Compat.@warn "no simulations found in $(pwd())/$folder"
         end
 
         if loop && t_int > 0
@@ -443,7 +447,7 @@ function writeGrainVTK(simulation::Simulation,
 
     outfiles = WriteVTK.vtk_save(vtkfile)
     if verbose
-        info("Output file: " * outfiles[1])
+        Compat.@info "Output file: $(outfiles[1])"
     end
     nothing
 end
@@ -773,7 +777,7 @@ function writeGridVTK(grid::Any,
 
     outfiles = WriteVTK.vtk_save(vtkfile)
     if verbose
-        info("Output file: " * outfiles[1])
+        Compat.@info "Output file: $(outfiles[1])"
     end
     nothing
 end
@@ -1045,8 +1049,8 @@ FrameWindow=[0, $(simulation.file_number)])
         end
     end
     if verbose
-        info("$(filename) written, execute with " *
-             "'pvpython $(vtk_folder)/$(simulation.id).py'")
+        Compat.@info "$(filename) written, execute with " *
+             "'pvpython $(vtk_folder)/$(simulation.id).py'"
     end
 end
 
@@ -1098,14 +1102,16 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                     -loop 0 $(simulation.id)/$(simulation.id).'*'.png 
                     $(simulation.id)/$(simulation.id).gif`)
                 if reverse
-                    run(`$convert -trim +repage -delay 10 -transparent-color white 
+                    run(`$convert -trim +repage -delay 10 
+                        -transparent-color white 
                         -loop 0 -reverse
                         $(simulation.id)/$(simulation.id).'*'.png 
                         $(simulation.id)/$(simulation.id)-reverse.gif`)
                 end
             catch return_signal
                 if isa(return_signal, Base.UVError)
-                    info("Skipping gif merge since `$convert` was not found.")
+                    Compat.@info "Skipping gif merge since `$convert` " *
+                        "was not found."
                 end
             end
         end
@@ -1194,7 +1200,7 @@ function plotGrainSizeDistribution(simulation::Simulation;
     gnuplotscript = Base.Filesystem.tempname()
 
     #if maximum(diameters) ≈ minimum(diameters)
-        #info("Overriding `nbins = $nbins` -> `nbins = 1`.")
+        #Compat.@info "Overriding `nbins = $nbins` -> `nbins = 1`."
         #nbins = 1
     #end
 
@@ -1227,7 +1233,7 @@ function plotGrainSizeDistribution(simulation::Simulation;
     end
 
     if verbose
-        info(filename)
+        Compat.@info filename
     end
 end
 
@@ -1451,7 +1457,7 @@ function plotGrains(sim::Simulation;
     end
 
     if verbose
-        info(filename)
+        Compat.@info filename
     end
 
     if show_figure

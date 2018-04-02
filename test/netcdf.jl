@@ -2,12 +2,12 @@
 
 # Check if NetCDF files are read correctly from the disk.
 
-info("#### $(basename(@__FILE__)) ####")
+Compat.@info "#### $(basename(@__FILE__)) ####"
 
 @test_throws ErrorException Granular.readOceanStateNetCDF("nonexistentfile")
 @test_throws ErrorException Granular.readOceanGridNetCDF("nonexistentfile")
 
-info("Testing dimensions of content read from Baltic test case")
+Compat.@info "Testing dimensions of content read from Baltic test case"
 ocean = Granular.readOceanNetCDF("Baltic/00010101.ocean_month.nc",
                                "Baltic/ocean_hgrid.nc")
 @test ocean.time / (24. * 60. * 60.) ≈ [.5, 1.5, 2.5, 3.5, 4.5]
@@ -20,7 +20,7 @@ ocean = Granular.readOceanNetCDF("Baltic/00010101.ocean_month.nc",
 @test size(ocean.h) == (23, 14, 63, 5)
 @test size(ocean.e) == (23, 14, 64, 5)
 
-info("Testing ocean state interpolation")
+Compat.@info "Testing ocean state interpolation"
 @test_throws ErrorException Granular.interpolateOceanState(ocean, time=0.)
 @test_throws ErrorException Granular.interpolateOceanState(ocean, time=1.e34)
 u1, v1, h1, e1 = Granular.interpolateOceanState(ocean, ocean.time[1])

@@ -9,11 +9,11 @@ import Plots
 import Granular
 import CurveFit
 
-info("#### $(basename(@__FILE__)) ####")
+Compat.@info "#### $(basename(@__FILE__)) ####"
 
 verbose=false
 
-info("Testing performance with many interacting grains")
+Compat.@info "Testing performance with many interacting grains"
 
 function timeSingleStepInDenseSimulation(nx::Int; verbose::Bool=true,
                                          profile::Bool=false,
@@ -104,7 +104,7 @@ memory_usage_all_to_all = zeros(length(nx))
 memory_usage_cell_sorting = zeros(length(nx))
 memory_usage_cell_sorting2 = zeros(length(nx))
 for i=1:length(nx)
-    info("nx = $(nx[i])")
+    Compat.@info "nx = $(nx[i])"
     t_elapsed_all_to_all[i], memory_usage_all_to_all[i] =
         timeSingleStepInDenseSimulation(Int(nx[i]), grid_sorting=false)
     t_elapsed_cell_sorting[i], memory_usage_cell_sorting[i] =

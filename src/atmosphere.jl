@@ -1,4 +1,6 @@
+import Compat
 using Compat.Test
+using Compat.LinearAlgebra
 
 export createEmptyAtmosphere
 "Returns empty ocean type for initialization purposes."
@@ -73,8 +75,8 @@ function interpolateAtmosphereState(atmosphere::Atmosphere, t::Float64)
     if length(atmosphere.time) == 1
         return atmosphere.u, atmosphere.v
     elseif t < atmosphere.time[1] || t > atmosphere.time[end]
-        error("selected time (t = $(t)) is outside the range of time steps in 
-              the atmosphere data")
+        error("selected time (t = $(t)) is outside the range of " *
+              "time steps in the atmosphere data")
     end
 
     i = 1
@@ -134,16 +136,22 @@ function createRegularAtmosphereGrid(n::Vector{Int},
                                      bc_east::Integer = 1,
                                      bc_north::Integer = 1)
 
-    xq = repmat(linspace(origo[1], origo[1] + L[1], n[1] + 1), 1, n[2] + 1)
-    yq = repmat(linspace(origo[2], origo[2] + L[2], n[2] + 1)', n[1] + 1, 1)
+    xq = repeat(Compat.range(origo[1], stop=origo[1] + L[1], length=n[1] + 1),
+                1, n[2] + 1)
+    yq = repeat(Compat.range(origo[2], stop=origo[2] + L[2], length=n[2] + 1)',
+                n[1] + 1, 1)
 
     dx = L./n
-    xh = repmat(linspace(origo[1] + .5*dx[1], origo[1] + L[1] - .5*dx[1],
-                         n[1]), 1, n[2])
-    yh = repmat(linspace(origo[2] + .5*dx[2], origo[1] + L[2] - .5*dx[2],
-                         n[2])', n[1], 1)
+    xh = repeat(Compat.range(origo[1] + .5*dx[1],
+                             stop=origo[1] + L[1] - .5*dx[1],
+                             length=n[1]),
+                1, n[2])
+    yh = repeat(Compat.range(origo[2] + .5*dx[2],
+                             stop=origo[1] + L[2] - .5*dx[2],
+                             length=n[2])',
+                n[1], 1)
 
-    zl = -linspace(.5*dx[3], L[3] - .5*dx[3], n[3])
+    zl = -Compat.range(.5*dx[3], stop=L[3] - .5*dx[3], length=n[3])
 
     u = zeros(n[1] + 1, n[2] + 1, n[3], length(time))
     v = zeros(n[1] + 1, n[2] + 1, n[3], length(time))

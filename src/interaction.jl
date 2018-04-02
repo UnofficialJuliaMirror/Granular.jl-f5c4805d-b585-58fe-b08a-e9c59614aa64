@@ -1,4 +1,6 @@
 ## Interaction functions
+import Compat
+using Compat.LinearAlgebra
 
 export interact!
 """
@@ -125,51 +127,50 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
 
     # Inter-position vector, use stored value which is corrected for boundary
     # periodicity
-    const p = simulation.grains[i].position_vector[ic]
-    const dist = norm(p)
+    p = simulation.grains[i].position_vector[ic]
+    dist = norm(p)
 
-    const r_i = simulation.grains[i].contact_radius
-    const r_j = simulation.grains[j].contact_radius
+    r_i = simulation.grains[i].contact_radius
+    r_j = simulation.grains[j].contact_radius
 
     # Floe distance; <0: compression, >0: tension
-    const δ_n = dist - (r_i + r_j)
+    δ_n = dist - (r_i + r_j)
 
     # Local axes
-    const n = p/dist
-    const t = [-n[2], n[1]]
+    n = p/dist
+    t = [-n[2], n[1]]
 
     # Contact kinematics
-    const vel_lin = simulation.grains[i].lin_vel -
-        simulation.grains[j].lin_vel
-    const vel_n = dot(vel_lin, n)
-    const vel_t = dot(vel_lin, t) -
+    vel_lin = simulation.grains[i].lin_vel - simulation.grains[j].lin_vel
+    vel_n = dot(vel_lin, n)
+    vel_t = dot(vel_lin, t) -
         harmonicMean(r_i, r_j)*(simulation.grains[i].ang_vel +
                                 simulation.grains[j].ang_vel)
 
     # Correct old tangential displacement for contact rotation and add new
-    const δ_t0 = simulation.grains[i].contact_parallel_displacement[ic]
-    const δ_t = dot(t, δ_t0 - (n*dot(n, δ_t0))) + vel_t*simulation.time_step
+    δ_t0 = simulation.grains[i].contact_parallel_displacement[ic]
+    δ_t = dot(t, δ_t0 - (n*dot(n, δ_t0))) + vel_t*simulation.time_step
 
     # Determine the contact rotation
-    const θ_t = simulation.grains[i].contact_rotation[ic] +
+    θ_t = simulation.grains[i].contact_rotation[ic] +
         (simulation.grains[j].ang_vel - simulation.grains[i].ang_vel) *
         simulation.time_step
 
     # Effective radius
-    const R_ij = harmonicMean(r_i, r_j)
+    R_ij = harmonicMean(r_i, r_j)
 
     # Contact area
-    const A_ij = R_ij*min(simulation.grains[i].thickness, 
-                          simulation.grains[j].thickness)
+    A_ij = R_ij*min(simulation.grains[i].thickness, 
+                    simulation.grains[j].thickness)
 
     # Contact mechanical parameters
     if simulation.grains[i].youngs_modulus > 0. &&
         simulation.grains[j].youngs_modulus > 0.
 
-        const E = harmonicMean(simulation.grains[i].youngs_modulus,
-                               simulation.grains[j].youngs_modulus)
-        const ν = harmonicMean(simulation.grains[i].poissons_ratio,
-                               simulation.grains[j].poissons_ratio)
+        E = harmonicMean(simulation.grains[i].youngs_modulus,
+                         simulation.grains[j].youngs_modulus)
+        ν = harmonicMean(simulation.grains[i].poissons_ratio,
+                         simulation.grains[j].poissons_ratio)
 
         # Effective normal and tangential stiffness
         k_n = E * A_ij/R_ij
@@ -184,14 +185,14 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
                            simulation.grains[j].contact_stiffness_tangential)
     end
 
-    const γ_n = harmonicMean(simulation.grains[i].contact_viscosity_normal,
-                             simulation.grains[j].contact_viscosity_normal)
+    γ_n = harmonicMean(simulation.grains[i].contact_viscosity_normal,
+                       simulation.grains[j].contact_viscosity_normal)
 
-    const γ_t = harmonicMean(simulation.grains[i].contact_viscosity_tangential,
-                             simulation.grains[j].contact_viscosity_tangential)
+    γ_t = harmonicMean(simulation.grains[i].contact_viscosity_tangential,
+                       simulation.grains[j].contact_viscosity_tangential)
 
-    const μ_d_minimum = min(simulation.grains[i].contact_dynamic_friction,
-                            simulation.grains[j].contact_dynamic_friction)
+    μ_d_minimum = min(simulation.grains[i].contact_dynamic_friction,
+                      simulation.grains[j].contact_dynamic_friction)
 
     # Determine contact forces
     if k_n ≈ 0. && γ_n ≈ 0.  # No interaction
@@ -222,8 +223,8 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
     end
 
     # Grain-pair moment of inertia [m^4]
-    const I_ij = 2.0/3.0*R_ij^3*min(simulation.grains[i].thickness,
-                                 simulation.grains[j].thickness)
+    I_ij = 2.0/3.0*R_ij^3*min(simulation.grains[i].thickness,
+                              simulation.grains[j].thickness)
 
 
     # Contact tensile strength increases linearly with contact age until

@@ -1,13 +1,13 @@
 #!/usr/bin/env julia
 import Compat
 
-info("#### $(basename(@__FILE__)) ####")
+Compat.@info "#### $(basename(@__FILE__)) ####"
 
 verbose=false
 
-info("## Inactive/Periodic BCs")
+Compat.@info "## Inactive/Periodic BCs"
 
-info("Testing assignment and reporting of grid boundary conditions")
+Compat.@info "Testing assignment and reporting of grid boundary conditions"
 ocean = Granular.createEmptyOcean()
 
 @test ocean.bc_west == 1
@@ -16,7 +16,7 @@ ocean = Granular.createEmptyOcean()
 @test ocean.bc_south == 1
 
 if !Compat.Sys.iswindows()
-    const originalSTDOUT = STDOUT
+    const originalSTDOUT = Compat.stdout
     (out_r, out_w) = redirect_stdout()
     Granular.reportGridBoundaryConditions(ocean)
     close(out_w)
@@ -108,7 +108,7 @@ if !Compat.Sys.iswindows()
                                                                     "asdf")
 end
 
-info("Testing granular interaction across periodic boundaries")
+Compat.@info "Testing granular interaction across periodic boundaries"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "periodic")
@@ -127,7 +127,7 @@ Granular.findContacts!(sim, method="ocean grid")
 @test 1 == sim.grains[2].n_contacts
 
 
-info("Test grain position adjustment across periodic boundaries")
+Compat.@info "Test grain position adjustment across periodic boundaries"
 # do not readjust inside grid, inactive boundaries
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])
@@ -193,9 +193,9 @@ Granular.addGrainCylindrical!(sim, [0.3, 1.1], 0.11, 0.1, verbose=false)
 @test_throws ErrorException Granular.moveGrainsAcrossPeriodicBoundaries!(sim)
 
 
-info("## Impermeable BCs")
+Compat.@info "## Impermeable BCs"
 
-info("Test grain velocity adjustment across impermeable boundaries")
+Compat.@info "Test grain velocity adjustment across impermeable boundaries"
 # do not readjust inside grid, inactive boundaries
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])

@@ -4,9 +4,9 @@ import Granular
 
 # Check the contact search and geometry of a two-particle interaction
 
-info("#### $(basename(@__FILE__)) ####")
+Compat.@info "#### $(basename(@__FILE__)) ####"
 
-info("Testing interGrainPositionVector(...) and findOverlap(...)")
+Compat.@info "Testing interGrainPositionVector(...) and findOverlap(...)"
 sim = Granular.createSimulation("test")
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0.01, 0.01], 10., 1., verbose=false)
@@ -19,12 +19,12 @@ overlap_ij = Granular.findOverlap(sim, 1, 2, position_ij)
 @test -2. ≈ overlap_ij
 
 
-info("Testing findContactsAllToAll(...)")
+Compat.@info "Testing findContactsAllToAll(...)"
 sim_copy = deepcopy(sim)
 Granular.findContactsAllToAll!(sim)
 
 
-info("Testing findContacts(...)")
+Compat.@info "Testing findContacts(...)"
 sim = deepcopy(sim_copy)
 Granular.findContacts!(sim)
 
@@ -45,7 +45,7 @@ end
 @test 1 == sim.grains[1].n_contacts
 @test 1 == sim.grains[2].n_contacts
 
-info("Testing findContacts(...)")
+Compat.@info "Testing findContacts(...)"
 sim = deepcopy(sim_copy)
 Granular.findContacts!(sim)
 
@@ -118,7 +118,7 @@ end
 @test 0 == sim.grains[1].n_contacts
 @test 0 == sim.grains[2].n_contacts
 
-info("Testing if interact(...) removes contacts correctly")
+Compat.@info "Testing if interact(...) removes contacts correctly"
 sim = deepcopy(sim_copy)
 Granular.findContacts!(sim)
 Granular.interact!(sim)
@@ -140,7 +140,7 @@ end
 @test 1 == sim.grains[2].n_contacts
 
 
-info("Testing findContactsGrid(...)")
+Compat.@info "Testing findContactsGrid(...)"
 sim = deepcopy(sim_copy)
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [80., 80., 2.])
 Granular.sortGrainsInGrid!(sim, sim.ocean)
@@ -202,7 +202,7 @@ end
 @test 0 == sim.grains[1].n_contacts
 @test 0 == sim.grains[2].n_contacts
 
-info("Testing findContacts(...)")
+Compat.@info "Testing findContacts(...)"
 sim = deepcopy(sim_copy)
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [80., 80., 2.])
 Granular.sortGrainsInGrid!(sim, sim.ocean)
@@ -224,7 +224,7 @@ end
 
 @test_throws ErrorException Granular.findContacts!(sim, method="")
 
-info("Testing contact registration with multiple contacts")
+Compat.@info "Testing contact registration with multiple contacts"
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [2., 2.], 1.01, 1., verbose=false)
 Granular.addGrainCylindrical!(sim, [4., 2.], 1.01, 1., verbose=false)
@@ -268,7 +268,7 @@ for i=1:9
     @test sim.grains[i].n_contacts == 0
 end
 
-info("Test contact search in regular square grid (all to all)")
+Compat.@info "Test contact search in regular square grid (all to all)"
 sim = Granular.createSimulation()
 nx = 60; ny = 50
 Granular.regularPacking!(sim, [nx, ny], 1., 1., padding_factor=0,
@@ -285,7 +285,7 @@ for j=2:(ny-1)
     end
 end
 
-info("Test contact search in regular square grid (sorting grid)")
+Compat.@info "Test contact search in regular square grid (sorting grid)"
 sim = Granular.createSimulation()
 nx = 60; ny = 50
 Granular.regularPacking!(sim, [nx, ny], 1., 1., padding_factor=0,

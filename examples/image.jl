@@ -3,6 +3,7 @@
 import Granular
 import FileIO
 import Colors
+import Compat
 
 const verbose = true
 
@@ -43,7 +44,7 @@ const h = .5
 
 sim = Granular.createSimulation(id="image")
 
-info("nx = $nx, ny = $ny")
+Compat.@info "nx = $nx, ny = $ny"
 
 for iy=1:size(img_bw, 1)
     for ix=1:size(img_bw, 2)
@@ -88,12 +89,12 @@ if forcing == "gyres"
     end
 
 elseif forcing == "down" || forcing == "sandpile"
-    srand(1)
+    Compat.srand(1)
     sim.ocean.u[:, :, 1, 1] = (rand(nx+1, ny+1) - .5)*.1
     sim.ocean.v[:, :, 1, 1] = -Ly/5.
 
 elseif forcing == "convergent"
-    srand(1)
+    Compat.srand(1)
     sim.ocean.u[:, :, 1, 1] = (rand(nx+1, ny+1) - .5)*.1
     for j=1:size(sim.ocean.u, 2)
         sim.ocean.v[:, j, 1, 1] = -(j/ny - .5)*10.
@@ -107,7 +108,7 @@ end
 r = dx/4.
 
 ## N-S wall segments
-for y in linspace(r, Ly-r, Int(round((Ly - 2.*r)/(r*2))))
+for y in Compat.range(r, stop=Ly-r, length=Int(round((Ly - 2.*r)/(r*2))))
     Granular.addGrainCylindrical!(sim, [r, y], r, h, fixed=true,
                                   youngs_modulus=youngs_modulus,
                                   verbose=false)
@@ -117,7 +118,7 @@ for y in linspace(r, Ly-r, Int(round((Ly - 2.*r)/(r*2))))
 end
 
 ## E-W wall segments
-for x in linspace(3.*r, Lx-3.*r, Int(round((Lx - 6.*r)/(r*2))))
+for x in Compat.range(3.*r, stop=Lx-3.*r, length=Int(round((Lx - 6.*r)/(r*2))))
     Granular.addGrainCylindrical!(sim, [x, r], r, h, fixed=true,
                                   youngs_modulus=youngs_modulus,
                                   verbose=false)

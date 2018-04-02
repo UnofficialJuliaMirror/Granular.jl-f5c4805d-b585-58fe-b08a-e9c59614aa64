@@ -3,6 +3,7 @@ ENV["MPLBACKEND"] = "Agg"
 import Granular
 import JLD
 import PyPlot
+import Compat
 
 ################################################################################
 #### SIMULATION PARAMETERS                                                     #
@@ -132,7 +133,7 @@ end
 Granular.addWallLinearFrictionless!(sim, [0., 1.], y_top,
                                     bc="normal stress", normal_stress=-N,
                                     contact_viscosity_normal=1e3)
-info("Placing top wall at y=$y_top")
+Compat.@info "Placing top wall at y=$y_top"
 
 # Resize the grid to span the current state
 Granular.fitGridToGrains!(sim, sim.ocean)

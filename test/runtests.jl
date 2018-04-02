@@ -1,4 +1,6 @@
+import Compat
 using Compat.Test
+using Compat.LinearAlgebra
 import Granular
 
 include("collision-2floes-normal.jl")

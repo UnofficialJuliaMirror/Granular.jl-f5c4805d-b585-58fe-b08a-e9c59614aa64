@@ -1,5 +1,7 @@
 ## Manage dynamic walls in the model
 
+import Compat
+
 export addWallLinearFrictionless!
 """
     function addWallLinear!(simulation, normal, pos[, bc, mass, thickness, 
@@ -84,7 +86,7 @@ function addWallLinearFrictionless!(simulation::Simulation,
 
     # Check input values
     if length(normal) != 2
-        error("Wall normal must be a two-element array (normal = ",
+        error("Wall normal must be a two-element array (normal = " *
               "$normal)")
     end
 
@@ -102,23 +104,23 @@ function addWallLinearFrictionless!(simulation::Simulation,
     # if not set, set wall mass to equal the mass of all grains.
     if mass < 0.
         if length(simulation.grains) < 1
-            error("If wall mass is not specified, walls should be added " *
-                  "after grains have been added to the simulation.")
+            error("If wall mass is not specified, walls should be " *
+                  "added after grains have been added to the simulation.")
         end
         mass = 0.
         for grain in simulation.grains
             mass += grain.mass
         end
         if verbose
-            info("Setting wall mass to total grain mass: $mass kg")
+            Compat.@info "Setting wall mass to total grain mass: $mass kg"
         end
     end
 
     # if not set, set wall thickness to equal largest grain thickness
     if thickness < 0.
         if length(simulation.grains) < 1
-            error("If wall thickness is not specified, walls should be added " *
-                  "after grains have been added to the simulation.")
+            error("If wall thickness is not specified, walls should " *
+                  "be added after grains have been added to the simulation.")
         end
         thickness = -Inf
         for grain in simulation.grains
@@ -127,7 +129,7 @@ function addWallLinearFrictionless!(simulation::Simulation,
             end
         end
         if verbose
-            info("Setting wall thickness to max grain thickness: $thickness m")
+            Compat.@info "Setting wall thickness to max grain thickness: $thickness m"
         end
     end
 
@@ -219,7 +221,7 @@ function getWallNormalStress(sim::Simulation;
     elseif stress_type == "effective"
         return sim.walls[wall_index].force / getWallSurfaceArea(sim, wall_index)
     else
-        error("stress_type not understood, should be 'effective' or 'defined'" *
-              " but is '$stress_type'.")
+        error("stress_type not understood, " *
+              "should be 'effective' or 'defined' but is '$stress_type'.")
     end
 end

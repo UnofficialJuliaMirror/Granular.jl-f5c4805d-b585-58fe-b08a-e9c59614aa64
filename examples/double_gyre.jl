@@ -1,5 +1,6 @@
 #!/usr/bin/env julia
 import Granular
+import Compat
 
 sim = Granular.createSimulation(id="double_gyre")
 
@@ -34,7 +35,7 @@ r = minimum(L[1:2]/n[1:2])/2.
 h = 1.
 
 ## N-S wall segments
-for y in linspace(r, L[2]-r, Int(round((L[2] - 2.*r)/(r*2))))
+for y in Compat.range(r, stop=L[2]-r, length=Int(round((L[2] - 2.*r)/(r*2))))
     Granular.addGrainCylindrical!(sim, [r, y], r, h, fixed=true,
                                   verbose=false)
     Granular.addGrainCylindrical!(sim, [L[1]-r, y], r, h, fixed=true,
@@ -42,7 +43,8 @@ for y in linspace(r, L[2]-r, Int(round((L[2] - 2.*r)/(r*2))))
 end
 
 ## E-W wall segments
-for x in linspace(3.*r, L[1]-3.*r, Int(round((L[1] - 6.*r)/(r*2))))
+for x in Compat.range(3.*r, stop=L[1]-3.*r,
+                      length=Int(round((L[1] - 6.*r)/(r*2))))
     Granular.addGrainCylindrical!(sim, [x, r], r, h, fixed=true,
                                   verbose=false)
     Granular.addGrainCylindrical!(sim, [x, L[2]-r], r, h, fixed=true,
@@ -50,14 +52,14 @@ for x in linspace(3.*r, L[1]-3.*r, Int(round((L[1] - 6.*r)/(r*2))))
 end
 
 n_walls = length(sim.grains)
-info("added $(n_walls) fixed ice floes as walls")
+Compat.@info "added $(n_walls) fixed ice floes as walls"
 
 
 
 # Initialize ice floes everywhere
 floe_padding = .5*r
 noise_amplitude = .8*floe_padding
-srand(1)
+Compat.srand(1)
 for y in (4.*r + noise_amplitude):(2.*r + floe_padding):(L[2] - 4.*r - 
                                                          noise_amplitude)
                                                          
@@ -74,7 +76,7 @@ for y in (4.*r + noise_amplitude):(2.*r + floe_padding):(L[2] - 4.*r -
     end
 end
 n = length(sim.grains) - n_walls
-info("added $(n) ice floes")
+Compat.@info "added $(n) ice floes"
 
 # Remove old simulation files
 Granular.removeSimulationFiles(sim)

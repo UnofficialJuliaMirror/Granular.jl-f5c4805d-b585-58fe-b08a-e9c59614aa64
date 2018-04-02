@@ -1,3 +1,6 @@
+import Compat
+using Compat.LinearAlgebra
+
 ## Contact mapping
 export findContacts!
 """
@@ -76,15 +79,15 @@ function findContactsAllToAll!(simulation::Simulation)
         simulation.ocean.bc_east > 1 ||
         simulation.ocean.bc_north > 1 ||
         simulation.ocean.bc_south > 1
-        error("Ocean boundary conditions to not work with all-to-all contact " *
-              "search")
+        error("Ocean boundary conditions to not work with all-to-all " *
+              "contact search")
     end
     if simulation.atmosphere.bc_west > 1 ||
         simulation.atmosphere.bc_east > 1 ||
         simulation.atmosphere.bc_north > 1 ||
         simulation.atmosphere.bc_south > 1
-        error("Atmopshere boundary conditions to not work with all-to-all " *
-              "contact search")
+        error("Atmopshere boundary conditions to not work with " *
+              "all-to-all contact search")
     end
 
     @inbounds for i = 1:length(simulation.grains)
@@ -289,7 +292,7 @@ function checkAndAddContact!(sim::Simulation, i::Int, j::Int,
         for ic=1:sim.Nc_max
             @inbounds if sim.grains[i].contacts[ic] == j
                 contact_found = true
-                @inbounds sim.grains[i].position_vector[ic] .= position_ij
+                @inbounds sim.grains[i].position_vector[ic] = position_ij
                 nothing  # contact already registered
             end
         end
@@ -305,13 +308,14 @@ function checkAndAddContact!(sim::Simulation, i::Int, j::Int,
                     # Test if this contact exceeds the number of contacts
                     if ic == (sim.Nc_max + 1)
                         for ic=1:sim.Nc_max
-                            warn("grains[$i].contacts[$ic] = " *
-                                 "$(sim.grains[i].contacts[ic])")
-                            warn("grains[$i].contact_age[$ic] = " *
-                                 "$(sim.grains[i].contact_age[ic])")
+                            Compat.@warn "grains[$i].contacts[$ic] = " *
+                                 "$(sim.grains[i].contacts[ic])"
+                            Compat.@warn "grains[$i].contact_age[$ic] = " *
+                                 "$(sim.grains[i].contact_age[ic])"
                         end
-                        error("contact $i-$j exceeds max. number of contacts " *
-                              "(sim.Nc_max = $(sim.Nc_max)) for grain $i")
+                        error("contact $i-$j exceeds max. number of " *
+                              "contacts (sim.Nc_max = $(sim.Nc_max)) " *
+                              "for grain $i")
                     end
 
                     # Register as new contact
@@ -319,7 +323,7 @@ function checkAndAddContact!(sim::Simulation, i::Int, j::Int,
                         @inbounds sim.grains[i].n_contacts += 1
                         @inbounds sim.grains[j].n_contacts += 1
                         @inbounds sim.grains[i].contacts[ic] = j
-                        @inbounds sim.grains[i].position_vector[ic] .=
+                        @inbounds sim.grains[i].position_vector[ic] =
                             position_ij
                         @inbounds fill!(sim.grains[i].
                               contact_parallel_displacement[ic] , 0.)

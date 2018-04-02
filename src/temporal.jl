@@ -1,3 +1,5 @@
+import Compat
+
 export setTotalTime!
 """
     setTotalTime!(simulation::Simulation, t::Float64)
@@ -54,7 +56,7 @@ this value is zero or negative, no output files will be written.
 function setOutputFileInterval!(simulation::Simulation, t::Float64; 
     verbose=true)
     if t <= 0.0 && verbose
-        info("No output files will be written")
+        Compat.@info "No output files will be written"
     end
     simulation.file_time_step = t
     nothing
@@ -72,12 +74,12 @@ export checkTimeParameters
 function checkTimeParameters(simulation::Simulation; single_step::Bool=false)
     if !single_step && (simulation.time_total <= 0.0 || simulation.time_total <= 
                         simulation.time)
-        error("Total time should be positive and larger than current time.\n",
-            "  t_total = ", simulation.time_total, " s, t = ", simulation.time, 
-            " s")
+        error("Total time should be positive and larger than current " *
+            "time.\n  t_total = $(simulation.time_total) s, " *
+            "t = $(simulation.time) s")
     end
     if simulation.time_step <= 0.0
-        error("Time step should be positive (t = ", simulation.time_step, ")")
+        error("Time step should be positive (t = $(simulation.time_step))")
     end
     nothing
 end
@@ -157,11 +159,11 @@ function setTimeStep!(simulation::Simulation;
     simulation.time_step = epsilon/(sqrt(maximum([k_n_max, k_t_max])/m_min))
 
     if simulation.time_step <= 1.0e-20
-        error("Time step too small or negative (", simulation.time_step, " s)")
+        error("Time step too small or negative ($(simulation.time_step) s)")
     end
 
     if verbose
-        info("Time step length t=",  simulation.time_step, " s")
+        Compat.@info "Time step length t=$(simulation.time_step) s"
     end
     nothing
 end

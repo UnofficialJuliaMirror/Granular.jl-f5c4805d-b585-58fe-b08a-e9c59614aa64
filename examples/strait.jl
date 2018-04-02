@@ -1,5 +1,6 @@
 #!/usr/bin/env julia
 import SeaIce
+import Compat
 
 sim = SeaIce.createSimulation(id="strait")
 n = [10, 10, 2]
@@ -22,15 +23,15 @@ h = 1.
 
 ## N-S segments
 r_walls = r_min
-for y in linspace((L[2] - Ly_constriction)/2.,
-                  Ly_constriction + (L[2] - Ly_constriction)/2., 
-                  Int(round(Ly_constriction/(r_walls*2))))
+for y in Compat.range((L[2] - Ly_constriction)/2.,
+                  stop=Ly_constriction + (L[2] - Ly_constriction)/2., 
+                  length=Int(round(Ly_constriction/(r_walls*2))))
     SeaIce.addIceFloeCylindrical!(sim, [(Lx - Lx_constriction)/2., y], r_walls, 
                                   h, fixed=true, verbose=false)
 end
-for y in linspace((L[2] - Ly_constriction)/2.,
-                  Ly_constriction + (L[2] - Ly_constriction)/2., 
-                  Int(round(Ly_constriction/(r_walls*2))))
+for y in Compat.range((L[2] - Ly_constriction)/2.,
+                  stop=Ly_constriction + (L[2] - Ly_constriction)/2., 
+                  length=Int(round(Ly_constriction/(r_walls*2))))
     SeaIce.addIceFloeCylindrical!(sim,
                                   [Lx_constriction +
                                    (L[1] - Lx_constriction)/2., y], r_walls, h, 
@@ -41,8 +42,9 @@ dx = 2.*r_walls*sin(atan((Lx - Lx_constriction)/(L[2] - Ly_constriction)))
 
 ## NW diagonal
 x = r_walls:dx:((Lx - Lx_constriction)/2.)
-y = linspace(L[2] - r_walls, (L[2] - Ly_constriction)/2. + Ly_constriction + 
-             r_walls, length(x))
+y = Compat.range(L[2] - r_walls,
+                 stop=(L[2] - Ly_constriction)/2. + Ly_constriction + r_walls,
+                 length=length(x))
 for i in 1:length(x)
     SeaIce.addIceFloeCylindrical!(sim, [x[i], y[i]], r_walls, h, fixed=true, 
                                   verbose=false)
@@ -50,8 +52,9 @@ end
 
 ## NE diagonal
 x = (L[1] - r_walls):(-dx):((Lx - Lx_constriction)/2. + Lx_constriction)
-y = linspace(L[2] - r_walls, (L[2] - Ly_constriction)/2. + Ly_constriction + 
-             r_walls, length(x))
+y = Compat.range(L[2] - r_walls,
+                 stop=(L[2] - Ly_constriction)/2. + Ly_constriction + r_walls,
+                 length=length(x))
 for i in 1:length(x)
     SeaIce.addIceFloeCylindrical!(sim, [x[i], y[i]], r_walls, h, fixed=true, 
                                   verbose=false)
@@ -59,7 +62,8 @@ end
 
 ## SW diagonal
 x = r_walls:dx:((Lx - Lx_constriction)/2.)
-y = linspace(r, (L[2] - Ly_constriction)/2. - r_walls, length(x))
+y = Compat.range(r, stop=(L[2] - Ly_constriction)/2. - r_walls,
+                 length=length(x))
 for i in 1:length(x)
     SeaIce.addIceFloeCylindrical!(sim, [x[i], y[i]], r_walls, h, fixed=true, 
                                   verbose=false)
@@ -67,14 +71,15 @@ end
 
 ## SE diagonal
 x = (L[1] - r_walls):(-dx):((Lx - Lx_constriction)/2. + Lx_constriction)
-y = linspace(r_walls, (L[2] - Ly_constriction)/2. - r_walls, length(x))
+y = Compat.range(r_walls, stop=(L[2] - Ly_constriction)/2. - r_walls,
+                 length=length(x))
 for i in 1:length(x)
     SeaIce.addIceFloeCylindrical!(sim, [x[i], y[i]], r_walls, h, fixed=true, 
                                   verbose=false)
 end
 
 n_walls = length(sim.ice_floes)
-info("added $(n_walls) fixed ice floes as walls")
+Compat.@info "added $(n_walls) fixed ice floes as walls"
 
 # Initialize ice floes in wedge north of the constriction
 iy = 1
@@ -82,7 +87,7 @@ dy = sqrt((2.*r_walls)^2. - dx^2.)
 spacing_to_boundaries = 4.*r
 floe_padding = .5*r
 noise_amplitude = floe_padding
-srand(1)
+Compat.srand(1)
 for y in (L[2] - r - noise_amplitude):(-(2.*r + floe_padding)):((L[2] - 
     Ly_constriction)/2. + Ly_constriction)
     for x in (r + noise_amplitude):(2.*r + floe_padding):(Lx - r - 
@@ -108,7 +113,7 @@ for y in (L[2] - r - noise_amplitude):(-(2.*r + floe_padding)):((L[2] -
     iy += 1
 end
 n = length(sim.ice_floes) - n_walls
-info("added $(n) ice floes")
+Compat.@info "added $(n) ice floes"
 
 # Remove old simulation files
 SeaIce.removeSimulationFiles(sim)

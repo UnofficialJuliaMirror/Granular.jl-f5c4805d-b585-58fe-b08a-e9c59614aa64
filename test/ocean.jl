@@ -3,9 +3,9 @@
 # Check if ocean-specific functions and grid operations are functioning 
 # correctly
 
-info("#### $(basename(@__FILE__)) ####")
+Compat.@info "#### $(basename(@__FILE__)) ####"
 
-info("Testing regular grid generation")
+Compat.@info "Testing regular grid generation"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([6, 6, 6], [1., 1., 1.])
 @test size(sim.ocean.xq) == (7, 7)
@@ -27,7 +27,7 @@ sim.ocean = Granular.createRegularOceanGrid([6, 6, 6], [1., 1., 1.])
 @test sim.ocean.h ≈ zeros(7, 7, 6, 1)
 @test sim.ocean.e ≈ zeros(7, 7, 6, 1)
 
-info("Testing velocity drag interaction (static ocean)")
+Compat.@info "Testing velocity drag interaction (static ocean)"
 Granular.addGrainCylindrical!(sim, [.5, .5], .25, .1)
 Granular.setTotalTime!(sim, 5.)
 Granular.setTimeStep!(sim)
@@ -43,7 +43,7 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test sim.grains[1].ocean_stress[1] < 0.
 @test sim.grains[1].ocean_stress[2] ≈ 0.
 
-info("Testing velocity drag interaction (static ice floe)")
+Compat.@info "Testing velocity drag interaction (static ice floe)"
 sim = deepcopy(sim_init)
 sim.ocean.v[:, :, 1, 1] = 0.1
 E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -56,7 +56,7 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test sim.grains[1].ocean_stress[1] ≈ 0.
 @test sim.grains[1].ocean_stress[2] > 0.
 
-info("Testing vortex interaction (static ocean)")
+Compat.@info "Testing vortex interaction (static ocean)"
 sim = deepcopy(sim_init)
 sim.grains[1].ang_vel = 0.1
 E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -69,7 +69,7 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test sim.grains[1].ang_pos > 0.     # check angular position orientation
 @test E_kin_lin_init ≈ E_kin_lin_final  # no linear velocity gained
 
-info("Testing vortex interaction (static ice floe)")
+Compat.@info "Testing vortex interaction (static ice floe)"
 sim = deepcopy(sim_init)
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
 sim.grains[1].lin_pos[1] = 0.5

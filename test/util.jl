@@ -1,8 +1,9 @@
 #!/usr/bin/env julia
+import Compat
 
-info("#### $(basename(@__FILE__)) ####")
+Compat.@info "#### $(basename(@__FILE__)) ####"
 
-info("Testing power-law RNG")
+Compat.@info "Testing power-law RNG"
 
 @test 1 == length(Granular.randpower())
 @test () == size(Granular.randpower())
@@ -13,7 +14,7 @@ info("Testing power-law RNG")
 @test 5 == length(Granular.randpower(5))
 @test (5,) == size(Granular.randpower(5))
 
-srand(1)
+Compat.srand(1)
 for i=1:10^5
     @test 0. <= Granular.randpower() <= 1.
     @test 0. <= Granular.randpower(1, 1., 0., 1.) <= 1.
