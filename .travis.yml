@@ -22,10 +22,6 @@ addons:
     - gnuplot
     - imagemagick
 
-matrix:
-  allow_failures:
-    - julia: nightly
-
 before_script:
   - julia -e 'info("Preparing Python"); ENV["PYTHON"]=""; Pkg.add("PyCall"); Pkg.build("PyCall"); Pkg.add("NetCDF")'
 
