@@ -201,7 +201,6 @@ function run!(simulation::Simulation;
         reportSimulationTimeToStdout(simulation)
         println()
     end
-    gc()
     nothing
 end
 

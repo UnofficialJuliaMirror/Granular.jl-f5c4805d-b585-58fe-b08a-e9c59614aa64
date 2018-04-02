@@ -1,6 +1,7 @@
 ## Functions for creating grain packings
 import Compat
 using Compat.LinearAlgebra
+using Compat.Random
 
 export regularPacking!
 """
@@ -44,7 +45,7 @@ function regularPacking!(simulation::Simulation,
     r_rand = 0.
     pos = zeros(2)
     h = .5   # disc tickness
-    Compat.srand(seed)
+    srand(seed)
 
     if tiling == "square"
         dx = r_max * 2. * (1. + padding_factor)  # cell size
@@ -178,7 +179,7 @@ function irregularPacking!(simulation::Simulation;
                            seed::Integer=1,
                            plot_during_packing::Bool=false,
                            verbose::Bool=true)
-    Compat.srand(seed)
+    srand(seed)
 
     active_list = Int[]  # list of points to originate search from
     i = 0
@@ -207,9 +208,9 @@ function irregularPacking!(simulation::Simulation;
         sortGrainsInGrid!(simulation, grid)
         push!(active_list, 1)
     else
-        for i=1:length(simulation.grains)
-            simulation.grains[i].color=1
-            push!(active_list, i)
+        for idx=1:length(simulation.grains)
+            simulation.grains[idx].color=1
+            push!(active_list, idx)
         end
     end
 
@@ -366,7 +367,7 @@ function rasterPacking!(sim::Simulation,
     h = .5   # disc tickness
     dx = r_max * 2. * (1. + padding_factor)  # cell size
     dx_padding = r_max * 2. * padding_factor
-    Compat.srand(seed)
+    srand(seed)
 
     np_init = length(sim.grains)
 
@@ -450,15 +451,15 @@ function rasterMap(sim::Simulation, dx::Real)
         #i, j = Int.(floor.((grain.lin_pos - origo) ./ dx)) + [1,1]
 
         # Find corner indexes for box spanning the grain
-        min_i, min_j = Int.(floor.((grain.lin_pos - origo -
-                                    grain.contact_radius) ./ dx)) + [1,1]
-        max_i, max_j = Int.(floor.((grain.lin_pos - origo +
-                                    grain.contact_radius) ./ dx)) + [1,1]
+        min_i, min_j = Int.(floor.((grain.lin_pos - origo .-
+                                    grain.contact_radius) ./ dx)) .+ [1,1]
+        max_i, max_j = Int.(floor.((grain.lin_pos - origo .+
+                                    grain.contact_radius) ./ dx)) .+ [1,1]
 
         # For each cell in box, check if the grain is contained
         for i = min_i:max_i
             for j = min_j:max_j
-                cell_mid_point = dx .* Vector{Float64}([i,j]) - 0.5 * dx
+                cell_mid_point = dx .* Vector{Float64}([i,j]) .- 0.5 * dx
 
                 if (norm(cell_mid_point - grain.lin_pos) -
                     grain.contact_radius < dist)

@@ -3,7 +3,7 @@ using Compat.Test
 using Compat.LinearAlgebra
 
 hasNetCDF = false
-if typeof(Pkg.installed("NetCDF")) == VersionNumber
+if typeof(Compat.Pkg.installed("NetCDF")) == VersionNumber
     import NetCDF
     hasNetCDF = true
 else

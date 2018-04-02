@@ -48,17 +48,18 @@ function timeSingleStepInDenseSimulation(nx::Int; verbose::Bool=true,
                                           fixed=fixed, verbose=false)
         end
     end
-    print_with_color(:green, "number of grains: $(length(sim.grains))\n")
+    Compat.printstyled("number of grains: $(length(sim.grains))\n",
+                       color=:green)
     if grid_sorting
         if include_atmosphere
-            print_with_color(:green, "using cell-based spatial decomposition " *
-                             " (ocean + atmosphere)\n")
+            Compat.printstyled("using cell-based spatial decomposition " *
+                             " (ocean + atmosphere)\n", color=:green)
         else
-            print_with_color(:green, "using cell-based spatial " * 
-                             "decomposition (ocean)\n")
+            Compat.printstyled("using cell-based spatial " * 
+                             "decomposition (ocean)\n", color=:green)
         end
     else
-        print_with_color(:green, "using all-to-all contact search\n")
+        Compat.printstyled("using all-to-all contact search\n", color=:green)
     end
 
     Granular.setTotalTime!(sim, 1.0)

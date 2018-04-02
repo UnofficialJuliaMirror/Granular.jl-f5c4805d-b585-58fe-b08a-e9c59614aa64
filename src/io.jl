@@ -3,7 +3,7 @@ import Compat
 using Compat.LinearAlgebra
 
 hasJLD = false
-if typeof(Pkg.installed("JLD")) == VersionNumber
+if typeof(Compat.Pkg.installed("JLD")) == VersionNumber
     import JLD
     hasJLD = true
 end
@@ -240,31 +240,31 @@ function status(folder::String=".";
             if write_header
                 println("--------------------------------------" * 
                         "--------------------------------------")
-                print_with_color(:default, "simulation folder \t")
-                print_with_color(time_color, "      time \t")
-                print_with_color(percentage_color, "      completed  ")
-                print_with_color(lastfile_color, "last file \n")
+                Compat.printstyled("simulation folder \t", color=:default)
+                Compat.printstyled("      time \t", color=time_color)
+                Compat.printstyled("      completed  ", color=percentage_color)
+                Compat.printstyled("last file \n", color=lastfile_color)
                 println("--------------------------------------" * 
                         "--------------------------------------")
             end
 
             for file in status_files
                 data = readdlm(file)
-                id = replace(file, ".status.txt", "")
-                id = replace(id, "./", "")
-                id = replace(id, r".*/", "")
+                id = Compat.replace(file, ".status.txt" => "")
+                id = Compat.replace(id, "./" => "")
+                id = Compat.replace(id, r".*/" => "")
                 time_s = @sprintf "%6.2fs" data[1]
                 time_h = @sprintf "%5.1fh" data[1]/(60. * 60.)
                 percentage = @sprintf "%3.0f%%" data[2]
                 lastfile = @sprintf "%5d" data[3]
                 if data[2] < 99.
-                    print_with_color(id_color_in_progress, "$id \t")
+                    Compat.printstyled("$id \t", color=id_color_in_progress)
                 else
-                    print_with_color(id_color_complete, "$id \t")
+                    Compat.printstyled("$id \t", color=id_color_complete)
                 end
-                print_with_color(time_color, "$time_s ($time_h) \t")
-                print_with_color(percentage_color, "$percentage \t")
-                print_with_color(lastfile_color, "$lastfile \n")
+                Compat.printstyled("$time_s ($time_h) \t", color=time_color)
+                Compat.printstyled("$percentage \t", color=percentage_color)
+                Compat.printstyled("$lastfile \n", color=lastfile_color)
 
                 if visualize
                     sim = createSimulation(id)
@@ -443,7 +443,6 @@ function writeGrainVTK(simulation::Simulation,
 
     deleteGrainArrays!(ifarr)
     ifarr = 0
-    gc()
 
     outfiles = WriteVTK.vtk_save(vtkfile)
     if verbose

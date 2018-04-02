@@ -1,5 +1,6 @@
-import Compat
+using Compat
 using Compat.LinearAlgebra
+using Compat.Random
 
 """
     bilinearInterpolation(field, x_tilde, y_tilde, i, j, k, it)
@@ -256,10 +257,10 @@ found the function returns `(0,0)`.
     not, can be "Conformal" (default) or "Area".
 """
 function findCellContainingPoint(grid::Any, point::Vector{Float64},
-                                 sw = Vector{Float64}(2),
-                                 se = Vector{Float64}(2),
-                                 ne = Vector{Float64}(2),
-                                 nw = Vector{Float64}(2);
+                                 sw = Vector{Float64}(undef, 2),
+                                 se = Vector{Float64}(undef, 2),
+                                 ne = Vector{Float64}(undef, 2),
+                                 nw = Vector{Float64}(undef, 2);
                                  method::String="Conformal")
     for i=1:size(grid.xh, 1)
         for j=1:size(grid.yh, 2)
@@ -300,10 +301,10 @@ more robust.  This function returns `true` or `false`.
 """
 function isPointInCell(grid::Any, i::Int, j::Int,
                        point::Vector{Float64},
-                       sw::Vector{Float64} = Vector{Float64}(2),
-                       se::Vector{Float64} = Vector{Float64}(2),
-                       ne::Vector{Float64} = Vector{Float64}(2),
-                       nw::Vector{Float64} = Vector{Float64}(2);
+                       sw::Vector{Float64} = Vector{Float64}(undef, 2),
+                       se::Vector{Float64} = Vector{Float64}(undef, 2),
+                       ne::Vector{Float64} = Vector{Float64}(undef, 2),
+                       nw::Vector{Float64} = Vector{Float64}(undef, 2);
                        method::String="Conformal")
 
     if grid.regular_grid
@@ -351,10 +352,10 @@ area-based approach (`method = "Area"`), or a conformal mapping approach
 function returns `true` or `false`.
 """
 function isPointInGrid(grid::Any, point::Vector{Float64},
-                       sw::Vector{Float64} = Vector{Float64}(2),
-                       se::Vector{Float64} = Vector{Float64}(2),
-                       ne::Vector{Float64} = Vector{Float64}(2),
-                       nw::Vector{Float64} = Vector{Float64}(2);
+                       sw::Vector{Float64} = Vector{Float64}(undef, 2),
+                       se::Vector{Float64} = Vector{Float64}(undef, 2),
+                       ne::Vector{Float64} = Vector{Float64}(undef, 2),
+                       nw::Vector{Float64} = Vector{Float64}(undef, 2);
                        method::String="Conformal")
 
     #sw, se, ne, nw = getCellCornerCoordinates(grid.xq, grid.yq, i, j)
@@ -585,7 +586,7 @@ function findEmptyPositionInGridCell(simulation::Simulation,
     for i_iter=1:n_iter
 
         overlap_found = false
-        Compat.srand(i*j*seed*i_iter)
+        srand(i*j*seed*i_iter)
         # generate random candidate position
         x_tilde = rand()
         y_tilde = rand()
@@ -625,7 +626,8 @@ function findEmptyPositionInGridCell(simulation::Simulation,
 
                         if overlap < 0.
                             if verbose
-                                Compat.@info "overlap with $grain_idx in cell $i,$j"
+                                Compat.@info "overlap with $grain_idx in " *
+                                    "cell $i,$j"
                             end
                             overlap_found = true
                             break
@@ -1048,10 +1050,10 @@ function findPorosity!(sim::Simulation, grid::Any; verbose::Bool=true)
         sortGrainsInGrid!(sim, grid, verbose=verbose)
     end
 
-    sw = Vector{Float64}(2)
-    se = Vector{Float64}(2)
-    ne = Vector{Float64}(2)
-    nw = Vector{Float64}(2)
+    @compat sw = Vector{Float64}(undef, 2)
+    @compat se = Vector{Float64}(undef, 2)
+    @compat ne = Vector{Float64}(undef, 2)
+    @compat nw = Vector{Float64}(undef, 2)
     cell_area = 0.0
     p = zeros(2)
     r = 0.0

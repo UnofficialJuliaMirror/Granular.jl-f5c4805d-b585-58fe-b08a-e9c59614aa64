@@ -4,6 +4,7 @@ import Granular
 import FileIO
 import Colors
 import Compat
+using Compat.Random
 
 const verbose = true
 
@@ -89,12 +90,12 @@ if forcing == "gyres"
     end
 
 elseif forcing == "down" || forcing == "sandpile"
-    Compat.srand(1)
+    srand(1)
     sim.ocean.u[:, :, 1, 1] = (rand(nx+1, ny+1) - .5)*.1
     sim.ocean.v[:, :, 1, 1] = -Ly/5.
 
 elseif forcing == "convergent"
-    Compat.srand(1)
+    srand(1)
     sim.ocean.u[:, :, 1, 1] = (rand(nx+1, ny+1) - .5)*.1
     for j=1:size(sim.ocean.u, 2)
         sim.ocean.v[:, j, 1, 1] = -(j/ny - .5)*10.

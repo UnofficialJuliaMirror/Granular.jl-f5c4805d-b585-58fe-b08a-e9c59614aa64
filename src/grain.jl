@@ -346,27 +346,27 @@ function convertGrainDataToArrays(simulation::Simulation)
     ifarr = GrainArrays(
                         # Material properties
                         ## density
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
 
                         # Geometrical properties
                         ## thickness
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## contact_radius
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## areal_radius
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## circumreference
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## horizontal_surface_area
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## side_surface_area
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## volume
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## mass
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## moment_of_inertia
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
 
                         # Linear kinematic degrees of freedom along horiz plane
                         ## lin_pos
@@ -394,58 +394,58 @@ function convertGrainDataToArrays(simulation::Simulation)
 
                         # Kinematic constraint flags
                         ## fixed
-                        Array{Int}(length(simulation.grains)),
+                        Array{Int}(undef, length(simulation.grains)),
                         ## allow_x_acc
-                        Array{Int}(length(simulation.grains)),
+                        Array{Int}(undef, length(simulation.grains)),
                         ## allow_y_acc
-                        Array{Int}(length(simulation.grains)),
+                        Array{Int}(undef, length(simulation.grains)),
                         ## rotating
-                        Array{Int}(length(simulation.grains)),
+                        Array{Int}(undef, length(simulation.grains)),
                         ## enabled
-                        Array{Int}(length(simulation.grains)),
+                        Array{Int}(undef, length(simulation.grains)),
 
                         # Rheological parameters
                         ## contact_stiffness_normal
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## contact_stiffness_tangential
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## contact_viscosity_normal
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## contact_viscosity_tangential
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## contact_static_friction
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## contact_dynamic_friction
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
 
                         ## youngs_modulus
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## poissons_ratio
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## tensile_strength
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## shear_strength
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## strength_heal_rate
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## fracture_toughness
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
 
                         # Ocean/atmosphere interaction parameters
                         ## ocean_drag_coeff_vert
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## ocean_drag_coeff_horiz
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## atmosphere_drag_coeff_vert
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## atmosphere_drag_coeff_horiz
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
 
                         # Interaction
                         ## pressure
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
                         ## n_contacts
-                        Array{Int}(length(simulation.grains)),
+                        Array{Int}(undef, length(simulation.grains)),
 
                         ## granular_stress
                         zeros(Float64, 3, length(simulation.grains)),
@@ -455,11 +455,11 @@ function convertGrainDataToArrays(simulation::Simulation)
                         zeros(Float64, 3, length(simulation.grains)),
 
                         ## thermal_energy
-                        Array{Float64}(length(simulation.grains)),
+                        Array{Float64}(undef, length(simulation.grains)),
 
                         # Visualization parameters
                         ## color
-                        Array{Int}(length(simulation.grains)),
+                        Array{Int}(undef, length(simulation.grains)),
 
                        )
 
@@ -607,7 +607,6 @@ function deleteGrainArrays!(ifarr::GrainArrays)
     ifarr.thermal_energy = f1
 
     ifarr.color = i1
-    gc()
     nothing
 end
 

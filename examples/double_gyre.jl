@@ -1,6 +1,7 @@
 #!/usr/bin/env julia
 import Granular
 import Compat
+using Compat.Random
 
 sim = Granular.createSimulation(id="double_gyre")
 
@@ -59,7 +60,7 @@ Compat.@info "added $(n_walls) fixed ice floes as walls"
 # Initialize ice floes everywhere
 floe_padding = .5*r
 noise_amplitude = .8*floe_padding
-Compat.srand(1)
+srand(1)
 for y in (4.*r + noise_amplitude):(2.*r + floe_padding):(L[2] - 4.*r - 
                                                          noise_amplitude)
                                                          
