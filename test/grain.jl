@@ -30,13 +30,13 @@ Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.compareGrains(sim.grains[1], sim.grains[2])
 
-gnuplot = true
+global gnuplot = true
 try
     run(`gnuplot --version`)
 catch return_signal
     if isa(return_signal, Base.UVError)
         Compat.@warn "Skipping plotting routines: Could not launch gnuplot process"
-        gnuplot = false
+        global gnuplot = false
     end
 end
 if gnuplot

@@ -86,10 +86,10 @@ function curl(grid::Any,
               j::Int,
               k::Int,
               it::Int,
-              sw::Vector{Float64} = Vector{Float64}(2),
-              se::Vector{Float64} = Vector{Float64}(2),
-              ne::Vector{Float64} = Vector{Float64}(2),
-              nw::Vector{Float64} = Vector{Float64}(2))
+              sw::Vector{Float64} = Vector{Float64}(undef, 2),
+              se::Vector{Float64} = Vector{Float64}(undef, 2),
+              ne::Vector{Float64} = Vector{Float64}(undef, 2),
+              nw::Vector{Float64} = Vector{Float64}(undef, 2))
 
     #sw, se, ne, nw = getCellCornerCoordinates(grid.xq, grid.yq, i, j)
     sw[1] = grid.xq[  i,   j]
@@ -120,7 +120,7 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
 
     if simulation.time_iteration == 0
         grid.grain_list =
-            Array{Array{Int, 1}}(size(grid.xh, 1), size(grid.xh, 2))
+            Array{Array{Int, 1}}(undef, size(grid.xh, 1), size(grid.xh, 2))
 
         for i=1:size(grid.xh, 1)
             for j=1:size(grid.xh, 2)
@@ -135,10 +135,10 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
         end
     end
 
-    sw = Vector{Float64}(2)
-    se = Vector{Float64}(2)
-    ne = Vector{Float64}(2)
-    nw = Vector{Float64}(2)
+    sw = Vector{Float64}(undef, 2)
+    se = Vector{Float64}(undef, 2)
+    ne = Vector{Float64}(undef, 2)
+    nw = Vector{Float64}(undef, 2)
 
     for idx=1:length(simulation.grains)
 

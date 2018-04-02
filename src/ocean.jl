@@ -34,7 +34,7 @@ function createEmptyOcean()
                  zeros(1,1,1,1),
                  zeros(1,1,1,1),
                  zeros(1,1,1,1),
-                 Array{Array{Int, 1}}(1, 1),
+                 Array{Array{Int, 1}}(undef, 1, 1),
                  zeros(1,1),
                  1, 1, 1, 1,
                  false, [0.,0.,0.], [1.,1.,1.], [1,1,1], [1.,1.,1.])
@@ -89,7 +89,7 @@ function readOceanNetCDF(velocity_file::String, grid_file::String;
                       v,
                       h,
                       e,
-                      Array{Array{Int, 1}}(size(xh, 1), size(xh, 2)),
+                      Array{Array{Int, 1}}(undef, size(xh, 1), size(xh, 2)),
                       zeros(size(xh)),
                       1, 1, 1, 1,
 
@@ -320,7 +320,7 @@ function createRegularOceanGrid(n::Vector{Int},
                  xh, yh,
                  zl, zi,
                  u, v, h, e,
-                 Array{Array{Int, 1}}(size(xh, 1), size(xh, 2)),
+                 Array{Array{Int, 1}}(undef, size(xh, 1), size(xh, 2)),
                  zeros(size(xh)),
                  bc_west, bc_south, bc_east, bc_north,
                  true, origo, L, n, dx)
@@ -337,11 +337,11 @@ function addOceanDrag!(simulation::Simulation)
     end
 
     u, v, h, e = interpolateOceanState(simulation.ocean, simulation.time)
-    uv_interp = Vector{Float64}(2)
-    sw = Vector{Float64}(2)
-    se = Vector{Float64}(2)
-    ne = Vector{Float64}(2)
-    nw = Vector{Float64}(2)
+    uv_interp = Vector{Float64}(undef, 2)
+    sw = Vector{Float64}(undef, 2)
+    se = Vector{Float64}(undef, 2)
+    ne = Vector{Float64}(undef, 2)
+    nw = Vector{Float64}(undef, 2)
 
     for grain in simulation.grains
 

@@ -19,7 +19,7 @@ function createEmptyAtmosphere()
                       zeros(1,1,1,1),
                       zeros(1,1,1,1),
 
-                      Array{Vector{Int}}(1, 1),
+                      Array{Vector{Int}}(undef, 1, 1),
                       zeros(1,1),
 
                       1, 1, 1, 1,
@@ -42,8 +42,8 @@ function interpolateAtmosphereVelocitiesToCorners(u_in::Array{Float64, 4},
     end
 
     nx, ny, nz, nt = size(u_in)
-    #u = Array{Float64}(nx+1, ny+1, nz, nt)
-    #v = Array{Float64}(nx+1, ny+1, nz, nt)
+    #u = Array{Float64}(undef, nx+1, ny+1, nz, nt)
+    #v = Array{Float64}(undef, nx+1, ny+1, nz, nt)
     u = zeros(nx+1, ny+1, nz, nt)
     v = zeros(nx+1, ny+1, nz, nt)
     for i=1:nx
@@ -164,7 +164,7 @@ function createRegularAtmosphereGrid(n::Vector{Int},
                  xh, yh,
                  zl,
                  u, v,
-                 Array{Array{Int, 1}}(size(xh, 1), size(xh, 2)),
+                 Array{Array{Int, 1}}(undef, size(xh, 1), size(xh, 2)),
                  zeros(size(xh)),
                  bc_west, bc_south, bc_east, bc_north,
                  false,
@@ -182,11 +182,11 @@ function addAtmosphereDrag!(simulation::Simulation)
     end
 
     u, v = interpolateAtmosphereState(simulation.atmosphere, simulation.time)
-    uv_interp = Vector{Float64}(2)
-    sw = Vector{Float64}(2)
-    se = Vector{Float64}(2)
-    ne = Vector{Float64}(2)
-    nw = Vector{Float64}(2)
+    uv_interp = Vector{Float64}(undef, 2)
+    sw = Vector{Float64}(undef, 2)
+    se = Vector{Float64}(undef, 2)
+    ne = Vector{Float64}(undef, 2)
+    nw = Vector{Float64}(undef, 2)
 
     for grain in simulation.grains
 

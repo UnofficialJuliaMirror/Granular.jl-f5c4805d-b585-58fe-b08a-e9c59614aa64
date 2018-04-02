@@ -413,10 +413,10 @@ sim = Granular.createSimulation()
 Granular.regularPacking!(sim, [5, 5], 1.0, 2.0)
 Granular.fitGridToGrains!(sim, sim.ocean)
 Granular.setGridBoundaryConditions!(sim.ocean, "impermeable")
-y_max_init = 0.
+global y_max_init = 0.
 for grain in sim.grains
     if y_max_init < grain.lin_pos[2] + grain.contact_radius
-        y_max_init = grain.lin_pos[2] + grain.contact_radius
+        global y_max_init = grain.lin_pos[2] + grain.contact_radius
     end
 end
 Granular.addWallLinearFrictionless!(sim, [0., 1.], y_max_init,
