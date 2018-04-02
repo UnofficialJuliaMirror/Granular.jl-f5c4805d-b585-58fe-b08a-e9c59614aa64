@@ -2,7 +2,7 @@
 
 ![Granular.jl logo](https://github.com/anders-dc/Granular.jl/raw/master/docs/src/assets/logo.gif)
 
-A [Julia](https://julialang.org) package for granular mechanics.
+A [Julia](https://julialang.org) package for simulating granular mechanics.
 
 | Referencing | Documentation | Chat | Stable Release | Development Version | Test Coverage |
 |:-----------:|:-------------:|:----:|:--------------:|:-------------------:|:-------------:|
