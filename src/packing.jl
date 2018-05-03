@@ -228,6 +228,9 @@ function irregularPacking!(simulation::Simulation;
     n = 0
     neighbor_found = false
     i_last_active = 0
+    if verbose
+        println("")
+    end
 
     while !isempty(active_list)
 
@@ -332,7 +335,7 @@ function irregularPacking!(simulation::Simulation;
             end
         end
         if verbose
-            println("Active points: $(length(active_list))")
+            print("\rActive points: $(length(active_list))")
             #println(active_list)
         end
 
@@ -349,7 +352,7 @@ function irregularPacking!(simulation::Simulation;
     end  # end while !isempty(active_list)
 
     if verbose
-        Compat.@info "Generated $(length(simulation.grains) - np_init) points"
+        Compat.@info "\nGenerated $(length(simulation.grains) - np_init) points"
     end
 end
 
