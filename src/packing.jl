@@ -192,6 +192,7 @@ function irregularPacking!(simulation::Simulation;
     else
         error("irregularPacking requires an ocean or atmosphere grid")
     end
+    sortGrainsInGrid!(simulation, grid)
     # save grid boundaries
     sw, se, ne, nw = getGridCornerCoordinates(grid.xq, grid.yq)
     width_x = se[1] - sw[1]  # assume regular grid
