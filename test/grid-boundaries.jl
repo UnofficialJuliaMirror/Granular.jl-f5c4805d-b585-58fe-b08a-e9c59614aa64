@@ -44,6 +44,57 @@ if !Compat.Sys.iswindows()
     @test ocean.bc_north == 1
     @test ocean.bc_south == 2
 
+    Granular.setGridBoundaryConditions!(ocean, "inactive", "all", verbose=false)
+    (out_r, out_w) = redirect_stdout()
+    Granular.setGridBoundaryConditions!(ocean, "periodic", "-y, -x",
+                                        verbose=true)
+    close(out_w)
+    redirect_stdout(originalSTDOUT)
+    output = String(readavailable(out_r))
+    @test output == """West  (-x): periodic\t(2)
+    East  (+x): inactive\t(1)
+    South (-y): periodic\t(2)
+    North (+y): inactive\t(1)
+    """
+    @test ocean.bc_west == 2
+    @test ocean.bc_east == 1
+    @test ocean.bc_north == 1
+    @test ocean.bc_south == 2
+
+    Granular.setGridBoundaryConditions!(ocean, "inactive", "all", verbose=false)
+    (out_r, out_w) = redirect_stdout()
+    Granular.setGridBoundaryConditions!(ocean, "periodic", "north, east",
+                                        verbose=true)
+    close(out_w)
+    redirect_stdout(originalSTDOUT)
+    output = String(readavailable(out_r))
+    @test output == """West  (-x): inactive\t(1)
+    East  (+x): periodic\t(2)
+    South (-y): inactive\t(1)
+    North (+y): periodic\t(2)
+    """
+    @test ocean.bc_west == 1
+    @test ocean.bc_east == 2
+    @test ocean.bc_north == 2
+    @test ocean.bc_south == 1
+
+    Granular.setGridBoundaryConditions!(ocean, "inactive", "all", verbose=false)
+    (out_r, out_w) = redirect_stdout()
+    Granular.setGridBoundaryConditions!(ocean, "periodic", "+y, +x",
+                                        verbose=true)
+    close(out_w)
+    redirect_stdout(originalSTDOUT)
+    output = String(readavailable(out_r))
+    @test output == """West  (-x): inactive\t(1)
+    East  (+x): periodic\t(2)
+    South (-y): inactive\t(1)
+    North (+y): periodic\t(2)
+    """
+    @test ocean.bc_west == 1
+    @test ocean.bc_east == 2
+    @test ocean.bc_north == 2
+    @test ocean.bc_south == 1
+
     (out_r, out_w) = redirect_stdout()
     Granular.setGridBoundaryConditions!(ocean, "inactive", "all", verbose=false)
     close(out_w)

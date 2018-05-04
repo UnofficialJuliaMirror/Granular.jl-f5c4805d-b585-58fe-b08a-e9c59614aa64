@@ -698,7 +698,8 @@ Grains can interact mechanically across the periodic boundary.
 * `grid::Any`: `Ocean` or `Atmosphere` grid to apply the boundary condition to.
 * `grid_face::String`: Grid face to apply the boundary condition to.  Valid
     values are any combination and sequence of `"west"` (-x), `"south"` (-y),
-    `"east"` (+x), `"north"` (+y).  The values may be delimited in any way.
+    `"east"` (+x), `"north"` (+y), or simply any combination of `"-x"`, `"+x"`,
+    `"-y"`, and `"+y"`.  The specifiers may be delimited in any way.
     Also, and by default, all boundaries can be selected with `"all"` (-x, -y,
     +x, +y), which overrides any other face selection.
 * `mode::String`: Boundary behavior, accepted values are `"inactive"`,
@@ -718,6 +719,11 @@ be periodic:
     setGridBoundaryConditions!(ocean, "inactive", "south north")
     setGridBoundaryConditions!(ocean, "periodic", "west east")
 
+or specify the conditions from the coordinate system axes:
+
+    setGridBoundaryConditions!(ocean, "inactive", "-y +y")
+    setGridBoundaryConditions!(ocean, "periodic", "-x +x")
+
 """
 function setGridBoundaryConditions!(grid::Any,
                                     mode::String,
@@ -734,22 +740,22 @@ function setGridBoundaryConditions!(grid::Any,
         error("Mode '$mode' not recognized as a valid boundary condition type")
     end
 
-    if Compat.occursin("west", grid_face)
+    if Compat.occursin("west", grid_face) || Compat.occursin("-x", grid_face)
         grid.bc_west = grid_bc_flags[mode]
         something_changed = true
     end
 
-    if Compat.occursin("south", grid_face)
+    if Compat.occursin("south", grid_face) || Compat.occursin("-y", grid_face)
         grid.bc_south = grid_bc_flags[mode]
         something_changed = true
     end
 
-    if Compat.occursin("east", grid_face)
+    if Compat.occursin("east", grid_face) || Compat.occursin("+x", grid_face)
         grid.bc_east = grid_bc_flags[mode]
         something_changed = true
     end
 
-    if Compat.occursin("north", grid_face)
+    if Compat.occursin("north", grid_face) || Compat.occursin("+y", grid_face)
         grid.bc_north = grid_bc_flags[mode]
         something_changed = true
     end
@@ -764,7 +770,7 @@ function setGridBoundaryConditions!(grid::Any,
 
     if !something_changed
         error("grid_face string '$grid_face' not understood, " *
-              "must be east, west, north, and/or south.")
+              "must be east, west, north, south, -x, +x, -y, and/or +y.")
     end
 
     if verbose
