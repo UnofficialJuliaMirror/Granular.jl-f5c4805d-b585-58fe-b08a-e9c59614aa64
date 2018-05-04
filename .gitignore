@@ -17,3 +17,7 @@ deps/deps.jl
 # documentation
 docs/build/
 docs/site/
+
+# temporary files
+.DS_Store
+tags
