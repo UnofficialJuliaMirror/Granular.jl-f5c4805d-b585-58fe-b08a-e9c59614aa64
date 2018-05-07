@@ -353,7 +353,8 @@ function irregularPacking!(simulation::Simulation;
     end  # end while !isempty(active_list)
 
     if verbose
-        Compat.@info "\nGenerated $(length(simulation.grains) - np_init) points"
+        println("")
+        Compat.@info "Generated $(length(simulation.grains) - np_init) points"
     end
 end
 
