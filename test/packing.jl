@@ -2,8 +2,9 @@
 using Compat.Test
 import Granular
 
-verbose = true
+verbose = false
 plot = false
+plot_packings=false
 
 Compat.@info "#### $(basename(@__FILE__)) ####"
 
@@ -41,9 +42,6 @@ for grain in sim.grains
 end
 plot && Granular.plotGrains(sim, filetype="regular-uniform.png", show_figure=false)
 
-
-plot_packings=false
-verbose=false
 
 Compat.@info "Testing irregular (Poisson-disk) packing generation (monodisperse size)"
 sim = Granular.createSimulation("poisson1-monodisperse-nopadding")
