@@ -336,7 +336,7 @@ function irregularPacking!(simulation::Simulation;
             end
         end
         if verbose
-            print("\rActive points: $(length(active_list))")
+            print("\rActive points: $(length(active_list))       ")
             #println(active_list)
         end
 
