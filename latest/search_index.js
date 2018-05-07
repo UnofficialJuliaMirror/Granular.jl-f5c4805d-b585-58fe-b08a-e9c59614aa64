@@ -445,7 +445,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.checkForContacts",
     "category": "method",
-    "text": "checkForContacts(grid, position, radius)\n\nPerform an O(n*log(n)) cell-based contact search between a candidate grain with position position and radius, against all grains registered in the grid. Returns the number of contacts that were found as an Integer value.\n\nArguments\n\nsimulation::Simulation: Simulation object containing grain positions.\ngrid::Any: Ocean or Atmosphere grid containing sorted particles.\nposition::Vector{Float64}: Candidate center position to probe for contacts   with existing grains [m].\nradius::Float64: Candidate radius [m].\n\n\n\n"
+    "text": "checkForContacts(grid, position, radius)\n\nPerform an O(n*log(n)) cell-based contact search between a candidate grain with position position and radius, against all grains registered in the grid. Returns the number of contacts that were found as an Integer value, unless return_when_overlap_found is true.\n\nArguments\n\nsimulation::Simulation: Simulation object containing grain positions.\ngrid::Any: Ocean or Atmosphere grid containing sorted particles.\nx_candidate::Vector{Float64}: Candidate center position to probe for   contacts with existing grains [m].\nr_candidate::Float64: Candidate radius [m].\nreturn_when_overlap_found::Bool (default: false): Return true if no   contacts are found, or return false as soon as a contact is found.\n\n\n\n"
 },
 
 {
