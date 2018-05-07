@@ -128,8 +128,8 @@ function findContactsInGrid!(simulation::Simulation, grid::Any)
             for j=(grid_pos[2] - 1):(grid_pos[2] + 1)
 
                 # correct indexes if necessary
-                i_corrected, j_corrected = periodicBoundaryCorrection!(grid,
-                                               i, j, distance_modifier)
+                i_corrected, j_corrected, distance_modifier =
+                    periodicBoundaryCorrection!(grid, i, j)
 
                 # skip iteration if target still falls outside grid after
                 # periodicity correction
@@ -155,14 +155,17 @@ export checkForContacts
 
 Perform an O(n*log(n)) cell-based contact search between a candidate grain with
 position `position` and `radius`, against all grains registered in the `grid`.
-Returns the number of contacts that were found as an `Integer` value.
+Returns the number of contacts that were found as an `Integer` value, unless
+`return_when_overlap_found` is `true`.
 
 # Arguments
 * `simulation::Simulation`: Simulation object containing grain positions.
 * `grid::Any`: `Ocean` or `Atmosphere` grid containing sorted particles.
-* `position::Vector{Float64}`: Candidate center position to probe for contacts
-    with existing grains [m].
-* `radius::Float64`: Candidate radius [m].
+* `x_candidate::Vector{Float64}`: Candidate center position to probe for
+    contacts with existing grains [m].
+* `r_candidate::Float64`: Candidate radius [m].
+* `return_when_overlap_found::Bool` (default: `false`): Return `true` if no
+    contacts are found, or return `false` as soon as a contact is found.
 """
 function checkForContacts(simulation::Simulation,
                           grid::Any,
@@ -181,8 +184,8 @@ function checkForContacts(simulation::Simulation,
         for iy_=(iy - 1):(iy + 1)
 
             # correct indexes if necessary
-            ix_corrected, iy_corrected =
-                periodicBoundaryCorrection!(grid, ix_, iy_, distance_modifier)
+            ix_corrected, iy_corrected, distance_modifier =
+                periodicBoundaryCorrection!(grid, ix_, iy_)
 
             # skip iteration if target still falls outside grid after
             # periodicity correction
@@ -192,10 +195,9 @@ function checkForContacts(simulation::Simulation,
             end
 
             @inbounds for idx in grid.grain_list[ix_corrected, iy_corrected]
-                if norm(simulation.grains[idx].lin_pos - x_candidate +
-                    distance_modifier) -
-                    (simulation.grains[idx].contact_radius +
-                     r_candidate) < 0.
+                if norm(x_candidate - simulation.grains[idx].lin_pos +
+                        distance_modifier) -
+                    (simulation.grains[idx].contact_radius + r_candidate) < 0.0
 
                     if return_when_overlap_found
                         return false
@@ -214,18 +216,16 @@ end
 
 """
     periodicBoundaryCorrection!(grid::Any, i::Integer, j::Integer,
-                                i_corrected::Integer, j_corrected::Integer,
-                                distance_modifier::Vector{Float64})
+                                i_corrected::Integer, j_corrected::Integer)
 
 Determine the geometric correction and grid-index adjustment required across
 periodic boundaries.
 """
-function periodicBoundaryCorrection!(grid::Any, i::Integer, j::Integer,
-                                     distance_modifier::Vector{Float64})
+function periodicBoundaryCorrection!(grid::Any, i::Integer, j::Integer)
 
     # vector for correcting inter-particle distance in case of
     # boundary periodicity
-    distance_modifier .= [0., 0.]
+    distance_modifier = zeros(2)
 
     # i and j are not corrected for periodic boundaries
     i_corrected = i
@@ -252,7 +252,7 @@ function periodicBoundaryCorrection!(grid::Any, i::Integer, j::Integer,
         end
     end
 
-    return i_corrected, j_corrected
+    return i_corrected, j_corrected, distance_modifier
 end
 
 export checkAndAddContact!

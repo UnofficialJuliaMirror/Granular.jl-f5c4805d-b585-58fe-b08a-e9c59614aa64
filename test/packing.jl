@@ -86,6 +86,38 @@ Granular.irregularPacking!(sim,
                            verbose=verbose)
 @test length(sim.grains) > 280
 
+Compat.@info "Testing irregular packing with inactive boundaries"
+sim = Granular.createSimulation("poisson-inactive")
+sim.ocean = Granular.createRegularOceanGrid([5, 5, 1], [1., 1., 1.])
+Granular.setGridBoundaryConditions!(sim.ocean, "inactive", verbose=verbose)
+Granular.irregularPacking!(sim,
+                           radius_max=.05,
+                           radius_min=.1,
+                           padding_factor=0.,
+                           plot_during_packing=plot_packings,
+                           verbose=verbose)
+Granular.findContacts!(sim, method="ocean grid")
+plot && Granular.plotGrains(sim, filetype="poisson-inactive.png", show_figure=false)
+for grain in sim.grains
+    @test grain.n_contacts == 0
+end
+
+Compat.@info "Testing irregular packing with periodic boundaries"
+sim = Granular.createSimulation("poisson-periodic")
+sim.ocean = Granular.createRegularOceanGrid([5, 5, 1], [1., 1., 1.])
+Granular.setGridBoundaryConditions!(sim.ocean, "periodic", verbose=verbose)
+Granular.irregularPacking!(sim,
+                           radius_max=.05,
+                           radius_min=.1,
+                           padding_factor=0.,
+                           plot_during_packing=plot_packings,
+                           verbose=verbose)
+plot && Granular.plotGrains(sim, filetype="poisson-periodic.png", show_figure=false)
+Granular.findContacts!(sim, method="ocean grid")
+for grain in sim.grains
+    @test grain.n_contacts == 0
+end
+
 
 Compat.@info "Testing raster-based mapping algorithm"
 sim = Granular.createSimulation("raster-packing1")

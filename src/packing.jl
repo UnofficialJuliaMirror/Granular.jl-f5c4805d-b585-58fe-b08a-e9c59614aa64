@@ -256,7 +256,7 @@ function irregularPacking!(simulation::Simulation;
                 x_candidate = getPositionDistancedFromPoint(T, x_active,
                                                             r_active + r_candidate)
             else
-                if j <= 2
+                if j <= 2  # generate large grains during the first two samples
                     x_candidate, r_candidate = generateNeighboringPoint(
                                                    x_active,
                                                    r_active,
