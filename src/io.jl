@@ -1067,7 +1067,8 @@ from the shell using the supplied `pvpython` argument.
 * `images::Bool`: render images to disk (default: true)
 * `gif::Bool`: merge images as GIF and save to disk (default: false, requires
     `images=true`)
-* `animation::Bool`: render animation as AVI to disk (default: false)
+* `animation::Bool`: render animation as movie to disk (default: false). If
+    ffmpeg is available on the system, the `.avi` file is converted to `.mp4`.
 * `trim::Bool`: trim images in animated sequence (default: true)
 * `reverse::Bool`: if `images=true` additionally render reverse-animated gif
     (default: false)
@@ -1083,6 +1084,19 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                               save_images=images, verbose=false)
     try
         run(`$(pvpython) $(simulation.id)/$(simulation.id).py`)
+
+        if animation
+            try
+                run(`ffmpeg -i $(simulation.id)/$(simulation.id).avi 
+                    -vf scale='trunc\(iw/2\)\*2:trunc\(ih/2\)\*2' 
+                    -c:v libx264 -profile:v high -pix_fmt yuv420p 
+                    -g 30 -r 30 -y 
+                    $(simulation.id)/$(simulation.id).mp4`)
+                if isfile("$(simulation.id)/$(simulation.id).mp4")
+                    rm("$(simulation.id)/$(simulation.id).avi")
+                end
+            end
+        end
 
         # if available, use imagemagick to create gif from images
         if images && gif
