@@ -1,13 +1,13 @@
 # Granular.jl
 
-*A [Julia](https://julialang.org) package for particle-based simulation of 
-granular dynamics.*
+**A [Julia](https://julialang.org) package for particle-based simulation of 
+granular materials.**
 
 `Granular.jl` is a flexible and computationally efficient 2d implementation of 
 the discrete element method.  Grains are represented as particles, which can be 
 forced by drag in fluid grids.  The grains interact through 
 elasto-viscous-frictional contact rheologies and can obtain time-dependent 
-tensile strength.
+cohesive strength with bond mechanics based on beam theory.
 
 The source code for Granular.jl is hosted on [Github](https://github.com/anders-dc/Granular.jl).
 
