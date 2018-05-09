@@ -13,7 +13,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Granular.jl",
     "category": "section",
-    "text": "A Julia package for particle-based simulation of  granular dynamics.Granular.jl is a flexible and computationally efficient 2d implementation of  the discrete element method.  Grains are represented as particles, which can be  forced by drag in fluid grids.  The grains interact through  elasto-viscous-frictional contact rheologies and can obtain time-dependent  tensile strength.The source code for Granular.jl is hosted on Github.See the Public API Index for the complete list of documented functions and types."
+    "text": "A Julia package for particle-based simulation of  granular materials.Granular.jl is a flexible and computationally efficient 2d implementation of  the discrete element method.  Grains are represented as particles, which can be  forced by drag in fluid grids.  The grains interact through  elasto-viscous-frictional contact rheologies and can obtain time-dependent  cohesive strength with bond mechanics based on beam theory.The source code for Granular.jl is hosted on Github.See the Public API Index for the complete list of documented functions and types."
 },
 
 {
