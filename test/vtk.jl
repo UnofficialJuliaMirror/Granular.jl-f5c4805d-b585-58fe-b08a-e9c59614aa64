@@ -59,7 +59,14 @@ Granular.run!(sim, single_step=true)
 Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim)
 
+Compat.@info "Testing status output"
 Granular.status()
+Granular.status(colored_output=false)
+dir = "empty_directory"
+isdir(dir) || mkdir(dir)
+#@test_warn "no simulations found in $(pwd())/$(dir)" Granular.status(dir)
+Granular.status(dir)
+rm(dir)
 
 Compat.@info "Testing generation of Paraview Python script"
 Granular.writeParaviewPythonScript(sim,
@@ -94,5 +101,21 @@ end
 @test read(`$(cmd) $(graininteractionpath)$(cmd_post)`, String) == 
     graininteractionchecksum
 @test read(`$(cmd) $(oceanpath)$(cmd_post)`, String) == oceanchecksum
+
+Compat.@info "Writing simple simulation to VTK file"
+sim = Granular.createSimulation(id="test")
+Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
+Granular.addGrainCylindrical!(sim, [18., 0.], 10., 1., verbose=false)
+sim.ocean = Granular.createRegularOceanGrid([10, 20, 5], [10., 25., 2.])  
+Granular.findContacts!(sim, method="all to all")
+Granular.writeVTK(sim, verbose=false)
+
+Compat.@info "Writing simple simulation to VTK file"
+sim = Granular.createSimulation(id="test")
+Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., youngs_modulus=0., verbose=false)
+Granular.addGrainCylindrical!(sim, [18., 0.], 10., 1., youngs_modulus=0., verbose=false)
+sim.ocean = Granular.createRegularOceanGrid([10, 20, 5], [10., 25., 2.])  
+Granular.findContacts!(sim, method="all to all")
+Granular.writeVTK(sim, verbose=false)
 
 Granular.removeSimulationFiles(sim)

@@ -507,6 +507,8 @@ function writeGrainInteractionVTK(simulation::Simulation,
                 end
                 δ_n = dist - (r_i + r_j)
                 R_ij = harmonicMean(r_i, r_j)
+                A_ij = R_ij*min(simulation.grains[i].thickness, 
+                                simulation.grains[j].thickness)
 
                 if simulation.grains[i].youngs_modulus > 0. &&
                     simulation.grains[j].youngs_modulus > 0.
@@ -514,8 +516,6 @@ function writeGrainInteractionVTK(simulation::Simulation,
                                         youngs_modulus,
                                         simulation.grains[j].
                                         youngs_modulus)
-                    A_ij = R_ij*min(simulation.grains[i].thickness, 
-                                    simulation.grains[j].thickness)
                     k_n = E_ij*A_ij/R_ij
                 else
                     k_n = harmonicMean(simulation.grains[i].
