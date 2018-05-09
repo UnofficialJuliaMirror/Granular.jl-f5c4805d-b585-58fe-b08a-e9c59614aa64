@@ -51,6 +51,8 @@ if gnuplot
     @test isfile("test-grain-size-distribution.png")
     rm("test-grain-size-distribution.png")
     @test_throws ErrorException Granular.plotGrainSizeDistribution(sim, size_type="asdf")
+    Compat.@info "Testing grain plotting "
+    Granular.plotGrains(sim)
 end
 
 Compat.@info "Testing external body force routines"

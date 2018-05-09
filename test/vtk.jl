@@ -56,6 +56,7 @@ Granular.setTimeStep!(sim)
 sim.file_number = 0
 Granular.run!(sim, single_step=true)
 @test Granular.readSimulationStatus(sim.id) == 1
+@test Granular.readSimulationStatus(sim) == 1
 Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim)
 
