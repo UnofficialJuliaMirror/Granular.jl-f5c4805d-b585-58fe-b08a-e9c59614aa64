@@ -104,17 +104,10 @@ end
 
 Compat.@info "Writing simple simulation to VTK file"
 sim = Granular.createSimulation(id="test")
-Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
-Granular.addGrainCylindrical!(sim, [18., 0.], 10., 1., verbose=false)
-sim.ocean = Granular.createRegularOceanGrid([10, 20, 5], [10., 25., 2.])  
-Granular.findContacts!(sim, method="all to all")
-Granular.writeVTK(sim, verbose=false)
-
-Compat.@info "Writing simple simulation to VTK file"
-sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., youngs_modulus=0., verbose=false)
 Granular.addGrainCylindrical!(sim, [18., 0.], 10., 1., youngs_modulus=0., verbose=false)
-sim.ocean = Granular.createRegularOceanGrid([10, 20, 5], [10., 25., 2.])  
+sim.ocean = Granular.createRegularOceanGrid([10, 20, 5], [10., 25., 2.])
+sim.atmosphere = Granular.createRegularAtmosphereGrid([10, 20, 5], [10., 25., 2.])
 Granular.findContacts!(sim, method="all to all")
 Granular.writeVTK(sim, verbose=false)
 
