@@ -29,6 +29,7 @@ sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.compareGrains(sim.grains[1], sim.grains[2])
+Granular.findContacts!(sim)
 
 global gnuplot = true
 try
@@ -44,15 +45,38 @@ if gnuplot
     Granular.plotGrainSizeDistribution(sim)
     @test isfile("test-grain-size-distribution.png")
     rm("test-grain-size-distribution.png")
+
     Granular.plotGrainSizeDistribution(sim, skip_fixed=false)
     @test isfile("test-grain-size-distribution.png")
     rm("test-grain-size-distribution.png")
+
     Granular.plotGrainSizeDistribution(sim, size_type="areal")
     @test isfile("test-grain-size-distribution.png")
     rm("test-grain-size-distribution.png")
+
     @test_throws ErrorException Granular.plotGrainSizeDistribution(sim, size_type="asdf")
-    Compat.@info "Testing grain plotting "
-    Granular.plotGrains(sim)
+
+    Compat.@info "Testing grain plotting"
+    Granular.plotGrains(sim, show_figure=false)
+    @test isfile("test/test.grains.0.png")
+    rm("test/test.grains.0.png")
+
+    Compat.@info "  - contact_radius"
+    Granular.plotGrains(sim, palette_scalar="contact_radius", show_figure=false)
+    @test isfile("test/test.grains.0.png")
+    rm("test/test.grains.0.png")
+    Compat.@info "  - areal_radius"
+    Granular.plotGrains(sim, palette_scalar="areal_radius", show_figure=false)
+    @test isfile("test/test.grains.0.png")
+    rm("test/test.grains.0.png")
+    Compat.@info "  - color"
+    Granular.plotGrains(sim, palette_scalar="color", show_figure=false)
+    @test isfile("test/test.grains.0.png")
+    rm("test/test.grains.0.png")
+
+    Compat.@info "  - invalid field"
+    @test_throws ErrorException Granular.plotGrains(sim, palette_scalar="asdf",
+                                                   show_figure=false)
 end
 
 Compat.@info "Testing external body force routines"
