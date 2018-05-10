@@ -50,6 +50,16 @@ Granular.addWallLinearFrictionless!(sim, [0., 1.], 1., verbose=false)
 @test Granular.getWallSurfaceArea(sim, 1) ≈ 20.0*2.0
 @test Granular.getWallSurfaceArea(sim, 2) ≈ 10.0*2.0
 
+sim.walls[1].normal_stress = 1.0
+@test Granular.getWallNormalStress(sim, 1, stress_type="defined") ≈ 1.0
+sim.walls[1].force = 1.0
+@test Granular.getWallNormalStress(sim, 1, stress_type="effective") ≈ 1.0/(20.0*2.0)
+@test_throws ErrorException Granular.getWallNormalStress(sim, 1, stress_type="nonexistent")
+
+sim.walls[1].normal = [1.0, 1.0]
+@test_throws ErrorException Granular.getWallSurfaceArea(sim, 1)
+@test_throws ErrorException Granular.getWallSurfaceArea(sim, [1.,1.], 0.5)
+
 Compat.@info "# Test wall-grain interaction: elastic"
 
 Compat.@info "Wall present but no contact"
