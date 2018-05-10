@@ -475,6 +475,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
     shear_displacement = Vector{Float64}[]
     contact_rotation = Float64[]
     contact_age = Float64[]
+    compressive_failure = Int[]
 
     for i=1:length(simulation.grains)
         for ic=1:simulation.Nc_max
@@ -541,6 +542,8 @@ function writeGrainInteractionVTK(simulation::Simulation,
                       simulation.grains[i].contact_rotation[ic])
 
                 push!(contact_age, simulation.grains[i].contact_age[ic])
+                push!(compressive_failure,
+                      simulation.grains[i].compressive_failure[ic])
             end
         end
     end
@@ -642,6 +645,15 @@ function writeGrainInteractionVTK(simulation::Simulation,
         format=\"ascii\">\n")
         for i=1:length(i1)
             @inbounds write(f, "$(contact_age[i]) ")
+        end
+        write(f, "\n")
+        write(f, "        </DataArray>\n")
+
+        write(f, "        <DataArray type=\"Float32\" " *
+              "Name=\"Compressive failure [-]\" NumberOfComponents=\"1\" 
+        format=\"ascii\">\n")
+        for i=1:length(i1)
+            @inbounds write(f, "$(compressive_failure[i]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")
@@ -1315,6 +1327,7 @@ function plotGrains(sim::Simulation;
         shear_displacement = Vector{Float64}[]
         contact_rotation = Float64[]
         contact_age = Float64[]
+        compressive_failure = Int[]
         for i=1:length(sim.grains)
             for ic=1:sim.Nc_max
                 if sim.grains[i].contacts[ic] > 0
@@ -1366,6 +1379,8 @@ function plotGrains(sim::Simulation;
                           sim.grains[i].contact_rotation[ic])
 
                     push!(contact_age, sim.grains[i].contact_age[ic])
+                    push!(compressive_failure,
+                      sim.grains[i].compressive_failure[ic])
                 end
             end
         end
