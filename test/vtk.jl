@@ -34,7 +34,7 @@ grainpath * "\n"
 
 graininteractionpath = "test/test.grain-interaction.1.vtp"
 graininteractionchecksum = 
-"c61f314a997c4405eaa98e6a4e3f81368ab2e1c60d06d9a0d998b69d7c8fb1bf  " *
+"526c86105affba2a3c1e38250fa73d1b07a8cae0a05e7bd7d693c76668f26fb5  " *
 graininteractionpath * "\n"
 
 oceanpath = "test/test.ocean.1.vts"
