@@ -29,40 +29,6 @@ function createEmptyAtmosphere()
                       false, [0.,0.,0.], [1.,1.,1.], [1,1,1], [1.,1.,1.])
 end
 
-export interpolateAtmosphereVelocitiesToCorners
-"""
-Convert gridded data from Arakawa-C type (decomposed velocities at faces) to 
-Arakawa-B type (velocities at corners) through interpolation.
-"""
-function interpolateAtmosphereVelocitiesToCorners(u_in::Array{Float64, 4},
-                                                  v_in::Array{Float64, 4})
-
-    if size(u_in) != size(v_in)
-        error("size of u_in ($(size(u_in))) must match v_in ($(size(v_in)))")
-    end
-
-    nx, ny, nz, nt = size(u_in)
-    #u = Array{Float64}(undef, nx+1, ny+1, nz, nt)
-    #v = Array{Float64}(undef, nx+1, ny+1, nz, nt)
-    u = zeros(nx+1, ny+1, nz, nt)
-    v = zeros(nx+1, ny+1, nz, nt)
-    for i=1:nx
-        for j=1:ny
-            if j < ny - 1
-                u[i, j, :, :] = (u_in[i, j, :, :] + u_in[i, j+1, :, :])/2.
-            else
-                u[i, j, :, :] = u_in[i, j, :, :]
-            end
-            if i < nx - 1
-                v[i, j, :, :] = (v_in[i, j, :, :] + v_in[i+1, j, :, :])/2.
-            else
-                v[i, j, :, :] = v_in[i, j, :, :]
-            end
-        end
-    end
-    return u, v
-end
-
 export interpolateAtmosphereState
 """
 Atmosphere data is containted in `Atmosphere` type at discrete times 
@@ -78,27 +44,6 @@ function interpolateAtmosphereState(atmosphere::Atmosphere, t::Float64)
         error("selected time (t = $(t)) is outside the range of " *
               "time steps in the atmosphere data")
     end
-
-    i = 1
-    rel_time = 0.
-    while i < length(atmosphere.time)
-        if atmosphere.time[i+1] < t
-            i += 1
-            continue
-        end
-
-        dt = atmosphere.time[i+1] - atmosphere.time[i]
-        rel_time = (t - atmosphere.time[i])/dt
-        if rel_time < 0. || rel_time > 1.
-            error("time bounds error")
-        end
-        break
-    end
-
-    return atmosphere.u[:,:,:,i]*(1. - rel_time) +
-        atmosphere.u[:,:,:,i+1]*rel_time,
-        atmosphere.v[:,:,:,i]*(1. - rel_time) +
-        atmosphere.v[:,:,:,i+1]*rel_time
 end
 
 export createRegularAtmosphereGrid
