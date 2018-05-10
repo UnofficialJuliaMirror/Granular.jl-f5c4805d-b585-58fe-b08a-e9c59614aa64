@@ -77,6 +77,18 @@ Granular.interactWalls!(sim)
 Compat.@info "Wall at -x"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
+Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., youngs_modulus=0.,
+                              verbose=false)
+Granular.addWallLinearFrictionless!(sim, [1., 0.], -1. + .01, verbose=false)
+Granular.setTimeStep!(sim, verbose=false)
+Granular.interactWalls!(sim)
+@test sim.walls[1].force < 0.
+@test sim.grains[1].force[1] > 0.
+@test sim.grains[1].force[2] ≈ 0.
+
+Compat.@info "Wall at -x"
+sim = Granular.createSimulation()
+sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
 Granular.addWallLinearFrictionless!(sim, [1., 0.], -1. + .01, verbose=false)
 Granular.setTimeStep!(sim, verbose=false)
