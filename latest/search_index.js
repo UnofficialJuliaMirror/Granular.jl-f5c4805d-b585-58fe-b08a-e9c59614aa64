@@ -825,14 +825,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.interpolateAtmosphereVelocitiesToCorners-Tuple{Array{Float64,4},Array{Float64,4}}",
-    "page": "Public API",
-    "title": "Granular.interpolateAtmosphereVelocitiesToCorners",
-    "category": "method",
-    "text": "Convert gridded data from Arakawa-C type (decomposed velocities at faces) to  Arakawa-B type (velocities at corners) through interpolation.\n\n\n\n"
-},
-
-{
     "location": "lib/public.html#Granular.interpolateOceanState-Tuple{Granular.Ocean,Float64}",
     "page": "Public API",
     "title": "Granular.interpolateOceanState",
