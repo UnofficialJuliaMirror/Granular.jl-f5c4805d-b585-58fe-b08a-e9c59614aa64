@@ -18,7 +18,7 @@ export addGrainCylindrical!
                                     youngs_modulus, poissons_ratio,
                                     tensile_strength, shear_strength,
                                     strength_heal_rate,
-                                    fracture_toughness,
+                                    compressive_strength,
                                     ocean_drag_coeff_vert,
                                     ocean_drag_coeff_horiz,
                                     atmosphere_drag_coeff_vert,
@@ -75,7 +75,7 @@ are optional, and come with default values.  The only required arguments are
 * `shear_strength::Float64 = 0.`: shear strength of bonded contacts [Pa].
 * `strength_heal_rate::Float64 = 0.`: rate at which contact bond
     strength is obtained [Pa/s].
-* `fracture_toughness::Float64 = 0.`: maximum compressive
+* `compressive_strength::Float64 = 0.`: maximum compressive
     strength on granular contact (not currently enforced) [m^{1/2}*Pa]. A value
     of 1.285e3 m^{1/2}*Pa is used for sea ice by Hopkins 2004.
 * `ocean_drag_coeff_vert::Float64 = 0.85`: vertical drag coefficient for ocean
@@ -161,7 +161,7 @@ function addGrainCylindrical!(simulation::Simulation,
                                 tensile_strength::Float64 = 0.,
                                 shear_strength::Float64 = 0.,
                                 strength_heal_rate::Float64 = Inf,
-                                fracture_toughness::Float64 = 0.,  
+                                compressive_strength::Float64 = 0.,  
                                 ocean_drag_coeff_vert::Float64 = 0.85, # H&C 2011
                                 ocean_drag_coeff_horiz::Float64 = 5e-4, # H&C 2011
                                 atmosphere_drag_coeff_vert::Float64 = 0.4, # H&C 2011
@@ -261,7 +261,7 @@ function addGrainCylindrical!(simulation::Simulation,
                                  tensile_strength,
                                  shear_strength,
                                  strength_heal_rate,
-                                 fracture_toughness,
+                                 compressive_strength,
 
                                  ocean_drag_coeff_vert,
                                  ocean_drag_coeff_horiz,
@@ -428,7 +428,7 @@ function convertGrainDataToArrays(simulation::Simulation)
                         Array{Float64}(undef, length(simulation.grains)),
                         ## strength_heal_rate
                         Array{Float64}(undef, length(simulation.grains)),
-                        ## fracture_toughness
+                        ## compressive_strength
                         Array{Float64}(undef, length(simulation.grains)),
 
                         # Ocean/atmosphere interaction parameters
@@ -515,8 +515,8 @@ function convertGrainDataToArrays(simulation::Simulation)
         ifarr.tensile_strength[i] = simulation.grains[i].tensile_strength
         ifarr.shear_strength[i] = simulation.grains[i].shear_strength
         ifarr.strength_heal_rate[i] = simulation.grains[i].strength_heal_rate
-        ifarr.fracture_toughness[i] = 
-            simulation.grains[i].fracture_toughness
+        ifarr.compressive_strength[i] = 
+            simulation.grains[i].compressive_strength
 
         ifarr.ocean_drag_coeff_vert[i] = 
             simulation.grains[i].ocean_drag_coeff_vert
@@ -590,7 +590,7 @@ function deleteGrainArrays!(ifarr::GrainArrays)
     ifarr.tensile_strength = f1
     ifarr.shear_strength = f1
     ifarr.strength_heal_rate = f1
-    ifarr.fracture_toughness = f1
+    ifarr.compressive_strength = f1
 
     ifarr.ocean_drag_coeff_vert = f1
     ifarr.ocean_drag_coeff_horiz = f1
@@ -657,7 +657,7 @@ function printGrainInfo(f::GrainCylindrical)
     println("  tensile_strength:   $(f.tensile_strength) Pa")
     println("  shear_strength:     $(f.shear_strength) Pa")
     println("  strength_heal_rate: $(f.strength_heal_rate) Pa/s")
-    println("  fracture_toughness: $(f.fracture_toughness) m^0.5 Pa\n")
+    println("  compressive_strength: $(f.compressive_strength) m^0.5 Pa\n")
 
     println("  c_o_v:  $(f.ocean_drag_coeff_vert)")
     println("  c_o_h:  $(f.ocean_drag_coeff_horiz)")
@@ -780,11 +780,9 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
 
     @test if1.density ≈ if2.density
     @test if1.thickness ≈ if2.thickness
-    @test if1.contact_radius ≈
-        if2.contact_radius
+    @test if1.contact_radius ≈ if2.contact_radius
     @test if1.areal_radius ≈ if2.areal_radius
-    @test if1.circumreference ≈
-        if2.circumreference
+    @test if1.circumreference ≈ if2.circumreference
     @test if1.horizontal_surface_area ≈ if2.horizontal_surface_area
     @test if1.side_surface_area ≈ if2.side_surface_area
     @test if1.volume ≈ if2.volume
@@ -808,11 +806,9 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
     @test if1.enabled == if2.enabled
 
     @test if1.contact_stiffness_normal ≈ if2.contact_stiffness_normal
-    @test if1.contact_stiffness_tangential ≈ 
-        if2.contact_stiffness_tangential
+    @test if1.contact_stiffness_tangential ≈ if2.contact_stiffness_tangential
     @test if1.contact_viscosity_normal ≈ if2.contact_viscosity_normal
-    @test if1.contact_viscosity_tangential ≈ 
-        if2.contact_viscosity_tangential
+    @test if1.contact_viscosity_tangential ≈ if2.contact_viscosity_tangential
     @test if1.contact_static_friction ≈ if2.contact_static_friction
     @test if1.contact_dynamic_friction ≈ if2.contact_dynamic_friction
 
@@ -821,23 +817,19 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
     @test if1.tensile_strength ≈ if2.tensile_strength
     @test if1.shear_strength ≈ if2.shear_strength
     @test if1.strength_heal_rate ≈ if2.strength_heal_rate
-    @test if1.fracture_toughness ≈
-        if2.fracture_toughness
+    @test if1.compressive_strength ≈ if2.compressive_strength
 
     @test if1.ocean_drag_coeff_vert ≈ if2.ocean_drag_coeff_vert
     @test if1.ocean_drag_coeff_horiz ≈ if2.ocean_drag_coeff_horiz
-    @test if1.atmosphere_drag_coeff_vert ≈ 
-        if2.atmosphere_drag_coeff_vert
-    @test if1.atmosphere_drag_coeff_horiz ≈ 
-        if2.atmosphere_drag_coeff_horiz
+    @test if1.atmosphere_drag_coeff_vert ≈ if2.atmosphere_drag_coeff_vert
+    @test if1.atmosphere_drag_coeff_horiz ≈ if2.atmosphere_drag_coeff_horiz
 
     @test if1.pressure ≈ if2.pressure
     @test if1.n_contacts == if2.n_contacts
     @test if1.ocean_grid_pos == if2.ocean_grid_pos
     @test if1.contacts == if2.contacts
     @test if1.position_vector == if2.position_vector
-    @test if1.contact_parallel_displacement == 
-        if2.contact_parallel_displacement
+    @test if1.contact_parallel_displacement == if2.contact_parallel_displacement
     @test if1.contact_rotation == if2.contact_rotation
     @test if1.contact_age ≈ if2.contact_age
 

@@ -49,7 +49,7 @@ mutable struct GrainCylindrical
     tensile_strength::Float64
     shear_strength::Float64
     strength_heal_rate::Float64
-    fracture_toughness::Float64
+    compressive_strength::Float64
 
     # Ocean/atmosphere interaction parameters
     ocean_drag_coeff_vert::Float64
@@ -67,6 +67,7 @@ mutable struct GrainCylindrical
     contact_parallel_displacement::Vector{Vector{Float64}}
     contact_rotation::Vector{Float64}
     contact_age::Vector{Float64}
+    compressive_failure::Vector{Int}
 
     granular_stress::Vector{Float64}
     ocean_stress::Vector{Float64}
@@ -144,7 +145,7 @@ mutable struct GrainArrays
     tensile_strength::Vector{Float64}
     shear_strength::Vector{Float64}
     strength_heal_rate::Vector{Float64}
-    fracture_toughness::Vector{Float64}
+    compressive_strength::Vector{Float64}
 
     ocean_drag_coeff_vert::Vector{Float64}
     ocean_drag_coeff_horiz::Vector{Float64}
