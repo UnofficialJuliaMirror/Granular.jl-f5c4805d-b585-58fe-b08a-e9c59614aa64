@@ -21,6 +21,7 @@ sim = deepcopy(sim_init)
 Granular.setTotalTime!(sim, 10.)
 sim.time_step = 1.
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].contact_age[1] ≈ sim.time
 
 Compat.@info "# Check if bonds add tensile strength"
@@ -31,6 +32,7 @@ sim.grains[1].lin_vel[1] = 0.1
 Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 10.)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] > 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] > 0.
@@ -53,6 +55,7 @@ Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 5.)
 #Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] ≈ 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] ≈ 0.
@@ -80,6 +83,7 @@ Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 5.)
 #Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] ≈ 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] ≈ 0.
@@ -108,6 +112,7 @@ Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 5.)
 #Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] ≈ 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] ≈ 0.
@@ -136,6 +141,7 @@ Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 5.)
 #Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] ≈ 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] ≈ 0.
@@ -165,6 +171,7 @@ Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 5.)
 #Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] ≈ 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] ≈ 0.
@@ -177,3 +184,19 @@ E_therm_final = Granular.totalGrainThermalEnergy(sim)
 @test E_kin_lin_init ≈ E_kin_lin_final
 @test sim.grains[1].n_contacts == 0
 @test sim.grains[2].n_contacts == 0
+
+
+Compat.@info "# Testing compressive strength"
+sim = Granular.createSimulation(id="cohesion")
+Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., compressive_strength=1.)
+Granular.addGrainCylindrical!(sim, [20., 0.], 10., 1., compressive_strength=1.)
+sim.grains[1].lin_vel[1] = 1.0
+E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
+E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
+Granular.setTimeStep!(sim)
+Granular.setTotalTime!(sim, 5.)
+Granular.setOutputFileInterval!(sim, 0.1)
+Granular.run!(sim, verbose=verbose)
+#Granular.removeSimulationFiles(sim)
+@test sim.grains[1].contact_radius < 10.
+@test sim.grains[2].contact_radius < 10.

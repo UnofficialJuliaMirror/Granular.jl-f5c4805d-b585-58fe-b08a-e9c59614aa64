@@ -179,7 +179,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
 
     else  # Micromechanical parameterization: k_n and k_t set explicitly
         k_n = harmonicMean(simulation.grains[i].contact_stiffness_normal,
-                         simulation.grains[j].contact_stiffness_normal)
+                           simulation.grains[j].contact_stiffness_normal)
 
         k_t = harmonicMean(simulation.grains[i].contact_stiffness_tangential,
                            simulation.grains[j].contact_stiffness_tangential)
@@ -262,6 +262,9 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         # Determine the excess overlap distance relative to yield
         Δr = abs(δ_n) - abs(δ_n_yield)
         
+        # Register that compressive failure has occurred for this contact
+        simulation.grains[i].compressive_failure[ic] = 1
+
         # Adjust radius and thickness of the weakest grain
         simulation.grains[idx_weakest].contact_radius -= Δr
         simulation.grains[idx_weakest].areal_radius -= Δr
