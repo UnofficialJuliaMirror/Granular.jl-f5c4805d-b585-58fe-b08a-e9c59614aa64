@@ -34,9 +34,6 @@ Granular.run!(sim, temporal_integration_method="Two-term Taylor", verbose=verbos
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 E_thermal_final = Granular.totalGrainThermalEnergy(sim)
-println(E_kin_lin_init)
-println(E_kin_lin_final)
-println(E_thermal_final)
 @test E_kin_lin_init ≈ E_kin_lin_final+E_thermal_final atol=E_kin_lin_init*tol
 @test E_kin_rot_init ≈ E_kin_rot_final
 
