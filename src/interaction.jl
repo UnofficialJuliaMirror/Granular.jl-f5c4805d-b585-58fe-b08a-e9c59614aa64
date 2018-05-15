@@ -161,9 +161,16 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
     # Effective radius
     R_ij = harmonicMean(r_i, r_j)
 
+    # Determine which ice floe is the thinnest
+    h_min, idx_thinnest = findmin([simulation.grains[i].thickness,
+                                   simulation.grains[j].thickness])
+    idx_thinnest == 1 ? idx_thinnest = i : idx_thinnest = j
+    
+    # Contact length along z
+    Lz_ij = h_min
+
     # Contact area
-    A_ij = R_ij*min(simulation.grains[i].thickness, 
-                    simulation.grains[j].thickness)
+    A_ij = R_ij*Lz_ij
 
     # Contact mechanical parameters
     if simulation.grains[i].youngs_modulus > 0. &&
@@ -215,21 +222,23 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
               ")
     end
 
-    # Determine which grain is the weakest
-    compressive_strength = simulation.grains[i].compressive_strength * 
-                           sqrt(simulation.grains[i].thickness)
-    compressive_strength_j = simulation.grains[j].compressive_strength * 
-                             sqrt(simulation.grains[j].thickness)
-    idx_weakest = i
-    if compressive_strength_j < compressive_strength
-        compressive_strength = compressive_strength_j
-        idx_weakest = j
+    # Determine the compressive strength in Pa by the contact thickness and the
+    # minimum compressive strength
+    compressive_strength = min(simulation.grains[i].compressive_strength,
+                               simulation.grains[j].compressive_strength)/
+                           sqrt(Lz_ij)
+
+    # Limit compressive stress if the prefactor is set to a positive value
+    if δ_n <= 0.0 && compressive_strength > 0. &&
+        norm(force_n) >= compressive_strength*A_ij
+
+        # Register that compressive failure has occurred for this contact
+        simulation.grains[i].compressive_failure[ic] = 1
     end
 
     # Grain-pair moment of inertia [m^4]
     I_ij = 2.0/3.0*R_ij^3*min(simulation.grains[i].thickness,
                               simulation.grains[j].thickness)
-
 
     # Contact tensile strength increases linearly with contact age until
     # tensile stress exceeds tensile strength.
@@ -254,33 +263,6 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         simulation.grains[i].contacts[ic] = 0  # remove contact
         simulation.grains[i].n_contacts -= 1
         simulation.grains[j].n_contacts -= 1
-    end
-
-    # Limit compressive stress if the prefactor is set to a positive value
-    if δ_n <= 0.0 && compressive_strength > 0. &&
-        norm(force_n) >= compressive_strength
-
-        # Determine the overlap distance where yeild stress is reached
-        δ_n_yield = -compressive_strength*A_ij/k_n
-
-        # Determine the excess overlap distance relative to yield
-        Δr = norm(δ_n) - norm(δ_n_yield)
-        if Δr < 0
-            error("radius modification Δr is negative")
-        end
-        
-        # Register that compressive failure has occurred for this contact
-        simulation.grains[i].compressive_failure[ic] = 1
-
-        # Adjust radius and thickness of the weakest grain, or, if this is
-        # hitting the lower size limit, the strongest grain
-        if simulation.grains[idx_weakest].contact_radius > 0.05 - Δr &&
-            simulation.grains[idx_weakest].thickness > 0.01 + 1.0/(π*Δr)
-
-            simulation.grains[idx_weakest].contact_radius -= Δr
-            simulation.grains[idx_weakest].areal_radius -= Δr
-            simulation.grains[idx_weakest].thickness += 1.0/(π*Δr)
-        end
     end
 
     if k_t ≈ 0. && γ_t ≈ 0.
