@@ -4,8 +4,6 @@ using Compat.LinearAlgebra
 # Check for conservation of kinetic energy (=momentum) during a normal collision 
 # between two ice cylindrical grains 
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 verbose=false
 
 Compat.@info "# One ice floe fixed"

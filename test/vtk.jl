@@ -3,8 +3,6 @@ import Compat
 
 # Check the contact search and geometry of a two-particle interaction
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 Compat.@info "Writing simple simulation to VTK file"
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
@@ -29,12 +27,12 @@ end
 
 grainpath = "test/test.grains.1.vtu"
 grainchecksum = 
-"86d501da4c1ee6cd87b1405f9f5050d936c1e4901b3be3c9a6dba7e3acbafc27  " *
+"abe316ba0e41faa74328f28550acab14dd2044d88398e15029d7ca687b1a8e85  " *
 grainpath * "\n"
 
 graininteractionpath = "test/test.grain-interaction.1.vtp"
 graininteractionchecksum = 
-"526c86105affba2a3c1e38250fa73d1b07a8cae0a05e7bd7d693c76668f26fb5  " *
+"4e2bcfdf30fee501f8dd6b2b61a45aa4f935b92b363dac2000c08acc75a98c99  " *
 graininteractionpath * "\n"
 
 oceanpath = "test/test.ocean.1.vts"

@@ -385,6 +385,8 @@ function writeGrainVTK(simulation::Simulation,
                             "Fixed but allow (x) acceleration [-]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.allow_y_acc,
                             "Fixed but allow (y) acceleration [-]")
+    WriteVTK.vtk_point_data(vtkfile, ifarr.allow_z_acc,
+                            "Fixed but allow (z) acceleration [-]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.rotating, "Free to rotate [-]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.enabled, "Enabled [-]")
 
@@ -473,7 +475,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
     contact_stiffness = Float64[]
     tensile_stress = Float64[]
     shear_displacement = Vector{Float64}[]
-    contact_rotation = Float64[]
+    contact_rotation = Vector{Float64}[]
     contact_age = Float64[]
     compressive_failure = Int[]
 
@@ -572,7 +574,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
         for i=1:length(i1)
             write(f, "$(inter_particle_vector[i][1]) ")
             write(f, "$(inter_particle_vector[i][2]) ")
-            write(f, "0.0 ")
+            write(f, "$(inter_particle_vector[i][3]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")
@@ -582,7 +584,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
         for i=1:length(i1)
             @inbounds write(f, "$(shear_displacement[i][1]) ")
             @inbounds write(f, "$(shear_displacement[i][2]) ")
-            write(f, "0.0 ")
+            @inbounds write(f, "$(shear_displacement[i][3]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")
@@ -632,10 +634,12 @@ function writeGrainInteractionVTK(simulation::Simulation,
         write(f, "        </DataArray>\n")
 
         write(f, "        <DataArray type=\"Float32\" " *
-              "Name=\"Contact rotation [rad]\" NumberOfComponents=\"1\" 
+              "Name=\"Contact rotation [rad]\" NumberOfComponents=\"3\" 
         format=\"ascii\">\n")
         for i=1:length(i1)
-            @inbounds write(f, "$(contact_rotation[i]) ")
+            @inbounds write(f, "$(contact_rotation[i][1]) ")
+            @inbounds write(f, "$(contact_rotation[i][2]) ")
+            @inbounds write(f, "$(contact_rotation[i][3]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")
@@ -666,7 +670,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
         write(f, "        <DataArray type=\"Float32\" Name=\"Points\" " *
               "NumberOfComponents=\"3\" format=\"ascii\">\n")
         for i in simulation.grains
-            @inbounds write(f, "$(i.lin_pos[1]) $(i.lin_pos[2]) 0.0 ")
+            @inbounds write(f, "$(i.lin_pos[1]) $(i.lin_pos[2]) $(i.lin_pos[3]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")
@@ -872,6 +876,7 @@ imagegrains.PointArrayStatus = [
 'Fixed in space [-]',
 'Fixed but allow (x) acceleration [-]',
 'Fixed but allow (y) acceleration [-]',
+'Fixed but allow (z) acceleration [-]',
 'Free to rotate [-]',
 'Enabled [-]',
 'Contact stiffness (normal) [N m^-1]',
@@ -1325,7 +1330,7 @@ function plotGrains(sim::Simulation;
         contact_stiffness = Float64[]
         tensile_stress = Float64[]
         shear_displacement = Vector{Float64}[]
-        contact_rotation = Float64[]
+        contact_rotation = Vector{Float64}[]
         contact_age = Float64[]
         compressive_failure = Int[]
         for i=1:length(sim.grains)

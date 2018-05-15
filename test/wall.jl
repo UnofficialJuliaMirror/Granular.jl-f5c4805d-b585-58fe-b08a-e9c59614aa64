@@ -2,14 +2,12 @@
 
 # Check the basic dynamic wall functionality
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 Compat.@info "# Test wall initialization"
 Compat.@info "Testing argument value checks"
 sim = Granular.createSimulation()
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 2., verbose=false)
 @test_throws ErrorException Granular.addWallLinearFrictionless!(sim,
-                                                                [.1, .1, .1],
+                                                                [.1, .1, .1, .1],
                                                                 1.)
 @test_throws ErrorException Granular.addWallLinearFrictionless!(sim,
                                                                 [1., 1.],
@@ -18,7 +16,7 @@ Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 2., verbose=false)
                                                                 [.1, .1, .1],
                                                                 1.)
 @test_throws ErrorException Granular.addWallLinearFrictionless!(sim,
-                                                                [0., 1.], 1.,
+                                                                [0., 1., 1.], 1.,
                                                                 bc="asdf")
 sim = Granular.createSimulation()
 @test_throws ErrorException Granular.addWallLinearFrictionless!(sim, [1., 0.],
@@ -56,7 +54,7 @@ sim.walls[1].force = 1.0
 @test Granular.getWallNormalStress(sim, wall_index=1, stress_type="effective") ≈ 1.0/(20.0*2.0)
 @test_throws ErrorException Granular.getWallNormalStress(sim, wall_index=1, stress_type="nonexistent")
 
-sim.walls[1].normal = [1.0, 1.0]
+sim.walls[1].normal = [1.0, 1.0, 1.0]
 @test_throws ErrorException Granular.getWallSurfaceArea(sim, 1)
 @test_throws ErrorException Granular.getWallSurfaceArea(sim, [1.,1.], 0.5)
 

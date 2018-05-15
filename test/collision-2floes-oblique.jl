@@ -3,8 +3,6 @@
 # Check for conservation of kinetic energy (=momentum) during a normal collision 
 # between two ice cylindrical grains 
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 verbose=false
 
 Compat.@info "## Contact-normal elasticity only"
@@ -136,19 +134,25 @@ sim_init.grains[2].contact_dynamic_friction = 1e2  # no Coulomb sliding
 sim_init.grains[2].fixed = true
 sim = deepcopy(sim_init)
 
+
 Compat.@info "Testing kinetic energy conservation with Two-term Taylor scheme"
 Granular.setTimeStep!(sim, epsilon=0.07)
 tol = 0.1
 Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
+Granular.setOutputFileInterval!(sim, 1.0)
 Granular.run!(sim, temporal_integration_method="Two-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos ≈ 0.
-@test sim.grains[2].ang_vel ≈ 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] ≈ 0.
+@test sim.grains[2].ang_vel[3] ≈ 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
+println(E_kin_lin_init)
+println(E_kin_lin_final)
+println(E_kin_rot_init)
+println(E_kin_rot_final)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol
 
 Compat.@info "mu_d = 0."
@@ -162,9 +166,9 @@ E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos ≈ 0.
-@test sim.grains[1].ang_vel ≈ 0.
-@test sim.grains[2].ang_pos ≈ 0.
+@test sim.grains[1].ang_pos[3] ≈ 0.
+@test sim.grains[1].ang_vel[3] ≈ 0.
+@test sim.grains[2].ang_pos[3] ≈ 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init ≈ E_kin_lin_final atol=E_kin_lin_init*tol
@@ -178,10 +182,10 @@ Compat.@info "Relative tolerance: $(tol*100.)%"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos ≈ 0.
-@test sim.grains[2].ang_vel ≈ 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] ≈ 0.
+@test sim.grains[2].ang_vel[3] ≈ 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol
@@ -195,10 +199,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos ≈ 0.
-@test sim.grains[2].ang_vel ≈ 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] ≈ 0.
+@test sim.grains[2].ang_vel[3] ≈ 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol
@@ -228,10 +232,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos < 0.
-@test sim.grains[2].ang_vel < 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] < 0.
+@test sim.grains[2].ang_vel[3] < 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol 
@@ -257,10 +261,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos < 0.
-@test sim.grains[2].ang_vel < 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] < 0.
+@test sim.grains[2].ang_vel[3] < 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol 
@@ -291,10 +295,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos > 0.
-@test sim.grains[1].ang_vel > 0.
-@test sim.grains[2].ang_pos > 0.
-@test sim.grains[2].ang_vel > 0.
+@test sim.grains[1].ang_pos[3] > 0.
+@test sim.grains[1].ang_vel[3] > 0.
+@test sim.grains[2].ang_pos[3] > 0.
+@test sim.grains[2].ang_vel[3] > 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol 
@@ -320,10 +324,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos > 0.
-@test sim.grains[1].ang_vel > 0.
-@test sim.grains[2].ang_pos > 0.
-@test sim.grains[2].ang_vel > 0.
+@test sim.grains[1].ang_pos[3] > 0.
+@test sim.grains[1].ang_vel[3] > 0.
+@test sim.grains[2].ang_pos[3] > 0.
+@test sim.grains[2].ang_vel[3] > 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol 
@@ -352,10 +356,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos < 0.
-@test sim.grains[2].ang_vel < 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] < 0.
+@test sim.grains[2].ang_vel[3] < 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol 
@@ -381,10 +385,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos < 0.
-@test sim.grains[2].ang_vel < 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] < 0.
+@test sim.grains[2].ang_vel[3] < 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol 
@@ -421,10 +425,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Two-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos < 0.
-@test sim.grains[2].ang_vel < 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] < 0.
+@test sim.grains[2].ang_vel[3] < 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol 
@@ -450,10 +454,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos < 0.
-@test sim.grains[2].ang_vel < 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] < 0.
+@test sim.grains[2].ang_vel[3] < 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init ≈ E_kin_lin_final+E_kin_rot_final atol=E_kin_lin_init*tol 
@@ -503,10 +507,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos < 0.
-@test sim.grains[2].ang_vel < 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] < 0.
+@test sim.grains[2].ang_vel[3] < 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init > E_kin_lin_final+E_kin_rot_final
@@ -556,10 +560,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos < 0.
-@test sim.grains[2].ang_vel < 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] < 0.
+@test sim.grains[2].ang_vel[3] < 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init > E_kin_lin_final+E_kin_rot_final
@@ -609,10 +613,10 @@ Compat.@info "Relative tolerance: $(tol*100.)% with time step: $(sim.time_step)"
 Granular.run!(sim, temporal_integration_method="Three-term Taylor",
             verbose=verbose)
 
-@test sim.grains[1].ang_pos < 0.
-@test sim.grains[1].ang_vel < 0.
-@test sim.grains[2].ang_pos < 0.
-@test sim.grains[2].ang_vel < 0.
+@test sim.grains[1].ang_pos[3] < 0.
+@test sim.grains[1].ang_vel[3] < 0.
+@test sim.grains[2].ang_pos[3] < 0.
+@test sim.grains[2].ang_vel[3] < 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_lin_init+E_kin_rot_init > E_kin_lin_final+E_kin_rot_final

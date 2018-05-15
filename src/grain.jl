@@ -24,7 +24,7 @@ export addGrainCylindrical!
                                     atmosphere_drag_coeff_vert,
                                     atmosphere_drag_coeff_horiz,
                                     pressure, fixed,
-                                    allow_x_acc, allow_y_acc,
+                                    allow_x_acc, allow_y_acc, allow_z_acc,
                                     rotating, enabled, verbose,
                                     ocean_grid_pos, atmosphere_grid_pos,
                                     n_contact, granular_stress, ocean_stress,
@@ -39,21 +39,34 @@ are optional, and come with default values.  The only required arguments are
 # Arguments
 * `simulation::Simulation`: the simulation object where the grain should be
     added to.
-* `lin_pos::Vector{Float64}`: linear position of grain center [m].
+* `lin_pos::Vector{Float64}`: linear position of grain center [m]. If a
+two-component vector is used, the values will be mapped to *x* and *y*, and the
+    *z* component will be set to zero.
 * `contact_radius::Float64`: grain radius for granular interaction [m].
 * `thickness::Float64`: grain thickness [m].
 * `areal_radius = false`: grain radius for determining sea-ice concentration
     [m].
-* `lin_vel::Vector{Float64} = [0., 0.]`: linear velocity [m/s].
-* `lin_acc::Vector{Float64} = [0., 0.]`: linear acceleration [m/s^2].
-* `force::Vector{Float64} = [0., 0.]`: linear force balance [N].
-* `ang_pos::Float64 = 0.`: angular position around its center vertical axis
-    [rad].
-* `ang_vel::Float64 = 0.`: angular velocity around its center vertical axis
-    [rad/s].
-* `ang_acc::Float64 = 0.`: angular acceleration around its center vertical axis
-    [rad/s^2].
-* `torque::Float64 = 0.`: torque around its center vertical axis [N*m]
+* `lin_vel::Vector{Float64} = [0., 0., 0.]`: linear velocity [m/s]. If a
+two-component vector is used, the values will be mapped to *x* and *y*, and the
+*z* component will be set to zero.
+* `lin_acc::Vector{Float64} = [0., 0., 0.]`: linear acceleration [m/s^2]. If a
+two-component vector is used, the values will be mapped to *x* and *y*, and the
+*z* component will be set to zero.
+* `force::Vector{Float64} = [0., 0., 0.]`: linear force balance [N]. If a
+two-component vector is used, the values will be mapped to *x* and *y*, and the
+*z* component will be set to zero.
+* `ang_pos::Float64 = [0., 0., 0.]`: angular position around its center vertical
+    axis [rad]. If a scalar is used, the value will be mapped to *z*, and the
+    *x* and *y* components will be set to zero.
+* `ang_vel::Float64 = [0., 0., 0.]`: angular velocity around its center vertical
+    axis [rad/s]. If a scalar is used, the value will be mapped to *z*, and the
+    *x* and *y* components will be set to zero.
+* `ang_acc::Float64 = [0., 0., 0.]`: angular acceleration around its center
+    vertical axis [rad/s^2]. If a scalar is used, the value will be mapped to
+    *z*, and the *x* and *y* components will be set to zero.
+* `torque::Float64 = [0., 0., 0.]`: torque around its center vertical axis
+    [N*m]. If a scalar is used, the value will be mapped to *z*, and the *x* and
+    *y* components will be set to zero.
 * `density::Float64 = 934.`: grain mean density [kg/m^3].
 * `contact_stiffness_normal::Float64 = 1e7`: contact-normal stiffness [N/m];
     overridden if `youngs_modulus` is set to a positive value.
@@ -90,6 +103,7 @@ are optional, and come with default values.  The only required arguments are
 * `fixed::Bool = false`: grain is fixed to a constant velocity (e.g. zero).
 * `allow_x_acc::Bool = false`: override `fixed` along `x`.
 * `allow_y_acc::Bool = false`: override `fixed` along `y`.
+* `allow_z_acc::Bool = false`: override `fixed` along `z`.
 * `rotating::Bool = true`: grain is allowed to rotate.
 * `enabled::Bool = true`: grain interacts with other grains.
 * `verbose::Bool = true`: display diagnostic information during the function
@@ -99,11 +113,11 @@ are optional, and come with default values.  The only required arguments are
 * `atmosphere_grid_pos::Array{Int, 1} = [0, 0]`: position of grain in the
     atmosphere grid.
 * `n_contacts::Int = 0`: number of contacts with other grains.
-* `granular_stress::Vector{Float64} = [0., 0.]`: resultant stress on grain
+* `granular_stress::Vector{Float64} = [0., 0., 0.]`: resultant stress on grain
     from granular interactions [Pa].
-* `ocean_stress::Vector{Float64} = [0., 0.]`: resultant stress on grain from
+* `ocean_stress::Vector{Float64} = [0., 0., 0.]`: resultant stress on grain from
     ocean drag [Pa].
-* `atmosphere_stress::Vector{Float64} = [0., 0.]`: resultant stress on grain
+* `atmosphere_stress::Vector{Float64} = [0., 0., 0.]`: resultant stress on grain
     from atmosphere drag [Pa].
 * `thermal_energy::Float64 = 0.0`: thermal energy of grain [J].
 * `color::Int=0`: type number, usually used for associating a color to the grain
@@ -111,12 +125,13 @@ are optional, and come with default values.  The only required arguments are
 
 # Examples
 The most basic example adds a new grain to the simulation `sim`, with a 
-center at `[1., 2.]`, a radius of `1.` meter, and a thickness of `0.5` 
+center at `[1., 2., 0.]`, a radius of `1.` meter, and a thickness of `0.5` 
 meter:
 
 ```julia
 Granular.addGrainCylindrical!(sim, [1., 2.], 1., .5)
 ```
+Note that the *z* component is set to zero if a two-component vector is passed.
 
 The following example will create a grain with tensile and shear strength, and a
 velocity of 0.5 m/s towards -x:
@@ -142,13 +157,13 @@ function addGrainCylindrical!(simulation::Simulation,
                                 contact_radius::Float64,
                                 thickness::Float64;
                                 areal_radius = false,
-                                lin_vel::Vector{Float64} = [0., 0.],
-                                lin_acc::Vector{Float64} = [0., 0.],
-                                force::Vector{Float64} = [0., 0.],
-                                ang_pos::Float64 = 0.,
-                                ang_vel::Float64 = 0.,
-                                ang_acc::Float64 = 0.,
-                                torque::Float64 = 0.,
+                                lin_vel::Vector{Float64} = [0., 0., 0.],
+                                lin_acc::Vector{Float64} = [0., 0., 0.],
+                                force::Vector{Float64} = [0., 0., 0.],
+                                ang_pos::Vector{Float64} = [0., 0., 0.],
+                                ang_vel::Vector{Float64} = [0., 0., 0.],
+                                ang_acc::Vector{Float64} = [0., 0., 0.],
+                                torque::Vector{Float64} = [0., 0., 0.],
                                 density::Float64 = 934.,
                                 contact_stiffness_normal::Float64 = 1e7,
                                 contact_stiffness_tangential::Float64 = 0.,
@@ -170,30 +185,52 @@ function addGrainCylindrical!(simulation::Simulation,
                                 fixed::Bool = false,
                                 allow_x_acc::Bool = false,
                                 allow_y_acc::Bool = false,
+                                allow_z_acc::Bool = false,
                                 rotating::Bool = true,
                                 enabled::Bool = true,
                                 verbose::Bool = true,
                                 ocean_grid_pos::Array{Int, 1} = [0, 0],
                                 atmosphere_grid_pos::Array{Int, 1} = [0, 0],
                                 n_contacts::Int = 0,
-                                granular_stress::Vector{Float64} = [0., 0.],
-                                ocean_stress::Vector{Float64} = [0., 0.],
-                                atmosphere_stress::Vector{Float64} = [0., 0.],
+                                granular_stress::Vector{Float64} = [0., 0., 0.],
+                                ocean_stress::Vector{Float64} = [0., 0., 0.],
+                                atmosphere_stress::Vector{Float64} = [0., 0., 0.],
                                 thermal_energy::Float64 = 0.,
                                 color::Int = 0)
 
     # Check input values
-    if length(lin_pos) != 2
-        error("Linear position must be a two-element array " *
-              "(lin_pos = $lin_pos)")
+    if length(lin_pos) != 3
+        lin_pos = vecTo3d(lin_pos)
     end
-    if length(lin_vel) != 2
-        error("Linear velocity must be a two-element array " *
-              "(lin_vel = $lin_vel)")
+    if length(lin_vel) != 3
+        lin_vel = vecTo3d(lin_vel)
     end
-    if length(lin_acc) != 2
-        error("Linear acceleration must be a two-element array " *
-              "(lin_acc = $lin_acc)")
+    if length(lin_acc) != 3
+        lin_acc = vecTo3d(lin_acc)
+    end
+    if length(force) != 3
+        force = vecTo3d(force)
+    end
+    if length(ang_pos) != 3
+        ang_pos = vecTo3d(ang_pos)
+    end
+    if length(ang_vel) != 3
+        ang_vel = vecTo3d(ang_vel)
+    end
+    if length(ang_acc) != 3
+        ang_acc = vecTo3d(ang_acc)
+    end
+    if length(torque) != 3
+        torque = vecTo3d(torque)
+    end
+    if length(granular_stress) != 3
+        granular_stress = vecTo3d(granular_stress)
+    end
+    if length(ocean_stress) != 3
+        ocean_stress = vecTo3d(ocean_stress)
+    end
+    if length(atmosphere_stress) != 3
+        atmosphere_stress = vecTo3d(atmosphere_stress)
     end
     if contact_radius <= 0.0
         error("Radius must be greater than 0.0 " *
@@ -211,83 +248,85 @@ function addGrainCylindrical!(simulation::Simulation,
     contacts::Vector{Int} = zeros(Int, simulation.Nc_max)
     position_vector = Vector{Vector{Float64}}(simulation.Nc_max)
     contact_parallel_displacement = Vector{Vector{Float64}}(simulation.Nc_max)
-    contact_rotation::Vector{Float64} = zeros(Float64, simulation.Nc_max)
+    contact_rotation = Vector{Vector{Float64}}(simulation.Nc_max)
     contact_age::Vector{Float64} = zeros(Float64, simulation.Nc_max)
     compressive_failure::Vector{Int} = zeros(Int, simulation.Nc_max)
     for i=1:simulation.Nc_max
-        position_vector[i] = zeros(2)
-        contact_parallel_displacement[i] = zeros(2)
+        position_vector[i] = zeros(3)
+        contact_rotation[i] = zeros(3)
+        contact_parallel_displacement[i] = zeros(3)
     end
 
     # Create grain object with placeholder values for surface area, volume, 
     # mass, and moment of inertia.
     grain = GrainCylindrical(density,
 
-                                 thickness,
-                                 contact_radius,
-                                 areal_radius,
-                                 1.0,  # circumreference
-                                 1.0,  # horizontal_surface_area
-                                 1.0,  # side_surface_area
-                                 1.0,  # volume
-                                 1.0,  # mass
-                                 1.0,  # moment_of_inertia
-                                 lin_pos,
-                                 lin_vel,
-                                 lin_acc,
-                                 force,
-                                 [0., 0.], # external_body_force
-                                 [0., 0.], # lin_disp
+                             thickness,
+                             contact_radius,
+                             areal_radius,
+                             1.0,  # circumreference
+                             1.0,  # horizontal_surface_area
+                             1.0,  # side_surface_area
+                             1.0,  # volume
+                             1.0,  # mass
+                             1.0,  # moment_of_inertia
+                             lin_pos,
+                             lin_vel,
+                             lin_acc,
+                             force,
+                             [0., 0., 0.], # external_body_force
+                             [0., 0., 0.], # lin_disp
 
-                                 ang_pos,
-                                 ang_vel,
-                                 ang_acc,
-                                 torque,
+                             ang_pos,
+                             ang_vel,
+                             ang_acc,
+                             torque,
 
-                                 fixed,
-                                 allow_x_acc,
-                                 allow_y_acc,
-                                 rotating,
-                                 enabled,
+                             fixed,
+                             allow_x_acc,
+                             allow_y_acc,
+                             allow_z_acc,
+                             rotating,
+                             enabled,
 
-                                 contact_stiffness_normal,
-                                 contact_stiffness_tangential,
-                                 contact_viscosity_normal,
-                                 contact_viscosity_tangential,
-                                 contact_static_friction,
-                                 contact_dynamic_friction,
+                             contact_stiffness_normal,
+                             contact_stiffness_tangential,
+                             contact_viscosity_normal,
+                             contact_viscosity_tangential,
+                             contact_static_friction,
+                             contact_dynamic_friction,
 
-                                 youngs_modulus,
-                                 poissons_ratio,
-                                 tensile_strength,
-                                 shear_strength,
-                                 strength_heal_rate,
-                                 compressive_strength,
+                             youngs_modulus,
+                             poissons_ratio,
+                             tensile_strength,
+                             shear_strength,
+                             strength_heal_rate,
+                             compressive_strength,
 
-                                 ocean_drag_coeff_vert,
-                                 ocean_drag_coeff_horiz,
-                                 atmosphere_drag_coeff_vert,
-                                 atmosphere_drag_coeff_horiz,
+                             ocean_drag_coeff_vert,
+                             ocean_drag_coeff_horiz,
+                             atmosphere_drag_coeff_vert,
+                             atmosphere_drag_coeff_horiz,
 
-                                 pressure,
-                                 n_contacts,
-                                 ocean_grid_pos,
-                                 atmosphere_grid_pos,
-                                 contacts,
-                                 position_vector,
-                                 contact_parallel_displacement,
-                                 contact_rotation,
-                                 contact_age,
-                                 compressive_failure,
+                             pressure,
+                             n_contacts,
+                             ocean_grid_pos,
+                             atmosphere_grid_pos,
+                             contacts,
+                             position_vector,
+                             contact_parallel_displacement,
+                             contact_rotation,
+                             contact_age,
+                             compressive_failure,
 
-                                 granular_stress,
-                                 ocean_stress,
-                                 atmosphere_stress,
+                             granular_stress,
+                             ocean_stress,
+                             atmosphere_stress,
 
-                                 thermal_energy,
+                             thermal_energy,
 
-                                 color
-                                )
+                             color
+                            )
 
     # Overwrite previous placeholder values
     grain.circumreference = grainCircumreference(grain)
@@ -401,6 +440,8 @@ function convertGrainDataToArrays(simulation::Simulation)
                         Array{Int}(undef, length(simulation.grains)),
                         ## allow_y_acc
                         Array{Int}(undef, length(simulation.grains)),
+                        ## allow_z_acc
+                        Array{Int}(undef, length(simulation.grains)),
                         ## rotating
                         Array{Int}(undef, length(simulation.grains)),
                         ## enabled
@@ -480,22 +521,23 @@ function convertGrainDataToArrays(simulation::Simulation)
         ifarr.mass[i] = simulation.grains[i].mass
         ifarr.moment_of_inertia[i] = simulation.grains[i].moment_of_inertia
 
-        ifarr.lin_pos[1:2, i] = simulation.grains[i].lin_pos
-        ifarr.lin_vel[1:2, i] = simulation.grains[i].lin_vel
-        ifarr.lin_acc[1:2, i] = simulation.grains[i].lin_acc
-        ifarr.force[1:2, i] = simulation.grains[i].force
-        ifarr.external_body_force[1:2, i] =
+        ifarr.lin_pos[1:3, i] = simulation.grains[i].lin_pos
+        ifarr.lin_vel[1:3, i] = simulation.grains[i].lin_vel
+        ifarr.lin_acc[1:3, i] = simulation.grains[i].lin_acc
+        ifarr.force[1:3, i] = simulation.grains[i].force
+        ifarr.external_body_force[1:3, i] =
             simulation.grains[i].external_body_force
-        ifarr.lin_disp[1:2, i] = simulation.grains[i].lin_disp
+        ifarr.lin_disp[1:3, i] = simulation.grains[i].lin_disp
 
-        ifarr.ang_pos[3, i] = simulation.grains[i].ang_pos
-        ifarr.ang_vel[3, i] = simulation.grains[i].ang_vel
-        ifarr.ang_acc[3, i] = simulation.grains[i].ang_acc
-        ifarr.torque[3, i] = simulation.grains[i].torque
+        ifarr.ang_pos[1:3, i] = simulation.grains[i].ang_pos
+        ifarr.ang_vel[1:3, i] = simulation.grains[i].ang_vel
+        ifarr.ang_acc[1:3, i] = simulation.grains[i].ang_acc
+        ifarr.torque[1:3, i] = simulation.grains[i].torque
 
         ifarr.fixed[i] = Int(simulation.grains[i].fixed)
         ifarr.allow_x_acc[i] = Int(simulation.grains[i].allow_x_acc)
         ifarr.allow_y_acc[i] = Int(simulation.grains[i].allow_y_acc)
+        ifarr.allow_z_acc[i] = Int(simulation.grains[i].allow_z_acc)
         ifarr.rotating[i] = Int(simulation.grains[i].rotating)
         ifarr.enabled[i] = Int(simulation.grains[i].enabled)
 
@@ -532,10 +574,9 @@ function convertGrainDataToArrays(simulation::Simulation)
         ifarr.pressure[i] = simulation.grains[i].pressure
         ifarr.n_contacts[i] = simulation.grains[i].n_contacts
 
-        ifarr.granular_stress[1:2, i] = simulation.grains[i].granular_stress
-        ifarr.ocean_stress[1:2, i] = simulation.grains[i].ocean_stress
-        ifarr.atmosphere_stress[1:2, i] =
-            simulation.grains[i].atmosphere_stress
+        ifarr.granular_stress[1:3, i] = simulation.grains[i].granular_stress
+        ifarr.ocean_stress[1:3, i] = simulation.grains[i].ocean_stress
+        ifarr.atmosphere_stress[1:3, i] = simulation.grains[i].atmosphere_stress
 
         ifarr.thermal_energy[i] = simulation.grains[i].thermal_energy
 
@@ -577,6 +618,7 @@ function deleteGrainArrays!(ifarr::GrainArrays)
     ifarr.fixed = i1
     ifarr.allow_x_acc = i1
     ifarr.allow_y_acc = i1
+    ifarr.allow_z_acc = i1
     ifarr.rotating = i1
     ifarr.enabled = i1
 
@@ -644,21 +686,22 @@ function printGrainInfo(f::GrainCylindrical)
     println("  fixed:       $(f.fixed)")
     println("  allow_x_acc: $(f.allow_x_acc)")
     println("  allow_y_acc: $(f.allow_y_acc)")
+    println("  allow_z_acc: $(f.allow_z_acc)")
     println("  rotating:    $(f.rotating)")
     println("  enabled:     $(f.enabled)\n")
 
-    println("  k_n:     $(f.contact_stiffness_normal) N/m")
-    println("  k_t:     $(f.contact_stiffness_tangential) N/m")
+    println("  k_n: $(f.contact_stiffness_normal) N/m")
+    println("  k_t: $(f.contact_stiffness_tangential) N/m")
     println("  γ_n: $(f.contact_viscosity_normal) N/(m/s)")
     println("  γ_t: $(f.contact_viscosity_tangential) N/(m/s)")
-    println("  μ_s:    $(f.contact_static_friction)")
-    println("  μ_d:    $(f.contact_dynamic_friction)\n")
+    println("  μ_s: $(f.contact_static_friction)")
+    println("  μ_d: $(f.contact_dynamic_friction)\n")
 
-    println("  E:                  $(f.youngs_modulus) Pa")
-    println("  ν:                  $(f.poissons_ratio)")
-    println("  tensile_strength:   $(f.tensile_strength) Pa")
-    println("  shear_strength:     $(f.shear_strength) Pa")
-    println("  strength_heal_rate: $(f.strength_heal_rate) Pa/s")
+    println("  E:                    $(f.youngs_modulus) Pa")
+    println("  ν:                    $(f.poissons_ratio)")
+    println("  tensile_strength:     $(f.tensile_strength) Pa")
+    println("  shear_strength:       $(f.shear_strength) Pa")
+    println("  strength_heal_rate:   $(f.strength_heal_rate) Pa/s")
     println("  compressive_strength: $(f.compressive_strength) m^0.5 Pa\n")
 
     println("  c_o_v:  $(f.ocean_drag_coeff_vert)")
@@ -899,12 +942,12 @@ rotational) to zero in order to get rid of all kinetic energy.
 """
 function zeroKinematics!(sim::Simulation)
     for grain in sim.grains
-        grain.lin_vel .= zeros(2)
-        grain.lin_acc .= zeros(2)
-        grain.force .= zeros(2)
-        grain.lin_disp .= zeros(2)
-        grain.ang_vel = 0.
-        grain.ang_acc = 0.
-        grain.torque = 0.
+        grain.lin_vel .= zeros(3)
+        grain.lin_acc .= zeros(3)
+        grain.force .= zeros(3)
+        grain.lin_disp .= zeros(3)
+        grain.ang_vel .= zeros(3)
+        grain.ang_acc .= zeros(3)
+        grain.torque .= zeros(3)
     end
 end

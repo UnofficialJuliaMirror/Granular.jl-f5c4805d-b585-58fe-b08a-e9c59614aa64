@@ -63,10 +63,11 @@ function interactWalls!(sim::Simulation)
 
             # get overlap distance by projecting grain position onto wall-normal
             # vector. Overlap when δ_n < 0.0
-            δ_n = abs(dot(sim.walls[iw].normal, sim.grains[i].lin_pos) -
-                      sim.walls[iw].pos) - sim.grains[i].contact_radius
+            δ_n = norm(dot(sim.walls[iw].normal[1:2],
+                           sim.grains[i].lin_pos[1:2]) -
+                       sim.walls[iw].pos) - sim.grains[i].contact_radius
 
-            vel_n = dot(sim.walls[iw].normal, sim.grains[i].lin_vel)
+            vel_n = dot(sim.walls[iw].normal[1:2], sim.grains[i].lin_vel[1:2])
 
             if δ_n < 0.
                 if sim.grains[i].youngs_modulus > 0.
@@ -98,7 +99,7 @@ function interactWalls!(sim::Simulation)
                 end
 
                 sim.grains[i].force += -force_n .* sim.walls[iw].normal .*
-                    orientation
+                                               orientation
                 sim.walls[iw].force += force_n * orientation
             end
         end
@@ -127,7 +128,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
 
     # Inter-position vector, use stored value which is corrected for boundary
     # periodicity
-    p = simulation.grains[i].position_vector[ic]
+    p = simulation.grains[i].position_vector[ic][1:2]
     dist = norm(p)
 
     r_i = simulation.grains[i].contact_radius
@@ -140,20 +141,21 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
     n = p/dist
     t = [-n[2], n[1]]
 
-    # Contact kinematics
-    vel_lin = simulation.grains[i].lin_vel - simulation.grains[j].lin_vel
+    # Contact kinematics (2d)
+    vel_lin = simulation.grains[i].lin_vel[1:2] -
+        simulation.grains[j].lin_vel[1:2]
     vel_n = dot(vel_lin, n)
     vel_t = dot(vel_lin, t) -
-        harmonicMean(r_i, r_j)*(simulation.grains[i].ang_vel +
-                                simulation.grains[j].ang_vel)
+        harmonicMean(r_i, r_j)*(simulation.grains[i].ang_vel[3] +
+                                simulation.grains[j].ang_vel[3])
 
     # Correct old tangential displacement for contact rotation and add new
-    δ_t0 = simulation.grains[i].contact_parallel_displacement[ic]
+    δ_t0 = simulation.grains[i].contact_parallel_displacement[ic][1:2]
     δ_t = dot(t, δ_t0 - (n*dot(n, δ_t0))) + vel_t*simulation.time_step
 
-    # Determine the contact rotation
-    θ_t = simulation.grains[i].contact_rotation[ic] +
-        (simulation.grains[j].ang_vel - simulation.grains[i].ang_vel) *
+    # Determine the contact rotation (2d)
+    θ_t = simulation.grains[i].contact_rotation[ic][3] +
+        (simulation.grains[j].ang_vel[3] - simulation.grains[i].ang_vel[3]) *
         simulation.time_step
 
     # Effective radius
@@ -208,7 +210,9 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         end
 
     else
-        error("unknown contact_normal_rheology (k_n = $k_n, γ_n = $γ_n")
+        error("unknown contact_normal_rheology (k_n = $k_n, γ_n = $γ_n,
+              E = $E, A_ij = $A_ij, R_ij = $R_ij)
+              ")
     end
 
     # Determine which grain is the weakest
@@ -244,7 +248,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
     end
 
     # Reset contact age (breaking bond) if bond strength is exceeded
-    if δ_n >= 0.0 && abs(force_n)/A_ij + abs(M_t)*R_ij/I_ij > tensile_strength
+    if δ_n >= 0.0 && norm(force_n)/A_ij + norm(M_t)*R_ij/I_ij > tensile_strength
         force_n = 0.
         force_t = 0.
         simulation.grains[i].contacts[ic] = 0  # remove contact
@@ -254,36 +258,44 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
 
     # Limit compressive stress if the prefactor is set to a positive value
     if δ_n <= 0.0 && compressive_strength > 0. &&
-        abs(force_n) >= compressive_strength
+        norm(force_n) >= compressive_strength
 
         # Determine the overlap distance where yeild stress is reached
         δ_n_yield = -compressive_strength*A_ij/k_n
 
         # Determine the excess overlap distance relative to yield
-        Δr = abs(δ_n) - abs(δ_n_yield)
+        Δr = norm(δ_n) - norm(δ_n_yield)
+        if Δr < 0
+            error("radius modification Δr is negative")
+        end
         
         # Register that compressive failure has occurred for this contact
         simulation.grains[i].compressive_failure[ic] = 1
 
-        # Adjust radius and thickness of the weakest grain
-        simulation.grains[idx_weakest].contact_radius -= Δr
-        simulation.grains[idx_weakest].areal_radius -= Δr
-        simulation.grains[idx_weakest].thickness += 1.0/(π*Δr)
+        # Adjust radius and thickness of the weakest grain, or, if this is
+        # hitting the lower size limit, the strongest grain
+        if simulation.grains[idx_weakest].contact_radius > 0.05 - Δr &&
+            simulation.grains[idx_weakest].thickness > 0.01 + 1.0/(π*Δr)
+
+            simulation.grains[idx_weakest].contact_radius -= Δr
+            simulation.grains[idx_weakest].areal_radius -= Δr
+            simulation.grains[idx_weakest].thickness += 1.0/(π*Δr)
+        end
     end
 
     if k_t ≈ 0. && γ_t ≈ 0.
         # do nothing
 
     elseif k_t ≈ 0. && γ_t > 0.
-        force_t = abs(γ_t * vel_t)
+        force_t = norm(γ_t * vel_t)
 
         # Coulomb slip
-        if force_t > μ_d_minimum*abs(force_n)
-            force_t = μ_d_minimum*abs(force_n)
+        if force_t > μ_d_minimum*norm(force_n)
+            force_t = μ_d_minimum*norm(force_n)
 
             # Nguyen et al 2009 "Thermomechanical modelling of friction effects
             # in granular flows using the discrete element method"
-            E_shear = abs(force_t)*abs(vel_t)*simulation.time_step
+            E_shear = norm(force_t)*norm(vel_t)*simulation.time_step
 
             # Assume equal thermal properties
             simulation.grains[i].thermal_energy += 0.5*E_shear
@@ -298,13 +310,13 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         force_t = -k_t*δ_t - γ_t*vel_t
 
         # Coulomb slip
-        if abs(force_t) > μ_d_minimum*abs(force_n)
-            force_t = μ_d_minimum*abs(force_n)*force_t/abs(force_t)
+        if norm(force_t) > μ_d_minimum*norm(force_n)
+            force_t = μ_d_minimum*norm(force_n)*force_t/norm(force_t)
             δ_t = (-force_t - γ_t*vel_t)/k_t
 
             # Nguyen et al 2009 "Thermomechanical modelling of friction effects
             # in granular flows using the discrete element method"
-            E_shear = abs(force_t)*abs(vel_t)*simulation.time_step
+            E_shear = norm(force_t)*norm(vel_t)*simulation.time_step
 
             # Assume equal thermal properties
             simulation.grains[i].thermal_energy += 0.5*E_shear
@@ -317,7 +329,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
 
     # Break bond under extension through bending failure
     if δ_n < 0.0 && tensile_strength > 0.0 && shear_strength > 0.0 &&
-        abs(force_t)/A_ij > shear_strength
+        norm(force_t)/A_ij > shear_strength
 
         force_n = 0.
         force_t = 0.
@@ -326,15 +338,15 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         simulation.grains[j].n_contacts -= 1
     end
 
-    simulation.grains[i].contact_parallel_displacement[ic] = δ_t*t
-    simulation.grains[i].contact_rotation[ic] = θ_t
+    simulation.grains[i].contact_parallel_displacement[ic] = vecTo3d(δ_t.*t)
+    simulation.grains[i].contact_rotation[ic] = [0., 0., θ_t]
     simulation.grains[i].contact_age[ic] += simulation.time_step
 
-    simulation.grains[i].force += force_n*n + force_t*t;
-    simulation.grains[j].force -= force_n*n + force_t*t;
+    simulation.grains[i].force += vecTo3d(force_n.*n + force_t.*t);
+    simulation.grains[j].force -= vecTo3d(force_n.*n + force_t.*t);
 
-    simulation.grains[i].torque += -force_t*R_ij + M_t
-    simulation.grains[j].torque += -force_t*R_ij - M_t
+    simulation.grains[i].torque[3] += -force_t*R_ij + M_t
+    simulation.grains[j].torque[3] += -force_t*R_ij - M_t
 
     simulation.grains[i].pressure += 
         force_n/simulation.grains[i].side_surface_area;

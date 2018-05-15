@@ -5,8 +5,6 @@ import Granular
 # Check the grid interpolation and sorting functions
 verbose = false
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 if Granular.hasNetCDF
     ocean = Granular.readOceanNetCDF("Baltic/00010101.ocean_month.nc",
                                    "Baltic/ocean_hgrid.nc")

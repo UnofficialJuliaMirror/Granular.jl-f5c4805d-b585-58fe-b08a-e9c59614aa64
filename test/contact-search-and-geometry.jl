@@ -4,8 +4,6 @@ import Granular
 
 # Check the contact search and geometry of a two-particle interaction
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 Compat.@info "Testing interGrainPositionVector(...) and findOverlap(...)"
 sim = Granular.createSimulation("test")
 sim = Granular.createSimulation(id="test")
@@ -15,7 +13,7 @@ Granular.addGrainCylindrical!(sim, [18.01, 0.01], 10., 1., verbose=false)
 position_ij = Granular.interGrainPositionVector(sim, 1, 2)
 overlap_ij = Granular.findOverlap(sim, 1, 2, position_ij)
 
-@test [-18., 0.] ≈ position_ij
+@test [-18., 0., 0.] ≈ position_ij
 @test -2. ≈ overlap_ij
 
 
@@ -31,16 +29,16 @@ Granular.findContacts!(sim)
 sim.grains[1].enabled = false
 # The contact should be registered in ice floe 1, but not ice floe 2
 @test 2 == sim.grains[1].contacts[1]
-@test [-18., 0.] ≈ sim.grains[1].position_vector[1]
+@test [-18., 0., 0.] ≈ sim.grains[1].position_vector[1]
 for ic=2:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[1].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
 end
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[2].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[2].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
 end
 @test 1 == sim.grains[1].n_contacts
 @test 1 == sim.grains[2].n_contacts
@@ -50,16 +48,16 @@ sim = deepcopy(sim_copy)
 Granular.findContacts!(sim)
 
 @test 2 == sim.grains[1].contacts[1]
-@test [-18., 0.] ≈ sim.grains[1].position_vector[1]
+@test [-18., 0., 0.] ≈ sim.grains[1].position_vector[1]
 for ic=2:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[1].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
 end
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[2].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[2].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
 end
 @test 1 == sim.grains[1].n_contacts
 @test 1 == sim.grains[2].n_contacts
@@ -72,13 +70,13 @@ sim.grains[2].enabled = false
 Granular.findContacts!(sim)
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[1].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
 end
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[2].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[2].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
 end
 @test 0 == sim.grains[1].n_contacts
 @test 0 == sim.grains[2].n_contacts
@@ -89,13 +87,13 @@ Granular.disableGrain!(sim, 1)
 Granular.findContacts!(sim)
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[1].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
 end
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[2].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[2].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
 end
 @test 0 == sim.grains[1].n_contacts
 @test 0 == sim.grains[2].n_contacts
@@ -107,13 +105,13 @@ Granular.disableGrain!(sim, 2)
 Granular.findContacts!(sim)
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[1].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
 end
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[2].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[2].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
 end
 @test 0 == sim.grains[1].n_contacts
 @test 0 == sim.grains[2].n_contacts
@@ -125,16 +123,16 @@ Granular.interact!(sim)
 Granular.findContacts!(sim)
 
 @test 2 == sim.grains[1].contacts[1]
-@test [-18., 0.] ≈ sim.grains[1].position_vector[1]
+@test [-18., 0., 0.] ≈ sim.grains[1].position_vector[1]
 for ic=2:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[1].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
 end
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[2].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[2].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
 end
 @test 1 == sim.grains[1].n_contacts
 @test 1 == sim.grains[2].n_contacts
@@ -149,13 +147,13 @@ Granular.findContactsInGrid!(sim, sim.ocean)
 @test 2 == sim.grains[1].contacts[1]
 for ic=2:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[1].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
 end
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[2].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[2].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
 end
 @test 1 == sim.grains[1].n_contacts
 @test 1 == sim.grains[2].n_contacts
@@ -170,13 +168,13 @@ Granular.findContactsInGrid!(sim, sim.ocean)
 @test 2 == sim.grains[1].contacts[1]
 for ic=2:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[1].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
 end
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[2].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[2].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
 end
 @test 1 == sim.grains[1].n_contacts
 @test 1 == sim.grains[2].n_contacts
@@ -191,13 +189,13 @@ Granular.findContactsInGrid!(sim, sim.ocean)
 
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[1].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
 end
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[2].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[2].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
 end
 @test 0 == sim.grains[1].n_contacts
 @test 0 == sim.grains[2].n_contacts
@@ -211,13 +209,13 @@ Granular.findContacts!(sim)
 @test 2 == sim.grains[1].contacts[1]
 for ic=2:sim.Nc_max
     @test 0 == sim.grains[1].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[1].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[1].contact_parallel_displacement[ic]
 end
 for ic=1:sim.Nc_max
     @test 0 == sim.grains[2].contacts[ic]
-    @test [0., 0.] ≈ sim.grains[2].position_vector[ic]
-    @test [0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].position_vector[ic]
+    @test [0., 0., 0.] ≈ sim.grains[2].contact_parallel_displacement[ic]
 end
 @test 1 == sim.grains[1].n_contacts
 @test 1 == sim.grains[2].n_contacts
@@ -302,5 +300,3 @@ for j=2:(ny-1)
         @test sim.grains[idx].n_contacts == 4
     end
 end
-
-

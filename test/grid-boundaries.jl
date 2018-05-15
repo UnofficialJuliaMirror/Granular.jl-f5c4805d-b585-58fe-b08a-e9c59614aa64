@@ -1,8 +1,6 @@
 #!/usr/bin/env julia
 import Compat
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 verbose=false
 
 Compat.@info "## Inactive/Periodic BCs"
@@ -185,7 +183,7 @@ sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "inactive", verbose=false)
 Granular.addGrainCylindrical!(sim, [0.1, 0.5], 0.11, 0.1, verbose=false)
 Granular.moveGrainsAcrossPeriodicBoundaries!(sim)
-@test [0.1, 0.5] ≈ sim.grains[1].lin_pos
+@test [0.1, 0.5, 0.] ≈ sim.grains[1].lin_pos
 
 # do not readjust inside grid, periodic boundaries
 sim = Granular.createSimulation()
@@ -193,7 +191,7 @@ sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "periodic", verbose=false)
 Granular.addGrainCylindrical!(sim, [0.1, 0.5], 0.11, 0.1, verbose=false)
 Granular.moveGrainsAcrossPeriodicBoundaries!(sim)
-@test [0.1, 0.5] ≈ sim.grains[1].lin_pos
+@test [0.1, 0.5, 0.] ≈ sim.grains[1].lin_pos
 
 # do not readjust outside grid, inactive boundaries
 sim = Granular.createSimulation()
@@ -201,7 +199,7 @@ sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "inactive", verbose=false)
 Granular.addGrainCylindrical!(sim, [-0.1, 0.5], 0.11, 0.1, verbose=false)
 Granular.moveGrainsAcrossPeriodicBoundaries!(sim)
-@test [-0.1, 0.5] ≈ sim.grains[1].lin_pos
+@test [-0.1, 0.5, 0.] ≈ sim.grains[1].lin_pos
 
 # readjust outside grid, periodic boundaries, -x
 sim = Granular.createSimulation()
@@ -209,7 +207,7 @@ sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "periodic", verbose=false)
 Granular.addGrainCylindrical!(sim, [-0.1, 0.5], 0.11, 0.1, verbose=false)
 Granular.moveGrainsAcrossPeriodicBoundaries!(sim)
-@test [0.9, 0.5] ≈ sim.grains[1].lin_pos
+@test [0.9, 0.5, 0.] ≈ sim.grains[1].lin_pos
 
 # readjust outside grid, periodic boundaries, +x
 sim = Granular.createSimulation()
@@ -217,7 +215,7 @@ sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "periodic", verbose=false)
 Granular.addGrainCylindrical!(sim, [1.1, 0.5], 0.11, 0.1, verbose=false)
 Granular.moveGrainsAcrossPeriodicBoundaries!(sim)
-@test [0.1, 0.5] ≈ sim.grains[1].lin_pos
+@test [0.1, 0.5, 0.] ≈ sim.grains[1].lin_pos
 
 # readjust outside grid, periodic boundaries, -y
 sim = Granular.createSimulation()
@@ -225,7 +223,7 @@ sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "periodic", verbose=false)
 Granular.addGrainCylindrical!(sim, [0.3, -0.1], 0.11, 0.1, verbose=false)
 Granular.moveGrainsAcrossPeriodicBoundaries!(sim)
-@test [0.3, 0.9] ≈ sim.grains[1].lin_pos
+@test [0.3, 0.9, 0.] ≈ sim.grains[1].lin_pos
 
 # readjust outside grid, periodic boundaries, +y
 sim = Granular.createSimulation()
@@ -233,7 +231,7 @@ sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "periodic", verbose=false)
 Granular.addGrainCylindrical!(sim, [0.3, 1.1], 0.11, 0.1, verbose=false)
 Granular.moveGrainsAcrossPeriodicBoundaries!(sim)
-@test [0.3, 0.1] ≈ sim.grains[1].lin_pos
+@test [0.3, 0.1, 0.] ≈ sim.grains[1].lin_pos
 
 # throw error if atmosphere and ocean BCs differ
 sim = Granular.createSimulation()
@@ -253,4 +251,4 @@ sim.ocean = Granular.createRegularOceanGrid([5, 5, 2], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "inactive", verbose=false)
 Granular.addGrainCylindrical!(sim, [0.1, 0.5], 0.11, 0.1, verbose=false)
 Granular.moveGrainsAcrossPeriodicBoundaries!(sim)
-@test [0.1, 0.5] ≈ sim.grains[1].lin_pos
+@test [0.1, 0.5, 0.] ≈ sim.grains[1].lin_pos

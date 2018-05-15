@@ -161,14 +161,15 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
             !grid.regular_grid &&
             i_old > 0 && j_old > 0 &&
             isPointInCell(grid, i_old, j_old,
-                          simulation.grains[idx].lin_pos, sw, se, ne, nw)
+                          simulation.grains[idx].lin_pos[1:2], sw, se, ne, nw)
             i = i_old
             j = j_old
 
         else
 
             if grid.regular_grid
-                i, j = Int.(floor.((simulation.grains[idx].lin_pos - grid.origo)
+                i, j = Int.(floor.((simulation.grains[idx].lin_pos[1:2]
+                                    - grid.origo)
                                    ./ grid.dx[1:2])) + [1,1]
             else
 
@@ -185,8 +186,9 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
                         j_t = max(min(j_old + j_rel, ny), 1)
                         
                         @inbounds if isPointInCell(grid, i_t, j_t,
-                                         simulation.grains[idx].lin_pos,
-                                         sw, se, ne, nw)
+                                                   simulation.grains[idx].
+                                                   lin_pos[1:2],
+                                                   sw, se, ne, nw)
                             i = i_t
                             j = j_t
                             found = true
@@ -201,7 +203,7 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
                 if !found
                     i, j = findCellContainingPoint(grid,
                                                    simulation.grains[idx].
-                                                   lin_pos,
+                                                   lin_pos[1:2],
                                                    sw, se, ne, nw)
                 end
             end
@@ -285,10 +287,10 @@ This function is a wrapper for `getCellCornerCoordinates()` and
 function getNonDimensionalCellCoordinates(grid::Any, i::Int, j::Int,
                                           point::Vector{Float64})
     if grid.regular_grid
-        return (point - Float64.([i-1,j-1]).*grid.dx[1:2])./grid.dx[1:2]
+        return (point[1:2] - Float64.([i-1,j-1]).*grid.dx[1:2])./grid.dx[1:2]
     else
         sw, se, ne, nw = getCellCornerCoordinates(grid.xq, grid.yq, i, j)
-        return conformalQuadrilateralCoordinates(sw, se, ne, nw, point)
+        return conformalQuadrilateralCoordinates(sw, se, ne, nw, point[1:2])
     end
 end
 
@@ -308,7 +310,7 @@ function isPointInCell(grid::Any, i::Int, j::Int,
                        method::String="Conformal")
 
     if grid.regular_grid
-        if [i,j] == Int.(floor.((point - grid.origo) ./ grid.dx[1:2])) + [1,1]
+        if [i,j] == Int.(floor.((point[1:2] - grid.origo) ./ grid.dx[1:2])) + [1,1]
             return true
         else
             return false
@@ -620,8 +622,8 @@ function findEmptyPositionInGridCell(simulation::Simulation,
                     # traverse list of grains in the target cell and check 
                     # for overlaps
                     for grain_idx in grid.grain_list[it, jt]
-                        overlap = norm(simulation.grains[grain_idx].lin_pos - 
-                                       pos) -
+                        overlap = norm(simulation.grains[grain_idx].
+                                       lin_pos[1:2] - pos) -
                         (simulation.grains[grain_idx].contact_radius + r)
 
                         if overlap < 0.

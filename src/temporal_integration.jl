@@ -51,7 +51,7 @@ Use a two-term Taylor expansion for integrating the kinematic degrees of freedom
 for a `grain`.
 """
 function updateGrainKinematicsTwoTermTaylor!(grain::GrainCylindrical,
-                                               simulation::Simulation)
+                                             simulation::Simulation)
     grain.lin_acc = grain.force/grain.mass
     grain.ang_acc = grain.torque/grain.moment_of_inertia
 
@@ -62,9 +62,12 @@ function updateGrainKinematicsTwoTermTaylor!(grain::GrainCylindrical,
         if !grain.allow_y_acc
             grain.lin_acc[2] = 0.
         end
-        grain.ang_acc = 0.
+        if !grain.allow_z_acc
+            grain.lin_acc[3] = 0.
+        end
+        grain.ang_acc = zeros(3)
     elseif !grain.rotating
-        grain.ang_acc = 0.
+        grain.ang_acc = zeros(3)
     end
 
     grain.lin_pos +=
@@ -90,11 +93,11 @@ Use a three-term Taylor expansion for integrating the kinematic degrees of
 freedom for a `grain`.
 """
 function updateGrainKinematicsThreeTermTaylor!(grain::GrainCylindrical,
-                                                 simulation::Simulation)
+                                               simulation::Simulation)
 
     if simulation.time_iteration == 0
-        lin_acc_0 = zeros(2)
-        ang_acc_0 = 0.
+        lin_acc_0 = zeros(3)
+        ang_acc_0 = zeros(3)
     else
         lin_acc_0 = grain.lin_acc
         ang_acc_0 = grain.ang_acc
@@ -110,9 +113,12 @@ function updateGrainKinematicsThreeTermTaylor!(grain::GrainCylindrical,
         if !grain.allow_y_acc
             grain.lin_acc[2] = 0.
         end
-        grain.ang_acc = 0.
+        if !grain.allow_z_acc
+            grain.lin_acc[3] = 0.
+        end
+        grain.ang_acc = zeros(3)
     elseif !grain.rotating
-        grain.ang_acc = 0.
+        grain.ang_acc = zeros(3)
     end
 
     # Temporal gradient in acceleration using backwards differences

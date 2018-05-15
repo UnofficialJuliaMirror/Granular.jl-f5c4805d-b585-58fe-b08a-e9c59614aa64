@@ -4,8 +4,6 @@ import Compat
 using Compat.Random
 using Compat.Test
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 Compat.@info "Testing power-law RNG"
 
 @test 1 == length(Granular.randpower())

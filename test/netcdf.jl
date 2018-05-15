@@ -2,8 +2,6 @@
 
 # Check if NetCDF files are read correctly from the disk.
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 @test_throws ErrorException Granular.readOceanStateNetCDF("nonexistentfile")
 @test_throws ErrorException Granular.readOceanGridNetCDF("nonexistentfile")
 
