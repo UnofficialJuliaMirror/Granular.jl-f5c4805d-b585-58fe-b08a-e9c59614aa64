@@ -1,7 +1,12 @@
 default: test
 
 .PHONY: test
-test: test-julia-0.6 test-julia-0.7
+test: \
+	test-julia-0.6 \
+	test-julia-0.6-2threads \
+	test-julia-0.7 \
+	test-julia-0.7-2threads \
+
 
 .PHONY: test-julia-0.6
 test-julia-0.6:
