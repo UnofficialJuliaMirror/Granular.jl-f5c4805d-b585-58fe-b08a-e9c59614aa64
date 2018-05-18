@@ -90,7 +90,7 @@ function findContactsAllToAll!(simulation::Simulation)
               "all-to-all contact search")
     end
 
-    @inbounds for i = 1:length(simulation.grains)
+    Threads.@threads for i = 1:length(simulation.grains)
 
         # Check contacts with other grains
         for j = 1:length(simulation.grains)
@@ -113,7 +113,7 @@ function findContactsInGrid!(simulation::Simulation, grid::Any)
     i_corrected = 0
     j_corrected = 0
 
-    for idx_i = 1:length(simulation.grains)
+    Threads.@threads for idx_i = 1:length(simulation.grains)
 
         if typeof(grid) == Ocean
             grid_pos = simulation.grains[idx_i].ocean_grid_pos
