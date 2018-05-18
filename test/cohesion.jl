@@ -191,12 +191,11 @@ Granular.addGrainCylindrical!(sim, [20., 0.], 10., 1., compressive_strength=1.)
 sim.grains[1].lin_vel[1] = 0.1
 sim.grains[1].fixed = true
 sim.grains[2].fixed = true
-#E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
-#E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
+E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
+E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 60.)
 Granular.setOutputFileInterval!(sim, 1.0)
 Granular.run!(sim, verbose=verbose)
-#Granular.removeSimulationFiles(sim)
-#@test sim.grains[1].contact_radius < 10.
-#@test sim.grains[2].contact_radius < 10.
+#= Granular.removeSimulationFiles(sim) =#
+@test sim.grains[1].compressive_failure[1] == 1

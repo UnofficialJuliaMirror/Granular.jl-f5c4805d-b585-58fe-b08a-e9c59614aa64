@@ -8,6 +8,7 @@ function run_test(filename::String)
     include(filename)
 end
 
+run_test("cohesion.jl")
 run_test("grain.jl")
 run_test("vtk.jl")
 run_test("collision-2floes-normal.jl")
@@ -22,7 +23,6 @@ run_test("wall.jl")
 run_test("packing.jl")
 run_test("util.jl")
 run_test("temporal.jl")
-run_test("cohesion.jl")
 if Granular.hasNetCDF
     run_test("netcdf.jl")
 end
