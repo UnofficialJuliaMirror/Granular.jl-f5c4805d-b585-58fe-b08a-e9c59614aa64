@@ -5,8 +5,6 @@ os:
   - linux
   - osx
 
-sudo: required
-
 julia:
   - 0.6
   - nightly
