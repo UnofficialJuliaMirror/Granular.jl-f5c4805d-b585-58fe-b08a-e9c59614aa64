@@ -3,7 +3,12 @@ import Compat
 using Compat.LinearAlgebra
 
 hasJLD = false
-if typeof(Compat.Pkg.installed("JLD")) == VersionNumber
+if VERSION < v"0.7.0-alpha"
+    if typeof(Compat.Pkg.installed("JLD")) == VersionNumber
+        import JLD
+        hasJLD = true
+    end
+elseif haskey(Pkg.installed(), "JLD")
     import JLD
     hasJLD = true
 end
