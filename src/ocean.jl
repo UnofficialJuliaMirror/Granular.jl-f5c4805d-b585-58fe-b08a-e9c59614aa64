@@ -15,7 +15,7 @@ end
 if !hasNetCDF
     Compat.@warn "Package NetCDF not found. " *
          "Ocean/atmosphere grid read not supported. " * 
-         "Please install NetCDF and its " *
+         "If required, install NetCDF and its " *
          "requirements with `Pkg.add(\"NetCDF\")`."
 end
 
