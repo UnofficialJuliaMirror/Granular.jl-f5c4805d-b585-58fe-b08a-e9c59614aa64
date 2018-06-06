@@ -442,7 +442,7 @@ function rasterMap(sim::Simulation, dx::Real)
         origo = [sw[1], sw[2]]
     end
     dims = floor.(L./dx)
-    occupied = zeros(Bool, convert(dims[1], dims[2]))
+    occupied = zeros(Bool, convert(Dims, (dims[1], dims[2])))
 
     # Loop over existing grains and mark their extent in the `occupied` array
     i = 0; j = 0
