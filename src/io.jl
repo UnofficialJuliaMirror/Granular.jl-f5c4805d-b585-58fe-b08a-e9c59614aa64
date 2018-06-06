@@ -8,9 +8,12 @@ if VERSION < v"0.7.0-alpha"
         import JLD
         hasJLD = true
     end
-elseif haskey(Pkg.installed(), "JLD")
-    import JLD
-    hasJLD = true
+else
+    import Pkg
+    if haskey(Pkg.installed(), "JLD")
+        import JLD
+        hasJLD = true
+    end
 end
 
 import Compat

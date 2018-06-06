@@ -20,8 +20,8 @@ addons:
     - gnuplot
     - imagemagick
 
-before_script:
-  - julia -e 'info("Preparing Python"); ENV["PYTHON"]=""; Pkg.add("PyCall"); Pkg.build("PyCall"); Pkg.add("NetCDF")'
+before_script:  # NetCDF is not required, but test its dependent functions anyway
+  - julia -e 'Pkg.add("NetCDF")'
 
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi

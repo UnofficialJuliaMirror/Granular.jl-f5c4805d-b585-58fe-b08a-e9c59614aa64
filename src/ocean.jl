@@ -8,9 +8,12 @@ if VERSION < v"0.7.0-alpha"
         import NetCDF
         hasNetCDF = true
     end
-elseif haskey(Pkg.installed(), "NetCDF")
+else
+    import Pkg
+    if haskey(Pkg.installed(), "NetCDF")
         import NetCDF
         hasNetCDF = true
+    end
 end
 if !hasNetCDF
     Compat.@warn "Package NetCDF not found. " *
