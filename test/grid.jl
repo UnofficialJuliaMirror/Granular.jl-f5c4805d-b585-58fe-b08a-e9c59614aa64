@@ -175,10 +175,10 @@ ocean.u[2, 1, 1, 1] = 1.0
 ocean.u[2, 2, 1, 1] = 0.0
 ocean.u[1, 2, 1, 1] = 0.0
 ocean.v[:, :, 1, 1] .= 0.0
-sw = Vector{Float64}(undef, 2)
-se = Vector{Float64}(undef, 2)
-ne = Vector{Float64}(undef, 2)
-nw = Vector{Float64}(undef, 2)
+sw = zeros(2)
+se = zeros(2)
+ne = zeros(2)
+nw = zeros(2)
 @test Granular.curl(ocean, .5, .5, 1, 1, 1, 1, sw, se, ne, nw) > 0.
 
 ocean.u[1, 1, 1, 1] = 0.0
