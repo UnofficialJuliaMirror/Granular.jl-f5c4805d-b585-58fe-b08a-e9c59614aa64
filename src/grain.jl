@@ -209,8 +209,9 @@ function addGrainCylindrical!(simulation::Simulation,
     end
 
     contacts::Array{Int, 1} = zeros(Int, simulation.Nc_max)
-    position_vector = Vector{Vector{Float64}}(simulation.Nc_max)
-    contact_parallel_displacement = Vector{Vector{Float64}}(simulation.Nc_max)
+    position_vector = Vector{Vector{Float64}}(undef, simulation.Nc_max)
+    contact_parallel_displacement =
+        Vector{Vector{Float64}}(undef, simulation.Nc_max)
     contact_rotation::Vector{Float64} = zeros(Float64, simulation.Nc_max)
     contact_age::Vector{Float64} = zeros(Float64, simulation.Nc_max)
     for i=1:simulation.Nc_max
