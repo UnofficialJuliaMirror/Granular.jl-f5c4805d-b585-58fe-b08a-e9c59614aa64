@@ -143,18 +143,27 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
     # Contact kinematics
     vel_lin = simulation.grains[i].lin_vel - simulation.grains[j].lin_vel
     vel_n = dot(vel_lin, n)
-    vel_t = dot(vel_lin, t) -
-        harmonicMean(r_i, r_j)*(simulation.grains[i].ang_vel +
-                                simulation.grains[j].ang_vel)
 
-    # Correct old tangential displacement for contact rotation and add new
-    δ_t0 = simulation.grains[i].contact_parallel_displacement[ic]
-    δ_t = dot(t, δ_t0 - (n*dot(n, δ_t0))) + vel_t*simulation.time_step
+    if !simulation.grains[i].rotating && !simulation.grains[j].rotating 
+        rotation = false
+    else
+        rotation = true
+    end
+    
+    if rotation
+        vel_t = dot(vel_lin, t) -
+            harmonicMean(r_i, r_j)*(simulation.grains[i].ang_vel +
+                                    simulation.grains[j].ang_vel)
 
-    # Determine the contact rotation
-    θ_t = simulation.grains[i].contact_rotation[ic] +
-        (simulation.grains[j].ang_vel - simulation.grains[i].ang_vel) *
-        simulation.time_step
+        # Correct old tangential displacement for contact rotation and add new
+        δ_t0 = simulation.grains[i].contact_parallel_displacement[ic]
+        δ_t = dot(t, δ_t0 - (n*dot(n, δ_t0))) + vel_t*simulation.time_step
+
+        # Determine the contact rotation
+        θ_t = simulation.grains[i].contact_rotation[ic] +
+            (simulation.grains[j].ang_vel - simulation.grains[i].ang_vel) *
+            simulation.time_step
+    end
 
     # Effective radius
     R_ij = harmonicMean(r_i, r_j)
@@ -175,24 +184,30 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         # Effective normal and tangential stiffness
         k_n = E * A_ij/R_ij
         #k_t = k_n*ν   # Kneib et al 2016
-        k_t = k_n * 2. * (1. - ν^2.) / ((2. - ν) * (1. + ν))  # Obermayr 2011
+        if rotation
+            k_t = k_n * 2. * (1. - ν^2.) / ((2. - ν) * (1. + ν))  # Obermayr 2011
+        end
 
     else  # Micromechanical parameterization: k_n and k_t set explicitly
         k_n = harmonicMean(simulation.grains[i].contact_stiffness_normal,
                          simulation.grains[j].contact_stiffness_normal)
 
-        k_t = harmonicMean(simulation.grains[i].contact_stiffness_tangential,
-                           simulation.grains[j].contact_stiffness_tangential)
+        if rotation
+            k_t = harmonicMean(simulation.grains[i].contact_stiffness_tangential,
+                               simulation.grains[j].contact_stiffness_tangential)
+        end
     end
 
     γ_n = harmonicMean(simulation.grains[i].contact_viscosity_normal,
                        simulation.grains[j].contact_viscosity_normal)
 
-    γ_t = harmonicMean(simulation.grains[i].contact_viscosity_tangential,
-                       simulation.grains[j].contact_viscosity_tangential)
+    if rotation
+        γ_t = harmonicMean(simulation.grains[i].contact_viscosity_tangential,
+                           simulation.grains[j].contact_viscosity_tangential)
 
-    μ_d_minimum = min(simulation.grains[i].contact_dynamic_friction,
-                      simulation.grains[j].contact_dynamic_friction)
+        μ_d_minimum = min(simulation.grains[i].contact_dynamic_friction,
+                          simulation.grains[j].contact_dynamic_friction)
+    end
 
     # Determine contact forces
     if k_n ≈ 0. && γ_n ≈ 0.  # No interaction
@@ -223,8 +238,10 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
     end
 
     # Grain-pair moment of inertia [m^4]
-    I_ij = 2.0/3.0*R_ij^3*min(simulation.grains[i].thickness,
-                              simulation.grains[j].thickness)
+    if rotation
+        I_ij = 2.0/3.0*R_ij^3*min(simulation.grains[i].thickness,
+                                  simulation.grains[j].thickness)
+    end
 
 
     # Contact tensile strength increases linearly with contact age until
@@ -232,24 +249,36 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
     tensile_strength = min(simulation.grains[i].contact_age[ic]*
                            simulation.grains[i].strength_heal_rate,
                            simulation.grains[i].tensile_strength)
-    shear_strength = min(simulation.grains[i].contact_age[ic]*
-                         simulation.grains[i].strength_heal_rate,
-                         simulation.grains[i].shear_strength)
-    M_t = 0.0
-    if tensile_strength > 0.0
-        # Determine bending momentum on contact [N*m],
-        # (converting k_n to E to bar(k_n))
-        M_t = (k_n*R_ij/(A_ij*(simulation.grains[i].contact_radius +
+    if rotation
+        shear_strength = min(simulation.grains[i].contact_age[ic]*
+                             simulation.grains[i].strength_heal_rate,
+                             simulation.grains[i].shear_strength)
+        M_t = 0.0
+        if tensile_strength > 0.0
+            # Determine bending momentum on contact [N*m],
+            # (converting k_n to E to bar(k_n))
+            M_t = (k_n*R_ij/(A_ij*(simulation.grains[i].contact_radius +
                                simulation.grains[j].contact_radius)))*I_ij*θ_t
+        end
     end
 
     # Reset contact age (breaking bond) if bond strength is exceeded
-    if δ_n >= 0.0 && abs(force_n)/A_ij + abs(M_t)*R_ij/I_ij > tensile_strength
-        force_n = 0.
-        force_t = 0.
-        simulation.grains[i].contacts[ic] = 0  # remove contact
-        simulation.grains[i].n_contacts -= 1
-        simulation.grains[j].n_contacts -= 1
+    if rotation
+        if δ_n >= 0.0 && abs(force_n)/A_ij + abs(M_t)*R_ij/I_ij > tensile_strength
+            force_n = 0.
+            force_t = 0.
+            simulation.grains[i].contacts[ic] = 0  # remove contact
+            simulation.grains[i].n_contacts -= 1
+            simulation.grains[j].n_contacts -= 1
+        end
+    else
+        if δ_n >= 0.0 && abs(force_n)/A_ij > tensile_strength
+            force_n = 0.
+            force_t = 0.
+            simulation.grains[i].contacts[ic] = 0  # remove contact
+            simulation.grains[i].n_contacts -= 1
+            simulation.grains[j].n_contacts -= 1
+        end
     end
 
     # Limit compressive stress if the prefactor is set to a positive value
@@ -268,53 +297,55 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         simulation.grains[idx_weakest].thickness += 1.0/(π*Δr)
     end
 
-    if k_t ≈ 0. && γ_t ≈ 0.
-        # do nothing
+    if rotation
+        if k_t ≈ 0. && γ_t ≈ 0.
+            # do nothing
 
-    elseif k_t ≈ 0. && γ_t > 0.
-        force_t = abs(γ_t * vel_t)
+        elseif k_t ≈ 0. && γ_t > 0.
+            force_t = abs(γ_t * vel_t)
 
-        # Coulomb slip
-        if force_t > μ_d_minimum*abs(force_n)
-            force_t = μ_d_minimum*abs(force_n)
+            # Coulomb slip
+            if force_t > μ_d_minimum*abs(force_n)
+                force_t = μ_d_minimum*abs(force_n)
 
-            # Nguyen et al 2009 "Thermomechanical modelling of friction effects
-            # in granular flows using the discrete element method"
-            E_shear = abs(force_t)*abs(vel_t)*simulation.time_step
+                # Nguyen et al 2009 "Thermomechanical modelling of friction effects
+                # in granular flows using the discrete element method"
+                E_shear = abs(force_t)*abs(vel_t)*simulation.time_step
 
-            # Assume equal thermal properties
-            simulation.grains[i].thermal_energy += 0.5*E_shear
-            simulation.grains[j].thermal_energy += 0.5*E_shear
+                # Assume equal thermal properties
+                simulation.grains[i].thermal_energy += 0.5*E_shear
+                simulation.grains[j].thermal_energy += 0.5*E_shear
+            end
+            if vel_t > 0.
+                force_t = -force_t
+            end
+
+        elseif k_t > 0.
+
+            force_t = -k_t*δ_t - γ_t*vel_t
+
+            # Coulomb slip
+            if abs(force_t) > μ_d_minimum*abs(force_n)
+                force_t = μ_d_minimum*abs(force_n)*force_t/abs(force_t)
+                δ_t = (-force_t - γ_t*vel_t)/k_t
+
+                # Nguyen et al 2009 "Thermomechanical modelling of friction effects
+                # in granular flows using the discrete element method"
+                E_shear = abs(force_t)*abs(vel_t)*simulation.time_step
+
+                # Assume equal thermal properties
+                simulation.grains[i].thermal_energy += 0.5*E_shear
+                simulation.grains[j].thermal_energy += 0.5*E_shear
+            end
+
+        else
+            error("unknown contact_tangential_rheology (k_t = $k_t, γ_t = $γ_t")
         end
-        if vel_t > 0.
-            force_t = -force_t
-        end
-
-    elseif k_t > 0.
-
-        force_t = -k_t*δ_t - γ_t*vel_t
-
-        # Coulomb slip
-        if abs(force_t) > μ_d_minimum*abs(force_n)
-            force_t = μ_d_minimum*abs(force_n)*force_t/abs(force_t)
-            δ_t = (-force_t - γ_t*vel_t)/k_t
-
-            # Nguyen et al 2009 "Thermomechanical modelling of friction effects
-            # in granular flows using the discrete element method"
-            E_shear = abs(force_t)*abs(vel_t)*simulation.time_step
-
-            # Assume equal thermal properties
-            simulation.grains[i].thermal_energy += 0.5*E_shear
-            simulation.grains[j].thermal_energy += 0.5*E_shear
-        end
-
-    else
-        error("unknown contact_tangential_rheology (k_t = $k_t, γ_t = $γ_t")
     end
 
     # Break bond under extension through bending failure
-    if δ_n < 0.0 && tensile_strength > 0.0 && shear_strength > 0.0 &&
-        abs(force_t)/A_ij > shear_strength
+    if δ_n < 0.0 && tensile_strength > 0.0 && rotation && 
+        shear_strength > 0.0 && abs(force_t)/A_ij > shear_strength
 
         force_n = 0.
         force_t = 0.
@@ -323,15 +354,21 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         simulation.grains[j].n_contacts -= 1
     end
 
-    simulation.grains[i].contact_parallel_displacement[ic] = δ_t*t
-    simulation.grains[i].contact_rotation[ic] = θ_t
     simulation.grains[i].contact_age[ic] += simulation.time_step
 
-    simulation.grains[i].force += force_n*n + force_t*t;
-    simulation.grains[j].force -= force_n*n + force_t*t;
+    if rotation
+        simulation.grains[i].contact_parallel_displacement[ic] = δ_t*t
+        simulation.grains[i].contact_rotation[ic] = θ_t
 
-    simulation.grains[i].torque += -force_t*R_ij + M_t
-    simulation.grains[j].torque += -force_t*R_ij - M_t
+        simulation.grains[i].force += force_n*n + force_t*t;
+        simulation.grains[j].force -= force_n*n + force_t*t;
+
+        simulation.grains[i].torque += -force_t*R_ij + M_t
+        simulation.grains[j].torque += -force_t*R_ij - M_t
+    else
+        simulation.grains[i].force += force_n*n;
+        simulation.grains[j].force -= force_n*n;
+    end
 
     simulation.grains[i].pressure += 
         force_n/simulation.grains[i].side_surface_area;
