@@ -192,7 +192,7 @@ Compat.@info "Testing atmosphere drag"
 sim = Granular.createSimulation()
 sim.atmosphere = Granular.createRegularAtmosphereGrid([4, 4, 2], [4., 4., 2.])
 atmosphere = Granular.createRegularAtmosphereGrid([4, 4, 2], [4., 4., 2.])
-sim.atmosphere.u[:,:,1,1] = 5.
+sim.atmosphere.u[:,:,1,1] .= 5.
 Granular.addGrainCylindrical!(sim, [2.5, 3.5], 1., 1., verbose=verbose)
 Granular.addGrainCylindrical!(sim, [2.6, 2.5], 1., 1., verbose=verbose)
 Granular.sortGrainsInGrid!(sim, sim.atmosphere, verbose=verbose)
