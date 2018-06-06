@@ -3,16 +3,20 @@ using Compat.Test
 using Compat.LinearAlgebra
 
 hasNetCDF = false
-if typeof(Compat.Pkg.installed("NetCDF")) == VersionNumber
-    import NetCDF
-    hasNetCDF = true
-else
-    if !hasNetCDF
-        Compat.@warn "Package NetCDF not found. " *
-             "Ocean/atmosphere grid read not supported. " * 
-             "Please install NetCDF and its " *
-             "requirements with `Pkg.add(\"NetCDF\")`."
+if VERSION < v"0.7.0-alpha"
+    if typeof(Compat.Pkg.installed("NetCDF")) == VersionNumber
+        import NetCDF
+        hasNetCDF = true
     end
+elseif haskey(Pkg.installed(), "NetCDF")
+        import NetCDF
+        hasNetCDF = true
+end
+if !hasNetCDF
+    Compat.@warn "Package NetCDF not found. " *
+         "Ocean/atmosphere grid read not supported. " * 
+         "Please install NetCDF and its " *
+         "requirements with `Pkg.add(\"NetCDF\")`."
 end
 
 export createEmptyOcean
