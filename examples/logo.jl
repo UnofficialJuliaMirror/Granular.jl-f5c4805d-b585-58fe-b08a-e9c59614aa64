@@ -8,8 +8,8 @@ const verbose = true
 
 const text = "Granular.jl"
 
-const forcing = "gyres"
-#const forcing = "down"
+#const forcing = "gyres"
+const forcing = "down"
 #const forcing = "convergent"
 
 # Font created with `figlet` and the font 'pebbles'.  If figlet is not installed 
@@ -43,7 +43,7 @@ end
 const nx = maxwidth + 1
 
 const Lx = nx*dx
-const Ly = ny*dy
+const Ly = (ny + 1)*dy
 
 x = 0.
 y = 0.
@@ -169,3 +169,7 @@ Granular.removeSimulationFiles(sim)
 Granular.run!(sim, verbose=verbose)
 
 Granular.render(sim, images=true, animation=false, reverse=true)
+
+run(`convert -delay 100 logo/logo.0000.png -delay 10 logo/logo.'*'.png -trim
+    +repage -delay 10 -transparent-color white -quiet -layers OptimizePlus
+    -loop 0 logo.gif`)
