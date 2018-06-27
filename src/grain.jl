@@ -40,21 +40,21 @@ are optional, and come with default values.  The only required arguments are
 * `simulation::Simulation`: the simulation object where the grain should be
     added to.
 * `lin_pos::Vector{Float64}`: linear position of grain center [m]. If a
-two-component vector is used, the values will be mapped to *x* and *y*, and the
-    *z* component will be set to zero.
+    two-component vector is used, the values will be mapped to *x* and *y*, and
+    the *z* component will be set to zero.
 * `contact_radius::Float64`: grain radius for granular interaction [m].
 * `thickness::Float64`: grain thickness [m].
 * `areal_radius = false`: grain radius for determining sea-ice concentration
     [m].
 * `lin_vel::Vector{Float64} = [0., 0., 0.]`: linear velocity [m/s]. If a
-two-component vector is used, the values will be mapped to *x* and *y*, and the
-*z* component will be set to zero.
+    two-component vector is used, the values will be mapped to *x* and *y*, and
+    the *z* component will be set to zero.
 * `lin_acc::Vector{Float64} = [0., 0., 0.]`: linear acceleration [m/s^2]. If a
-two-component vector is used, the values will be mapped to *x* and *y*, and the
-*z* component will be set to zero.
+    two-component vector is used, the values will be mapped to *x* and *y*, and
+    the *z* component will be set to zero.
 * `force::Vector{Float64} = [0., 0., 0.]`: linear force balance [N]. If a
-two-component vector is used, the values will be mapped to *x* and *y*, and the
-*z* component will be set to zero.
+    two-component vector is used, the values will be mapped to *x* and *y*, and
+    the *z* component will be set to zero.
 * `ang_pos::Float64 = [0., 0., 0.]`: angular position around its center vertical
     axis [rad]. If a scalar is used, the value will be mapped to *z*, and the
     *x* and *y* components will be set to zero.
