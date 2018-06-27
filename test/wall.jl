@@ -443,6 +443,6 @@ Granular.addWallLinearFrictionless!(sim, [0., 1.], y_max_init,
                                     bc="normal stress", normal_stress=-100e3)
 Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 1.)
-Granular.setOutputFileInterval!(sim, 10.)
 Granular.run!(sim)
+Granular.removeSimulationFiles(sim)
 @test sim.walls[1].pos < y_max_init

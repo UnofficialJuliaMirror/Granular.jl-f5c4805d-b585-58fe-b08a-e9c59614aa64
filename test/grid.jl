@@ -142,7 +142,7 @@ end
 Compat.@info "Testing ocean drag"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
-sim.ocean.u[:,:,1,1] = 5.
+sim.ocean.u[:,:,1,1] .= 5.
 Granular.addGrainCylindrical!(sim, [2.5, 3.5], 1., 1., verbose=verbose)
 Granular.addGrainCylindrical!(sim, [2.6, 2.5], 1., 1., verbose=verbose)
 Granular.sortGrainsInGrid!(sim, sim.ocean, verbose=verbose)
@@ -155,8 +155,8 @@ Granular.addOceanDrag!(sim)
 @test sim.grains[1].force[2] ≈ 0.
 @test sim.grains[2].force[1] > 0.
 @test sim.grains[2].force[2] ≈ 0.
-sim.ocean.u[:,:,1,1] = -5.
-sim.ocean.v[:,:,1,1] = 5.
+sim.ocean.u[:,:,1,1] .= -5.
+sim.ocean.v[:,:,1,1] .= 5.
 Granular.addGrainCylindrical!(sim, [2.5, 3.5], 1., 1., verbose=verbose)
 Granular.addGrainCylindrical!(sim, [2.6, 2.5], 1., 1., verbose=verbose)
 Granular.sortGrainsInGrid!(sim, sim.ocean, verbose=verbose)
@@ -172,25 +172,25 @@ ocean.u[1, 1, 1, 1] = 1.0
 ocean.u[2, 1, 1, 1] = 1.0
 ocean.u[2, 2, 1, 1] = 0.0
 ocean.u[1, 2, 1, 1] = 0.0
-ocean.v[:, :, 1, 1] = 0.0
-sw = Vector{Float64}(2)
-se = Vector{Float64}(2)
-ne = Vector{Float64}(2)
-nw = Vector{Float64}(2)
+ocean.v[:, :, 1, 1] .= 0.0
+sw = zeros(2)
+se = zeros(2)
+ne = zeros(2)
+nw = zeros(2)
 @test Granular.curl(ocean, .5, .5, 1, 1, 1, 1, sw, se, ne, nw) > 0.
 
 ocean.u[1, 1, 1, 1] = 0.0
 ocean.u[2, 1, 1, 1] = 0.0
 ocean.u[2, 2, 1, 1] = 1.0
 ocean.u[1, 2, 1, 1] = 1.0
-ocean.v[:, :, 1, 1] = 0.0
+ocean.v[:, :, 1, 1] .= 0.0
 @test Granular.curl(ocean, .5, .5, 1, 1, 1, 1, sw, se, ne, nw) < 0.
 
 Compat.@info "Testing atmosphere drag"
 sim = Granular.createSimulation()
 sim.atmosphere = Granular.createRegularAtmosphereGrid([4, 4, 2], [4., 4., 2.])
 atmosphere = Granular.createRegularAtmosphereGrid([4, 4, 2], [4., 4., 2.])
-sim.atmosphere.u[:,:,1,1] = 5.
+sim.atmosphere.u[:,:,1,1] .= 5.
 Granular.addGrainCylindrical!(sim, [2.5, 3.5], 1., 1., verbose=verbose)
 Granular.addGrainCylindrical!(sim, [2.6, 2.5], 1., 1., verbose=verbose)
 Granular.sortGrainsInGrid!(sim, sim.atmosphere, verbose=verbose)
@@ -200,8 +200,8 @@ Granular.addAtmosphereDrag!(sim)
 @test sim.grains[1].force[2] ≈ 0.
 @test sim.grains[2].force[1] > 0.
 @test sim.grains[2].force[2] ≈ 0.
-sim.atmosphere.u[:,:,1,1] = -5.
-sim.atmosphere.v[:,:,1,1] = 5.
+sim.atmosphere.u[:,:,1,1] .= -5.
+sim.atmosphere.v[:,:,1,1] .= 5.
 Granular.addGrainCylindrical!(sim, [2.5, 3.5], 1., 1., verbose=verbose)
 Granular.addGrainCylindrical!(sim, [2.6, 2.5], 1., 1., verbose=verbose)
 Granular.sortGrainsInGrid!(sim, sim.atmosphere, verbose=verbose)
@@ -217,7 +217,7 @@ atmosphere.u[1, 1, 1, 1] = 1.0
 atmosphere.u[2, 1, 1, 1] = 1.0
 atmosphere.u[2, 2, 1, 1] = 0.0
 atmosphere.u[1, 2, 1, 1] = 0.0
-atmosphere.v[:, :, 1, 1] = 0.0
+atmosphere.v[:, :, 1, 1] .= 0.0
 @test Granular.curl(atmosphere, .5, .5, 1, 1, 1, 1) > 0.
 @test Granular.curl(atmosphere, .5, .5, 1, 1, 1, 1, sw, se, ne, nw) > 0.
 
@@ -225,7 +225,7 @@ atmosphere.u[1, 1, 1, 1] = 0.0
 atmosphere.u[2, 1, 1, 1] = 0.0
 atmosphere.u[2, 2, 1, 1] = 1.0
 atmosphere.u[1, 2, 1, 1] = 1.0
-atmosphere.v[:, :, 1, 1] = 0.0
+atmosphere.v[:, :, 1, 1] .= 0.0
 @test Granular.curl(atmosphere, .5, .5, 1, 1, 1, 1) < 0.
 @test Granular.curl(atmosphere, .5, .5, 1, 1, 1, 1, sw, se, ne, nw) < 0.
 

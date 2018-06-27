@@ -5,8 +5,6 @@ os:
   - linux
   - osx
 
-sudo: required
-
 julia:
   - 0.6
   - nightly
@@ -22,8 +20,8 @@ addons:
     - gnuplot
     - imagemagick
 
-before_script:
-  - julia -e 'info("Preparing Python"); ENV["PYTHON"]=""; Pkg.add("PyCall"); Pkg.build("PyCall"); Pkg.add("NetCDF")'
+before_script:  # NetCDF is not required, but test its dependent functions anyway
+  - julia -e 'Pkg.add("NetCDF")'
 
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
@@ -34,3 +32,4 @@ deploy:
     script: julia -e 'cd(Pkg.dir("Granular")); Pkg.add("Coverage"); Pkg.add("Documenter"); using Coverage; Codecov.submit(Codecov.process_folder()); cd(Pkg.dir("Granular")); include(joinpath("docs", "make.jl"))'
     on:
       os: linux
+      julia: 0.6

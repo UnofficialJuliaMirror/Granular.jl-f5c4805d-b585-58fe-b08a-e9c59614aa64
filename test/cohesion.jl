@@ -195,7 +195,7 @@ E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 60.)
-Granular.setOutputFileInterval!(sim, 1.0)
+#Granular.setOutputFileInterval!(sim, 1.0)
 Granular.run!(sim, verbose=verbose)
 #= Granular.removeSimulationFiles(sim) =#
 @test sim.grains[1].compressive_failure[1] == 1

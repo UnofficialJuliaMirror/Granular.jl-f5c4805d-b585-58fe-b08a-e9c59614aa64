@@ -2,7 +2,7 @@
 import Compat
 
 Compat.@info "Determining if JLD is installed"
-if typeof(Compat.Pkg.installed("JLD")) == VersionNumber
+if Granular.hasJLD
     Compat.@info "JLD found, proceeding with JLD-specific tests"
 
     Compat.@info "Writing simple simulation to JLD file"
