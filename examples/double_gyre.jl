@@ -32,7 +32,7 @@ for i=1:size(sim.ocean.u, 1)
 end
 
 # Initialize confining walls, which are ice floes that are fixed in space
-r = minimum(L[1:2]/n[1:2])/2.
+r = minimum(L[1:2]./n[1:2])/2.
 h = 1.
 
 ## N-S wall segments
@@ -99,5 +99,4 @@ Granular.setTotalTime!(sim, 12.*60.*60.)
 Granular.setOutputFileInterval!(sim, 60.)
 Granular.setTimeStep!(sim)
 
-Granular.run!(sim, status_interval=1,
-            contact_tangential_rheology="Linear Viscous Frictional")
+Granular.run!(sim)
