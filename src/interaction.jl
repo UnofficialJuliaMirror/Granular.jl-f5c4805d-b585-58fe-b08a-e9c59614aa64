@@ -159,7 +159,12 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
 
         # Correct old tangential displacement for contact rotation and add new
         δ_t0 = simulation.grains[i].contact_parallel_displacement[ic][1:2]
-        δ_t = dot(t, δ_t0 - (n*dot(n, δ_t0))) + vel_t*simulation.time_step
+        if !simulation.grains[i].compressive_failure[ic]
+            δ_t = dot(t, δ_t0 - (n*dot(n, δ_t0))) + vel_t*simulation.time_step
+        else
+            # Use δ_t as total slip-distance vector
+            δ_t = δ_t0 .+ (vel_lin .+ vel_t.*t) .* simulation.time_step
+        end
 
         # Determine the contact rotation (2d)
         θ_t = simulation.grains[i].contact_rotation[ic][3] +
@@ -254,19 +259,22 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
                                simulation.grains[j].compressive_strength)/
                            sqrt(Lz_ij)
 
-    # Limit compressive stress if the prefactor is set to a positive value
+    # Detect compressive failure if compressive_strength is set to a positive
+    # value
     if δ_n <= 0.0 && compressive_strength > 0. &&
+        !simulation.grains[i].compressive_failure[ic] &&
         norm(force_n) >= compressive_strength*A_ij
 
         # Register that compressive failure has occurred for this contact
         simulation.grains[i].compressive_failure[ic] = true
+
+        # Use δ_t as travel distance on horizontal slip surface
+        δ_t = zeros(2)
     end
 
     # Grain-pair moment of inertia [m^4]
-    if rotation
-        I_ij = 2.0/3.0*R_ij^3*min(simulation.grains[i].thickness,
-                                  simulation.grains[j].thickness)
-    end
+    I_ij = 2.0/3.0*R_ij^3*min(simulation.grains[i].thickness,
+                              simulation.grains[j].thickness)
 
     # Contact tensile strength increases linearly with contact age until
     # tensile stress exceeds tensile strength.
@@ -305,23 +313,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         end
     end
 
-    # Limit compressive stress if the prefactor is set to a positive value
-    if δ_n <= 0.0 && compressive_strength > 0. &&
-        norm(force_n) >= compressive_strength
-
-        # Determine the overlap distance where yeild stress is reached
-        δ_n_yield = -compressive_strength*A_ij/k_n
-
-        # Determine the excess overlap distance relative to yield
-        Δr = norm(δ_n) - norm(δ_n_yield)
-        
-        # Adjust radius and thickness of the weakest grain
-        simulation.grains[idx_weakest].contact_radius -= Δr
-        simulation.grains[idx_weakest].areal_radius -= Δr
-        simulation.grains[idx_weakest].thickness += 1.0/(π*Δr)
-    end
-
-    if rotation
+    if rotation && !simulation.grains[i].compressive_failure[ic]
         if k_t ≈ 0. && γ_t ≈ 0.
             # do nothing
 
@@ -353,8 +345,8 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
                 force_t = μ_d_minimum*norm(force_n)*force_t/norm(force_t)
                 δ_t = (-force_t - γ_t*vel_t)/k_t
 
-                # Nguyen et al 2009 "Thermomechanical modelling of friction effects
-                # in granular flows using the discrete element method"
+                # Nguyen et al 2009 "Thermomechanical modelling of friction
+                # effects in granular flows using the discrete element method"
                 E_shear = norm(force_t)*norm(vel_t)*simulation.time_step
 
                 # Assume equal thermal properties
@@ -367,6 +359,41 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         end
     end
 
+    # Overwrite previous force results if compressive failure occurred
+    if simulation.grains[i].compressive_failure[ic] && δ_n < 0.0
+
+        # Normal stress on horizontal interface, assuming bending stresses are
+        # negligible (ocean density and gravity are hardcoded for now)
+        σ_n = (1e3 - simulation.grains[i].density) * 9.81 *
+              (simulation.grains[i].thickness + simulation.grains[j].thickness)
+
+        # Horizontal overlap area (two overlapping circles)
+        # http://mathworld.wolfram.com/Circle-CircleIntersection.html (eq 14)
+        A_h = r_i^2.0*acos((dist^2.0 + r_i^2.0 - r_j^2.0)/(2.0*dist*r_i)) +
+              r_j^2.0*acos((dist^2.0 + r_j^2.0 - r_i^2.0)/(2.0*dist*r_j)) -
+              0.5*sqrt((-dist + r_i + r_j)*
+                       ( dist + r_i - r_j)*
+                       ( dist - r_i + r_j)*
+                       ( dist + r_i + r_j))
+
+        # Find horizontal stress on slip interface
+        σ_t = -k_t*δ_t/A_h
+
+        # Check for Coulomb-failure on the slip interface
+        if norm(σ_t) > norm(σ_n)*μ_d_minimum
+
+            σ_t = norm(σ_n)*μ_d_minimum * σ_t/norm(σ_t)
+
+            E_shear = norm(σ_t*A_h)*norm(vel_lin)*simulation.time_step
+
+            simulation.grains[i].thermal_energy += 0.5*E_shear
+            simulation.grains[j].thermal_energy += 0.5*E_shear
+        end
+
+        force_n = dot(σ_t, n)*A_h
+        force_t = dot(σ_t, t)*A_h
+    end
+
     # Break bond under extension through bending failure
     if δ_n < 0.0 && tensile_strength > 0.0 && rotation && 
         shear_strength > 0.0 && norm(force_t)/A_ij > shear_strength
@@ -376,12 +403,16 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         simulation.grains[i].contacts[ic] = 0  # remove contact
         simulation.grains[i].n_contacts -= 1
         simulation.grains[j].n_contacts -= 1
+    else
+        simulation.grains[i].contact_age[ic] += simulation.time_step
     end
 
-    simulation.grains[i].contact_age[ic] += simulation.time_step
-
     if rotation
-        simulation.grains[i].contact_parallel_displacement[ic] = vecTo3d(δ_t.*t)
+        if simulation.grains[i].compressive_failure[ic]
+            simulation.grains[i].contact_parallel_displacement[ic] = vecTo3d(δ_t)
+        else
+            simulation.grains[i].contact_parallel_displacement[ic] = vecTo3d(δ_t.*t)
+        end
         simulation.grains[i].contact_rotation[ic] = [0., 0., θ_t]
 
         simulation.grains[i].force += vecTo3d(force_n.*n + force_t.*t);
