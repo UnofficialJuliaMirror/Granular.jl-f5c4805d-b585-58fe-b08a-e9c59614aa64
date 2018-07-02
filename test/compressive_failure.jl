@@ -3,7 +3,7 @@ using Compat.Test
 import Granular
 
 verbose = true
-debug = true
+debug = false
 if debug
     import PyPlot
 end
@@ -28,16 +28,17 @@ function plot_interaction(sim::Granular.Simulation, output::String)
         append!(torque_1, sim.grains[1].torque[3])
         append!(torque_2, sim.grains[2].torque[3])
     end
+    PyPlot.clf()
     PyPlot.subplot(3,1,1)
     PyPlot.plot(time, force_n_1, "-b", label="1")
     PyPlot.plot(time, force_n_2, "--y", label="2")
     PyPlot.legend(loc="upper right")
-    PyPlot.ylabel("Normal force [N]")
+    PyPlot.ylabel("\$f_x\$ [N]")
     PyPlot.subplot(3,1,2)
     PyPlot.plot(time, force_t_1, "-b", label="1")
     PyPlot.plot(time, force_t_2, "--y", label="2")
     PyPlot.legend(loc="upper right")
-    PyPlot.ylabel("Tangential force [N]")
+    PyPlot.ylabel("\$f_y\$ [N]")
     PyPlot.subplot(3,1,3)
     PyPlot.plot(time, torque_1, "-b", label="1")
     PyPlot.plot(time, torque_2, "--y", label="2")
@@ -48,8 +49,8 @@ function plot_interaction(sim::Granular.Simulation, output::String)
     PyPlot.savefig(output)
 end
 
-Compat.@info "Testing compressive failure"
-sim = Granular.createSimulation()
+Compat.@info "Testing compressive failure: uniaxial compression"
+sim = Granular.createSimulation("compressive_failure_uniaxial")
 Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
                               compressive_strength=1285e3,
                               lin_vel=[1., 0.], fixed=true)
@@ -62,8 +63,7 @@ Granular.setTotalTime!(sim, 1.0)
 
 if debug
     Granular.setOutputFileInterval!(sim, 0.01)
-    plot_interaction(sim, "compressive_failure.pdf")
-    #Granular.render(sim)
+    plot_interaction(sim, sim.id * ".pdf")
 else
     Granular.run!(sim, verbose=verbose)
 end
@@ -74,3 +74,29 @@ end
 @test sim.grains[1].force[2] ≈ 0.0
 @test sim.grains[2].force[1] > 0.0
 @test sim.grains[2].force[2] ≈ 0.0
+
+Compat.@info "Testing compressive failure: shear"
+sim = Granular.createSimulation("compressive_failure_shear")
+Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
+                              compressive_strength=1285e3,
+                              lin_vel=[0., 1.], fixed=true)
+Granular.addGrainCylindrical!(sim, [1.5,1.5], 1., 0.5,
+                              compressive_strength=1285e3,
+                              fixed=true)
+@test count(x->x==true, sim.grains[1].compressive_failure) == 0
+Granular.setTimeStep!(sim, verbose=verbose)
+Granular.setTotalTime!(sim, 1.0)
+
+if debug
+    Granular.setOutputFileInterval!(sim, 0.01)
+    plot_interaction(sim, sim.id * ".pdf")
+else
+    Granular.run!(sim, verbose=verbose)
+end
+
+@test sim.grains[1].compressive_failure[1] == true
+@test count(x->x==true, sim.grains[1].compressive_failure) == 1
+#= @test sim.grains[1].force[1] < 0.0 =#
+#= @test sim.grains[1].force[2] ≈ 0.0 =#
+#= @test sim.grains[2].force[1] > 0.0 =#
+#= @test sim.grains[2].force[2] ≈ 0.0 =#
