@@ -259,7 +259,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         norm(force_n) >= compressive_strength*A_ij
 
         # Register that compressive failure has occurred for this contact
-        simulation.grains[i].compressive_failure[ic] = 1
+        simulation.grains[i].compressive_failure[ic] = true
     end
 
     # Grain-pair moment of inertia [m^4]

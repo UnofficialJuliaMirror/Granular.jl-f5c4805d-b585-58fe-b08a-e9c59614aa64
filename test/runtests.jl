@@ -8,6 +8,7 @@ function run_test(filename::String)
     include(filename)
 end
 
+run_test("compressive_failure.jl")
 run_test("cohesion.jl")
 run_test("grain.jl")
 run_test("vtk.jl")

@@ -68,7 +68,7 @@ mutable struct GrainCylindrical
     contact_parallel_displacement::Vector{Vector{Float64}}
     contact_rotation::Vector{Vector{Float64}}
     contact_age::Vector{Float64}
-    compressive_failure::Vector{Int}
+    compressive_failure::Vector{Bool}
 
     granular_stress::Vector{Float64}
     ocean_stress::Vector{Float64}

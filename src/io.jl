@@ -553,7 +553,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
 
                 push!(contact_age, simulation.grains[i].contact_age[ic])
                 push!(compressive_failure,
-                      simulation.grains[i].compressive_failure[ic])
+                      Int(simulation.grains[i].compressive_failure[ic]))
             end
         end
     end
@@ -665,7 +665,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
               "Name=\"Compressive failure [-]\" NumberOfComponents=\"1\" 
         format=\"ascii\">\n")
         for i=1:length(i1)
-            @inbounds write(f, "$(compressive_failure[i]) ")
+            @inbounds write(f, "$(Int(compressive_failure[i])) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")

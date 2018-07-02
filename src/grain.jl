@@ -251,7 +251,7 @@ function addGrainCylindrical!(simulation::Simulation,
         Vector{Vector{Float64}}(undef, simulation.Nc_max)
     contact_rotation = Vector{Vector{Float64}}(undef, simulation.Nc_max)
     contact_age::Vector{Float64} = zeros(Float64, simulation.Nc_max)
-    compressive_failure::Vector{Int} = zeros(Int, simulation.Nc_max)
+    compressive_failure::Vector{Bool} = zeros(Bool, simulation.Nc_max)
     for i=1:simulation.Nc_max
         position_vector[i] = zeros(3)
         contact_rotation[i] = zeros(3)
