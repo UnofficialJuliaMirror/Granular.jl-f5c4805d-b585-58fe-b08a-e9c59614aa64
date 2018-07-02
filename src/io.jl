@@ -1120,6 +1120,12 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                 if isfile("$(simulation.id)/$(simulation.id).mp4")
                     rm("$(simulation.id)/$(simulation.id).avi")
                 end
+            catch return_signal
+                if isa(return_signal, Base.UVError)
+                    Compat.@info "Could not run external ffmpeg command, " *
+                    "skipping conversion from " *
+                    "$(simulation.id)/$(simulation.id).avi to mp4."
+                end
             end
         end
 
