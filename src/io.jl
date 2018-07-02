@@ -1122,7 +1122,7 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                 end
             catch return_signal
                 if isa(return_signal, Base.UVError)
-                    Compat.@info "Could not run external ffmpeg command, " *
+                    Compat.@warn "Could not run external ffmpeg command, " *
                     "skipping conversion from " *
                     "$(simulation.id)/$(simulation.id).avi to mp4."
                 end
@@ -1154,7 +1154,7 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                 end
             catch return_signal
                 if isa(return_signal, Base.UVError)
-                    Compat.@info "Skipping gif merge since `$convert` " *
+                    Compat.@warn "Skipping gif merge since `$convert` " *
                         "was not found."
                 end
             end
