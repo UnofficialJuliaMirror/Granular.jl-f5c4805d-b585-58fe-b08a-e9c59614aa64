@@ -3,7 +3,7 @@ using Compat.Test
 import Granular
 
 verbose = true
-debug = false
+debug = true
 if debug
     import PyPlot
 end
@@ -52,10 +52,10 @@ end
 Compat.@info "Testing compressive failure: uniaxial compression"
 sim = Granular.createSimulation("compressive_failure_uniaxial")
 Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
-                              compressive_strength=1285e3,
+                              fracture_toughness=1285e3,
                               lin_vel=[1., 0.], fixed=true)
 Granular.addGrainCylindrical!(sim, [2.,0.], 1., 0.5,
-                              compressive_strength=1285e3,
+                              fracture_toughness=1285e3,
                               fixed=true)
 @test count(x->x==true, sim.grains[1].compressive_failure) == 0
 Granular.setTimeStep!(sim, verbose=verbose)
@@ -78,10 +78,10 @@ end
 Compat.@info "Testing compressive failure: shear"
 sim = Granular.createSimulation("compressive_failure_shear")
 Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
-                              compressive_strength=1285e3,
+                              fracture_toughness=1285e3,
                               lin_vel=[0., 1.], fixed=true)
 Granular.addGrainCylindrical!(sim, [1.5,1.5], 1., 0.5,
-                              compressive_strength=1285e3,
+                              fracture_toughness=1285e3,
                               fixed=true)
 @test count(x->x==true, sim.grains[1].compressive_failure) == 0
 Granular.setTimeStep!(sim, verbose=verbose)

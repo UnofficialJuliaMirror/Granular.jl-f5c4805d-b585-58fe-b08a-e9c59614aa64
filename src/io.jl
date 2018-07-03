@@ -421,8 +421,8 @@ function writeGrainVTK(simulation::Simulation,
                             "Shear strength [Pa]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.strength_heal_rate,
                             "Bond strength healing rate [Pa/s]")
-    WriteVTK.vtk_point_data(vtkfile, ifarr.compressive_strength,
-                            "Compressive strength [m^0.5 Pa]")
+    WriteVTK.vtk_point_data(vtkfile, ifarr.fracture_toughness,
+                            "Fracture toughness [m^0.5 Pa]")
 
     WriteVTK.vtk_point_data(vtkfile, ifarr.ocean_drag_coeff_vert,
                             "Ocean drag coefficient (vertical) [-]")

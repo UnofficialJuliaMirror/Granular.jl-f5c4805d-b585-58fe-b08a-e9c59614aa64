@@ -242,31 +242,24 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
               ")
     end
 
-    # Determine which grain is the weakest
-    compressive_strength = simulation.grains[i].compressive_strength * 
-                           sqrt(Lz_ij)
-    compressive_strength_j = simulation.grains[j].compressive_strength * 
-                             sqrt(Lz_ij)
-    idx_weakest = i
-    if compressive_strength_j < compressive_strength
-        compressive_strength = compressive_strength_j
-        idx_weakest = j
-    end
-
     # Determine the compressive strength in Pa by the contact thickness and the
-    # minimum compressive strength
-    compressive_strength = min(simulation.grains[i].compressive_strength,
-                               simulation.grains[j].compressive_strength)/
-                           sqrt(Lz_ij)
+    # minimum compressive strength [N]
+    compressive_strength = min(simulation.grains[i].fracture_toughness,
+                               simulation.grains[j].fracture_toughness) *
+                           Lz_ij^1.5
 
-    # Detect compressive failure if compressive_strength is set to a positive
-    # value
+    # Detect compressive failure if compressive_strength is a positive value
     if δ_n <= 0.0 && compressive_strength > 0. &&
         !simulation.grains[i].compressive_failure[ic] &&
-        norm(force_n) >= compressive_strength*A_ij
+        norm(force_n) >= compressive_strength
 
         # Register that compressive failure has occurred for this contact
         simulation.grains[i].compressive_failure[ic] = true
+
+        # Determine energy dissipation from compressive failure
+        E_shear = norm(force_t)*norm(vel_t)*simulation.time_step
+        simulation.grains[i].thermal_energy += 0.5*E_shear
+        simulation.grains[j].thermal_energy += 0.5*E_shear
 
         # Use δ_t as travel distance on horizontal slip surface
         δ_t = zeros(2)
