@@ -3,7 +3,7 @@ using Compat.Test
 import Granular
 
 verbose = true
-debug = true
+debug = false
 if debug
     import PyPlot
 end
