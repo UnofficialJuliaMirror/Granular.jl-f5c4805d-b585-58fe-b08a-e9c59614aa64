@@ -2,7 +2,7 @@
 using Compat.Test
 import Granular
 
-verbose = true
+verbose = false
 debug = false
 if debug
     import PyPlot
