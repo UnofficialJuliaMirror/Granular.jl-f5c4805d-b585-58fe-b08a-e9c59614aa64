@@ -56,9 +56,11 @@ the same type as the input.
 * `fill::Real`: value to use for third
 """
 function vecTo3d(input::Any; fill::Real = 0.0)
-    if length(input) >= 3
-        error("vecTo3d requires a scalar or input vector to of length 2, but "
-              * "input is $input")
+    if length(input) > 3
+        error("vecTo3d requires a scalar or input vector to of length 3 or " *
+              "less, but input is $input")
+    elseif length(input) == 3
+        return input
     elseif length(input) == 2
         return [input[1], input[2], typeof(input[1])(fill)]
     elseif length(input) == 1
