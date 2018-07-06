@@ -799,7 +799,7 @@ Add to the value of the external body force on a grain.
 * `force::Vector{Float64}`: a vector of force [N]
 """
 function addBodyForce!(grain::GrainCylindrical, force::Vector{Float64})
-    grain.external_body_force += force
+    grain.external_body_force += vecTo3d(force)
 end
 
 export setBodyForce!
@@ -813,7 +813,7 @@ Set the value of the external body force on a grain.
 * `force::Vector{Float64}`: a vector of force [N]
 """
 function setBodyForce!(grain::GrainCylindrical, force::Vector{Float64})
-    grain.external_body_force = force
+    grain.external_body_force = vecTo3d(force)
 end
 
 export compareGrains
