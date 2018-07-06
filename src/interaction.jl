@@ -248,23 +248,6 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
                                simulation.grains[j].fracture_toughness) *
                            Lz_ij^1.5
 
-    # Detect compressive failure if compressive_strength is a positive value
-    if δ_n <= 0.0 && compressive_strength > 0. &&
-        !simulation.grains[i].compressive_failure[ic] &&
-        norm(force_n) >= compressive_strength
-
-        # Register that compressive failure has occurred for this contact
-        simulation.grains[i].compressive_failure[ic] = true
-
-        # Determine energy dissipation from compressive failure
-        E_shear = norm(force_t)*norm(vel_t)*simulation.time_step
-        simulation.grains[i].thermal_energy += 0.5*E_shear
-        simulation.grains[j].thermal_energy += 0.5*E_shear
-
-        # Use δ_t as travel distance on horizontal slip surface
-        δ_t = zeros(2)
-    end
-
     # Grain-pair moment of inertia [m^4]
     I_ij = 2.0/3.0*R_ij^3*min(simulation.grains[i].thickness,
                               simulation.grains[j].thickness)
@@ -352,13 +335,25 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         end
     end
 
+    just_failed = false
+    # Detect compressive failure if compressive force exceeds compressive
+    # strength
+    if δ_n <= 0.0 && compressive_strength > 0. &&
+        !simulation.grains[i].compressive_failure[ic] &&
+        norm(force_n.*n .+ force_t.*t) >= compressive_strength
+
+        # Register that compressive failure has occurred for this contact
+        simulation.grains[i].compressive_failure[ic] = true
+        just_failed = true
+    end
+
     # Overwrite previous force results if compressive failure occurred
     if simulation.grains[i].compressive_failure[ic] && δ_n < 0.0
 
         # Normal stress on horizontal interface, assuming bending stresses are
         # negligible (ocean density and gravity are hardcoded for now)
         σ_n = (1e3 - simulation.grains[i].density) * 9.81 *
-              (simulation.grains[i].thickness + simulation.grains[j].thickness)
+            (simulation.grains[i].thickness + simulation.grains[j].thickness)
 
         # Horizontal overlap area (two overlapping circles)
         # http://mathworld.wolfram.com/Circle-CircleIntersection.html (eq 14)
@@ -369,18 +364,34 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
                        ( dist - r_i + r_j)*
                        ( dist + r_i + r_j))
 
-        # Find horizontal stress on slip interface
-        σ_t = -k_t*δ_t/A_h
+        if just_failed
+            # Use δ_t as travel distance on horizontal slip surface, and set the
+            # original displacement to Coulomb-frictional limit in the direction
+            # of the pre-failure force
+            F = force_n.*n .+ force_t.*t
+            σ_t = μ_d_minimum*norm(σ_n).*F/norm(F)
+            δ_t = σ_t*A_h/(-k_t)
 
-        # Check for Coulomb-failure on the slip interface
-        if norm(σ_t) > norm(σ_n)*μ_d_minimum
-
-            σ_t = norm(σ_n)*μ_d_minimum * σ_t/norm(σ_t)
-
-            E_shear = norm(σ_t*A_h)*norm(vel_lin)*simulation.time_step
-
+            # Save energy loss in E_shear
+            E_shear = norm(F)*norm(vel_lin)*simulation.time_step
             simulation.grains[i].thermal_energy += 0.5*E_shear
             simulation.grains[j].thermal_energy += 0.5*E_shear
+
+        else
+
+            # Find horizontal stress on slip interface
+            σ_t = -k_t*δ_t/A_h
+
+            # Check for Coulomb-failure on the slip interface
+            if norm(σ_t) > μ_d_minimum*norm(σ_n)
+
+                σ_t = μ_d_minimum*norm(σ_n)*σ_t/norm(σ_t)
+                δ_t = σ_t*A_h/(-k_t)
+
+                E_shear = norm(σ_t*A_h)*norm(vel_lin)*simulation.time_step
+                simulation.grains[i].thermal_energy += 0.5*E_shear
+                simulation.grains[j].thermal_energy += 0.5*E_shear
+            end
         end
 
         force_n = dot(σ_t, n)*A_h

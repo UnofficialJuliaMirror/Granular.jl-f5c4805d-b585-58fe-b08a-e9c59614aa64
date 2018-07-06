@@ -59,9 +59,10 @@ Granular.addGrainCylindrical!(sim, [2.,0.], 1., 0.5,
                               fixed=true)
 @test count(x->x==true, sim.grains[1].compressive_failure) == 0
 Granular.setTimeStep!(sim, verbose=verbose)
-Granular.setTotalTime!(sim, 1.0)
+Granular.setTotalTime!(sim, 1.00)
 
 if debug
+    Granular.removeSimulationFiles(sim)
     Granular.setOutputFileInterval!(sim, 0.01)
     plot_interaction(sim, sim.id * ".pdf")
 else
@@ -74,6 +75,8 @@ end
 @test sim.grains[1].force[2] ≈ 0.0
 @test sim.grains[2].force[1] > 0.0
 @test sim.grains[2].force[2] ≈ 0.0
+@test sim.grains[1].torque ≈ zeros(3)
+@test sim.grains[2].torque ≈ zeros(3)
 
 Compat.@info "Testing compressive failure: shear"
 sim = Granular.createSimulation("compressive_failure_shear")
@@ -85,9 +88,10 @@ Granular.addGrainCylindrical!(sim, [1.5,1.5], 1., 0.5,
                               fixed=true)
 @test count(x->x==true, sim.grains[1].compressive_failure) == 0
 Granular.setTimeStep!(sim, verbose=verbose)
-Granular.setTotalTime!(sim, 1.0)
+Granular.setTotalTime!(sim, 1.00)
 
 if debug
+    Granular.removeSimulationFiles(sim)
     Granular.setOutputFileInterval!(sim, 0.01)
     plot_interaction(sim, sim.id * ".pdf")
 else
@@ -96,7 +100,13 @@ end
 
 @test sim.grains[1].compressive_failure[1] == true
 @test count(x->x==true, sim.grains[1].compressive_failure) == 1
-#= @test sim.grains[1].force[1] < 0.0 =#
-#= @test sim.grains[1].force[2] ≈ 0.0 =#
-#= @test sim.grains[2].force[1] > 0.0 =#
-#= @test sim.grains[2].force[2] ≈ 0.0 =#
+@test sim.grains[1].force[1] > 0.0
+@test sim.grains[1].force[2] < 0.0
+@test abs(sim.grains[1].force[1]) < abs(sim.grains[1].force[2])
+@test sim.grains[2].force[1] < 0.0
+@test sim.grains[2].force[2] > 0.0
+@test abs(sim.grains[2].force[1]) < abs(sim.grains[2].force[2])
+@test sim.grains[1].torque[1:2] ≈ zeros(2)
+@test sim.grains[1].torque[3] < 0.0
+@test sim.grains[2].torque[1:2] ≈ zeros(2)
+@test sim.grains[2].torque[3] < 0.0
