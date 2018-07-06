@@ -357,12 +357,20 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
 
         # Horizontal overlap area (two overlapping circles)
         # http://mathworld.wolfram.com/Circle-CircleIntersection.html (eq 14)
-        A_h = r_i^2.0*acos((dist^2.0 + r_i^2.0 - r_j^2.0)/(2.0*dist*r_i)) +
-              r_j^2.0*acos((dist^2.0 + r_j^2.0 - r_i^2.0)/(2.0*dist*r_j)) -
-              0.5*sqrt((-dist + r_i + r_j)*
-                       ( dist + r_i - r_j)*
-                       ( dist - r_i + r_j)*
-                       ( dist + r_i + r_j))
+        if min(r_i, r_j) >= (r_i + r_j) - dist
+
+            # Complete overlap
+            A_h = π*min(r_i, r_j)^2
+
+        else
+            # Partial overlap
+            A_h = r_i^2.0*acos((dist^2.0 + r_i^2.0 - r_j^2.0)/(2.0*dist*r_i)) +
+                  r_j^2.0*acos((dist^2.0 + r_j^2.0 - r_i^2.0)/(2.0*dist*r_j)) -
+                  0.5*sqrt((-dist + r_i + r_j)*
+                           ( dist + r_i - r_j)*
+                           ( dist - r_i + r_j)*
+                           ( dist + r_i + r_j))
+        end
 
         if just_failed
             # Use δ_t as travel distance on horizontal slip surface, and set the
