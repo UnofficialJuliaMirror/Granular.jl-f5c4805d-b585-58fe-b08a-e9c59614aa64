@@ -485,6 +485,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
     shear_displacement = Vector{Float64}[]
     contact_rotation = Vector{Float64}[]
     contact_age = Float64[]
+    contact_area = Float64[]
     compressive_failure = Int[]
 
     for i=1:length(simulation.grains)
@@ -552,6 +553,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
                       simulation.grains[i].contact_rotation[ic])
 
                 push!(contact_age, simulation.grains[i].contact_age[ic])
+                push!(contact_area, simulation.grains[i].contact_area[ic])
                 push!(compressive_failure,
                       Int(simulation.grains[i].compressive_failure[ic]))
             end
@@ -657,6 +659,15 @@ function writeGrainInteractionVTK(simulation::Simulation,
         format=\"ascii\">\n")
         for i=1:length(i1)
             @inbounds write(f, "$(contact_age[i]) ")
+        end
+        write(f, "\n")
+        write(f, "        </DataArray>\n")
+
+        write(f, "        <DataArray type=\"Float32\" " *
+              "Name=\"Contact area [m*m]\" NumberOfComponents=\"1\" 
+        format=\"ascii\">\n")
+        for i=1:length(i1)
+            @inbounds write(f, "$(contact_area[i]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")

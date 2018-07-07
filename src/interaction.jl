@@ -138,7 +138,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
     δ_n = dist - (r_i + r_j)
 
     # Local axes
-    n = p/dist
+    n = p/max(dist, 1e-12)
     t = [-n[2], n[1]]
 
     # Contact kinematics (2d)
@@ -185,6 +185,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
 
     # Contact area
     A_ij = R_ij*Lz_ij
+    simulation.grains[i].contact_area[ic] = A_ij
 
     # Contact mechanical parameters
     if simulation.grains[i].youngs_modulus > 0. &&
@@ -356,14 +357,14 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
             (simulation.grains[i].thickness + simulation.grains[j].thickness)
 
         # Horizontal overlap area (two overlapping circles)
-        # http://mathworld.wolfram.com/Circle-CircleIntersection.html (eq 14)
-        if min(r_i, r_j) >= (r_i + r_j) - dist
+        if 2.0*min(r_i, r_j) <= abs(δ_n)
 
             # Complete overlap
             A_h = π*min(r_i, r_j)^2
 
         else
-            # Partial overlap
+            # Partial overlap, eq 14 from
+            # http://mathworld.wolfram.com/Circle-CircleIntersection.html
             A_h = r_i^2.0*acos((dist^2.0 + r_i^2.0 - r_j^2.0)/(2.0*dist*r_i)) +
                   r_j^2.0*acos((dist^2.0 + r_j^2.0 - r_i^2.0)/(2.0*dist*r_j)) -
                   0.5*sqrt((-dist + r_i + r_j)*
@@ -371,6 +372,7 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
                            ( dist - r_i + r_j)*
                            ( dist + r_i + r_j))
         end
+        simulation.grains[i].contact_area[ic] = A_h
 
         if just_failed
             # Use δ_t as travel distance on horizontal slip surface, and set the

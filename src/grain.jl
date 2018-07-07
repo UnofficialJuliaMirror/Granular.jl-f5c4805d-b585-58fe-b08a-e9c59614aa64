@@ -251,6 +251,7 @@ function addGrainCylindrical!(simulation::Simulation,
         Vector{Vector{Float64}}(undef, simulation.Nc_max)
     contact_rotation = Vector{Vector{Float64}}(undef, simulation.Nc_max)
     contact_age::Vector{Float64} = zeros(Float64, simulation.Nc_max)
+    contact_area::Vector{Float64} = zeros(Float64, simulation.Nc_max)
     compressive_failure::Vector{Bool} = zeros(Bool, simulation.Nc_max)
     for i=1:simulation.Nc_max
         position_vector[i] = zeros(3)
@@ -318,6 +319,7 @@ function addGrainCylindrical!(simulation::Simulation,
                              contact_parallel_displacement,
                              contact_rotation,
                              contact_age,
+                             contact_area,
                              compressive_failure,
 
                              granular_stress,
@@ -878,6 +880,7 @@ function compareGrains(if1::GrainCylindrical, if2::GrainCylindrical)
     @test if1.contact_parallel_displacement == if2.contact_parallel_displacement
     @test if1.contact_rotation == if2.contact_rotation
     @test if1.contact_age ≈ if2.contact_age
+    @test if1.contact_area ≈ if2.contact_area
     @test if1.compressive_failure ≈ if2.compressive_failure
 
     @test if1.granular_stress ≈ if2.granular_stress
