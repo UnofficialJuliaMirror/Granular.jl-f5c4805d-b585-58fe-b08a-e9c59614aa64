@@ -5,8 +5,6 @@ import Granular
 # Check for conservation of kinetic energy (=momentum) during a normal collision 
 # between two ice cylindrical grains 
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 verbose=false
 
 sim_init = Granular.createSimulation()
@@ -21,6 +19,7 @@ sim = deepcopy(sim_init)
 Granular.setTotalTime!(sim, 10.)
 sim.time_step = 1.
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].contact_age[1] ≈ sim.time
 
 Compat.@info "# Check if bonds add tensile strength"
@@ -31,12 +30,13 @@ sim.grains[1].lin_vel[1] = 0.1
 Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 10.)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] > 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] > 0.
 @test sim.grains[2].lin_vel[2] ≈ 0.
-@test sim.grains[1].ang_vel ≈ 0.
-@test sim.grains[2].ang_vel ≈ 0.
+@test sim.grains[1].ang_vel ≈ zeros(3)
+@test sim.grains[2].ang_vel ≈ zeros(3)
 
 Compat.@info "# Add shear strength and test bending resistance (one grain rotating)"
 sim = Granular.createSimulation(id="cohesion")
@@ -44,7 +44,7 @@ Granular.addGrainCylindrical!(sim, [0., 0.], 10.1, 1., tensile_strength=500e3,
     shear_strength=500e3)
 Granular.addGrainCylindrical!(sim, [20., 0.], 10., 1., tensile_strength=500e3,
     shear_strength=500e3)
-sim.grains[1].ang_vel = 0.1
+sim.grains[1].ang_vel[3] = 0.1
 Granular.findContacts!(sim) # make sure contact is registered
 sim.grains[1].contact_radius=10.0 # decrease radius so there isn't compression
 E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -53,12 +53,13 @@ Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 5.)
 #Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] ≈ 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] ≈ 0.
 @test sim.grains[2].lin_vel[2] ≈ 0.
-@test sim.grains[1].ang_vel != 0.
-@test sim.grains[2].ang_vel != 0.
+@test sim.grains[1].ang_vel[3] != 0.
+@test sim.grains[2].ang_vel[3] != 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 E_therm_final = Granular.totalGrainThermalEnergy(sim)
@@ -71,7 +72,7 @@ Granular.addGrainCylindrical!(sim, [0., 0.], 10.1, 1., tensile_strength=500e3,
     shear_strength=500e3)
 Granular.addGrainCylindrical!(sim, [20., 0.], 10., 1., tensile_strength=500e3,
     shear_strength=500e3)
-sim.grains[2].ang_vel = 0.1
+sim.grains[2].ang_vel[3] = 0.1
 Granular.findContacts!(sim) # make sure contact is registered
 sim.grains[1].contact_radius=10.0 # decrease radius so there isn't compression
 E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -80,12 +81,13 @@ Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 5.)
 #Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] ≈ 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] ≈ 0.
 @test sim.grains[2].lin_vel[2] ≈ 0.
-@test sim.grains[1].ang_vel != 0.
-@test sim.grains[2].ang_vel != 0.
+@test sim.grains[1].ang_vel[3] != 0.
+@test sim.grains[2].ang_vel[3] != 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 E_therm_final = Granular.totalGrainThermalEnergy(sim)
@@ -98,8 +100,8 @@ Granular.addGrainCylindrical!(sim, [0., 0.], 10.0000001, 1., tensile_strength=50
     shear_strength=500e3)
 Granular.addGrainCylindrical!(sim, [20., 0.], 10., 1., tensile_strength=500e3,
     shear_strength=500e3)
-sim.grains[1].ang_vel = 0.1
-sim.grains[2].ang_vel = -0.1
+sim.grains[1].ang_vel[3] = 0.1
+sim.grains[2].ang_vel[3] = -0.1
 Granular.findContacts!(sim) # make sure contact is registered
 sim.grains[1].contact_radius=10.0 # decrease radius so there isn't compression
 E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -108,12 +110,13 @@ Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 5.)
 #Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] ≈ 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] ≈ 0.
 @test sim.grains[2].lin_vel[2] ≈ 0.
-@test sim.grains[1].ang_vel != 0.
-@test sim.grains[2].ang_vel != 0.
+@test sim.grains[1].ang_vel[3] != 0.
+@test sim.grains[2].ang_vel[3] != 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 E_therm_final = Granular.totalGrainThermalEnergy(sim)
@@ -126,8 +129,8 @@ Granular.addGrainCylindrical!(sim, [0., 0.], 10.0000001, 1., tensile_strength=50
     shear_strength=500e3)
 Granular.addGrainCylindrical!(sim, [20., 0.], 10., 1., tensile_strength=500e3,
     shear_strength=500e3)
-sim.grains[1].ang_vel = 100
-sim.grains[2].ang_vel = -100
+sim.grains[1].ang_vel[3] = 100
+sim.grains[2].ang_vel[3] = -100
 Granular.findContacts!(sim) # make sure contact is registered
 sim.grains[1].contact_radius=10.0 # decrease radius so there isn't compression
 E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -136,12 +139,13 @@ Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 5.)
 #Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] ≈ 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] ≈ 0.
 @test sim.grains[2].lin_vel[2] ≈ 0.
-@test sim.grains[1].ang_vel != 0.
-@test sim.grains[2].ang_vel != 0.
+@test sim.grains[1].ang_vel[3] != 0.
+@test sim.grains[2].ang_vel[3] != 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 E_therm_final = Granular.totalGrainThermalEnergy(sim)
@@ -155,8 +159,8 @@ Granular.addGrainCylindrical!(sim, [0., 0.], 10.1, 1., tensile_strength=500e3,
     shear_strength=50e3)
 Granular.addGrainCylindrical!(sim, [20., 0.], 10., 1., tensile_strength=500e3,
     shear_strength=50e3)
-sim.grains[1].ang_vel = 100
-sim.grains[2].ang_vel = 0.0
+sim.grains[1].ang_vel[3] = 100
+sim.grains[2].ang_vel[3] = 0.0
 Granular.findContacts!(sim) # make sure contact is registered
 sim.grains[1].contact_radius=10.0 # decrease radius so there isn't compression
 E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -165,12 +169,13 @@ Granular.setTimeStep!(sim)
 Granular.setTotalTime!(sim, 5.)
 #Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim, verbose=verbose)
+Granular.removeSimulationFiles(sim)
 @test sim.grains[1].lin_vel[1] ≈ 0.
 @test sim.grains[1].lin_vel[2] ≈ 0.
 @test sim.grains[2].lin_vel[1] ≈ 0.
 @test sim.grains[2].lin_vel[2] ≈ 0.
-@test sim.grains[1].ang_vel != 0.
-@test sim.grains[2].ang_vel != 0.
+@test sim.grains[1].ang_vel[3] != 0.
+@test sim.grains[2].ang_vel[3] != 0.
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 E_therm_final = Granular.totalGrainThermalEnergy(sim)

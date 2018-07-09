@@ -393,6 +393,8 @@ function writeGrainVTK(simulation::Simulation,
                             "Fixed but allow (x) acceleration [-]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.allow_y_acc,
                             "Fixed but allow (y) acceleration [-]")
+    WriteVTK.vtk_point_data(vtkfile, ifarr.allow_z_acc,
+                            "Fixed but allow (z) acceleration [-]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.rotating, "Free to rotate [-]")
     WriteVTK.vtk_point_data(vtkfile, ifarr.enabled, "Enabled [-]")
 
@@ -481,8 +483,10 @@ function writeGrainInteractionVTK(simulation::Simulation,
     contact_stiffness = Float64[]
     tensile_stress = Float64[]
     shear_displacement = Vector{Float64}[]
-    contact_rotation = Float64[]
+    contact_rotation = Vector{Float64}[]
     contact_age = Float64[]
+    contact_area = Float64[]
+    compressive_failure = Int[]
 
     for i=1:length(simulation.grains)
         for ic=1:simulation.Nc_max
@@ -549,6 +553,9 @@ function writeGrainInteractionVTK(simulation::Simulation,
                       simulation.grains[i].contact_rotation[ic])
 
                 push!(contact_age, simulation.grains[i].contact_age[ic])
+                push!(contact_area, simulation.grains[i].contact_area[ic])
+                push!(compressive_failure,
+                      Int(simulation.grains[i].compressive_failure[ic]))
             end
         end
     end
@@ -577,7 +584,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
         for i=1:length(i1)
             write(f, "$(inter_particle_vector[i][1]) ")
             write(f, "$(inter_particle_vector[i][2]) ")
-            write(f, "0.0 ")
+            write(f, "$(inter_particle_vector[i][3]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")
@@ -587,7 +594,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
         for i=1:length(i1)
             @inbounds write(f, "$(shear_displacement[i][1]) ")
             @inbounds write(f, "$(shear_displacement[i][2]) ")
-            write(f, "0.0 ")
+            @inbounds write(f, "$(shear_displacement[i][3]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")
@@ -637,10 +644,12 @@ function writeGrainInteractionVTK(simulation::Simulation,
         write(f, "        </DataArray>\n")
 
         write(f, "        <DataArray type=\"Float32\" " *
-              "Name=\"Contact rotation [rad]\" NumberOfComponents=\"1\" 
+              "Name=\"Contact rotation [rad]\" NumberOfComponents=\"3\" 
         format=\"ascii\">\n")
         for i=1:length(i1)
-            @inbounds write(f, "$(contact_rotation[i]) ")
+            @inbounds write(f, "$(contact_rotation[i][1]) ")
+            @inbounds write(f, "$(contact_rotation[i][2]) ")
+            @inbounds write(f, "$(contact_rotation[i][3]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")
@@ -654,6 +663,24 @@ function writeGrainInteractionVTK(simulation::Simulation,
         write(f, "\n")
         write(f, "        </DataArray>\n")
 
+        write(f, "        <DataArray type=\"Float32\" " *
+              "Name=\"Contact area [m*m]\" NumberOfComponents=\"1\" 
+        format=\"ascii\">\n")
+        for i=1:length(i1)
+            @inbounds write(f, "$(contact_area[i]) ")
+        end
+        write(f, "\n")
+        write(f, "        </DataArray>\n")
+
+        write(f, "        <DataArray type=\"Float32\" " *
+              "Name=\"Compressive failure [-]\" NumberOfComponents=\"1\" 
+        format=\"ascii\">\n")
+        for i=1:length(i1)
+            @inbounds write(f, "$(Int(compressive_failure[i])) ")
+        end
+        write(f, "\n")
+        write(f, "        </DataArray>\n")
+
         write(f, "      </CellData>\n")
         write(f, "      <Points>\n")
 
@@ -662,7 +689,7 @@ function writeGrainInteractionVTK(simulation::Simulation,
         write(f, "        <DataArray type=\"Float32\" Name=\"Points\" " *
               "NumberOfComponents=\"3\" format=\"ascii\">\n")
         for i in simulation.grains
-            @inbounds write(f, "$(i.lin_pos[1]) $(i.lin_pos[2]) 0.0 ")
+            @inbounds write(f, "$(i.lin_pos[1]) $(i.lin_pos[2]) $(i.lin_pos[3]) ")
         end
         write(f, "\n")
         write(f, "        </DataArray>\n")
@@ -868,6 +895,7 @@ imagegrains.PointArrayStatus = [
 'Fixed in space [-]',
 'Fixed but allow (x) acceleration [-]',
 'Fixed but allow (y) acceleration [-]',
+'Fixed but allow (z) acceleration [-]',
 'Free to rotate [-]',
 'Enabled [-]',
 'Contact stiffness (normal) [N m^-1]',
@@ -1103,6 +1131,12 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                 if isfile("$(simulation.id)/$(simulation.id).mp4")
                     rm("$(simulation.id)/$(simulation.id).avi")
                 end
+            catch return_signal
+                if isa(return_signal, Base.UVError)
+                    Compat.@warn "Could not run external ffmpeg command, " *
+                    "skipping conversion from " *
+                    "$(simulation.id)/$(simulation.id).avi to mp4."
+                end
             end
         end
 
@@ -1131,7 +1165,7 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                 end
             catch return_signal
                 if isa(return_signal, Base.UVError)
-                    Compat.@info "Skipping gif merge since `$convert` " *
+                    Compat.@warn "Skipping gif merge since `$convert` " *
                         "was not found."
                 end
             end
@@ -1321,8 +1355,9 @@ function plotGrains(sim::Simulation;
         contact_stiffness = Float64[]
         tensile_stress = Float64[]
         shear_displacement = Vector{Float64}[]
-        contact_rotation = Float64[]
+        contact_rotation = Vector{Float64}[]
         contact_age = Float64[]
+        compressive_failure = Int[]
         for i=1:length(sim.grains)
             for ic=1:sim.Nc_max
                 if sim.grains[i].contacts[ic] > 0
@@ -1374,6 +1409,8 @@ function plotGrains(sim::Simulation;
                           sim.grains[i].contact_rotation[ic])
 
                     push!(contact_age, sim.grains[i].contact_age[ic])
+                    push!(compressive_failure,
+                      sim.grains[i].compressive_failure[ic])
                 end
             end
         end

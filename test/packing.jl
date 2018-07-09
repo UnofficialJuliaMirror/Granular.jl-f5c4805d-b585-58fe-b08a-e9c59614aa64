@@ -6,8 +6,6 @@ verbose = false
 plot = false
 plot_packings=false
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 Compat.@info "Testing regular packing generation (power law GSD)"
 sim = Granular.createSimulation()
 Granular.regularPacking!(sim, [2, 2], 1., 1., size_distribution="powerlaw")

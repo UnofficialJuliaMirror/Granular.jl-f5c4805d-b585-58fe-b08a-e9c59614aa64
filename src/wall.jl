@@ -16,9 +16,10 @@ The only required arguments are
 # Arguments
 * `simulation::Simulation`: the simulation object where the wall should be
     added to.
-* `normal::Vector{Float64}`: 2d vector denoting the normal to the wall [m].  The
+* `normal::Vector{Float64}`: 3d vector denoting the normal to the wall [m].  The
     wall will only interact in the opposite direction of this vector, so the
-    normal vector should point in the direction of the grains.
+    normal vector should point in the direction of the grains. If a 2d vector is
+    passed, the third (z) component is set to zero.
 * `pos::Float64`: position along axis parallel to the normal vector [m].
 * `bc::String="fixed"`: boundary condition, possible values are `"fixed"`
     (default), `"normal stress"`, or `"velocity"`.
@@ -50,13 +51,13 @@ wall-face normal of `[1., 0.]` (wall along *y* and normal to *x*), a position of
 `1.5` meter:
 
 ```julia
-Granular.addWallLinearFrictionless!(sim, [1., 0.], 1.5)
+Granular.addWallLinearFrictionless!(sim, [1., 0., 0.], 1.5)
 ```
 
 The following example creates a wall with a velocity of 0.5 m/s towards *-y*:
 
 ```julia
-Granular.addWallLinearFrictionless!(sim, [0., 1.], 1.5,
+Granular.addWallLinearFrictionless!(sim, [0., 1., 0.], 1.5,
                                     bc="velocity",
                                     vel=-0.5)
 ```
@@ -65,7 +66,7 @@ To create a wall parallel to the *y* axis pushing downwards with a constant
 normal stress of 100 kPa, starting at a position of y = 3.5 m:
 
 ```julia
-Granular.addWallLinearFrictionless!(sim, [0., 1.], 3.5,
+Granular.addWallLinearFrictionless!(sim, [0., 1., 0.], 3.5,
                                     bc="normal stress",
                                     normal_stress=100e3)
 ```
@@ -85,20 +86,19 @@ function addWallLinearFrictionless!(simulation::Simulation,
                                     verbose::Bool=true)
 
     # Check input values
-    if length(normal) != 2
-        error("Wall normal must be a two-element array (normal = " *
-              "$normal)")
+    if length(normal) != 3
+        normal = vecTo3d(normal)
     end
 
     if bc != "fixed" && bc != "velocity" && bc != "normal stress"
         error("Wall BC must be 'fixed', 'velocity', or 'normal stress'.")
     end
 
-    if !(normal ≈ [1., 0.]) && !(normal ≈ [0., 1.])
+    if !(normal ≈ [1., 0., 0.]) && !(normal ≈ [0., 1., 0.])
         error("Currently only walls with normals orthogonal to the " *
               "coordinate system are allowed, i.e. normals parallel to the " *
               "x or y axes.  Accepted values for `normal` " *
-              "are [1., 0.] and [0., 1.].  The passed normal was $normal")
+              "are [1., 0., 0.] and [0., 1., 0.]. The passed normal was $normal")
     end
 
     # if not set, set wall mass to equal the mass of all grains.
@@ -171,10 +171,10 @@ Returns the surface area of the wall given the grid size and its index.
 """
 function getWallSurfaceArea(sim::Simulation, wall_index::Integer)
 
-    if sim.walls[wall_index].normal ≈ [1., 0.]
+    if sim.walls[wall_index].normal ≈ [1., 0., 0.]
         return (sim.ocean.yq[end,end] - sim.ocean.yq[1,1]) *
             sim.walls[wall_index].thickness
-    elseif sim.walls[wall_index].normal ≈ [0., 1.]
+    elseif sim.walls[wall_index].normal ≈ [0., 1., 0.]
         return (sim.ocean.xq[end,end] - sim.ocean.xq[1,1]) *
             sim.walls[wall_index].thickness
     else
@@ -185,9 +185,9 @@ end
 function getWallSurfaceArea(sim::Simulation, normal::Vector{Float64},
                             thickness::Float64)
 
-    if normal ≈ [1., 0.]
+    if length(normal) == 3 && normal ≈ [1., 0., 0.]
         return (sim.ocean.yq[end,end] - sim.ocean.yq[1,1]) * thickness
-    elseif normal ≈ [0., 1.]
+    elseif length(normal) == 3 && normal ≈ [0., 1., 0.]
         return (sim.ocean.xq[end,end] - sim.ocean.xq[1,1]) * thickness
     else
         error("Wall normal not understood")

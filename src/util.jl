@@ -42,3 +42,31 @@ function harmonicMean(a::Number, b::Number)::Number
         return 2. * a * b / (a + b)
     end
 end
+
+export vecTo3d
+"""
+    function vecTo3d(input, fill)
+
+Convert a scalar or 2d vector to 3d by filling the missing component with the
+value `fill`. The returned 3-component vector is a Vector (or 1d Array) of
+the same type as the input.
+
+# Arguments
+* `input`: a scalar or two-component vector.
+* `fill::Real`: value to use for third
+"""
+function vecTo3d(input::Any; fill::Real = 0.0)
+    if length(input) > 3
+        error("vecTo3d requires a scalar or input vector to of length 3 or " *
+              "less, but input is $input")
+    elseif length(input) == 3
+        return input
+    elseif length(input) == 2
+        return [input[1], input[2], typeof(input[1])(fill)]
+    elseif length(input) == 1
+        return [input[1], typeof(input[1])(fill), typeof(input[1])(fill)]
+    else
+        error("input not understood: $input")
+    end
+end
+

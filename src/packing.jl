@@ -124,7 +124,7 @@ function generateNeighboringPoint(x_i::Vector, r_i::Real,
     #R = rand() * (r_i + r_j) * max_padding_factor + 2. * (r_i + r_j)
     R = r_i + r_j + padding
     T = rand() * 2. * pi
-    return [x_i[1] + R * sin(T), x_i[2] + R * cos(T)], r_j
+    return [x_i[1] + R * sin(T), x_i[2] + R * cos(T), x_i[3]], r_j
 end
 
 function generateRandomDirection()
@@ -132,7 +132,7 @@ function generateRandomDirection()
 end
 
 function getPositionDistancedFromPoint(T::Real, x_i::Vector, dist::Real)
-    return [x_i[1] + dist * sin(T), x_i[2] + dist * cos(T)]
+    return [x_i[1] + dist * sin(T), x_i[2] + dist * cos(T), x_i[3]]
 end
 
 export irregularPacking!
@@ -224,7 +224,7 @@ function irregularPacking!(simulation::Simulation;
     # and add it to the active list. If after `sample_limit` attempts no such
     # point is found, instead remove `i` from the active list.
     j = 0;
-    x_active = zeros(2); x_candidate = zeros(2);
+    x_active = zeros(3); x_candidate = zeros(3);
     r_active = 0.; r_candidate = 0.; T = 0.
     n = 0
     neighbor_found = false
@@ -456,9 +456,9 @@ function rasterMap(sim::Simulation, dx::Real)
         #i, j = Int.(floor.((grain.lin_pos - origo) ./ dx)) + [1,1]
 
         # Find corner indexes for box spanning the grain
-        min_i, min_j = Int.(floor.((grain.lin_pos - origo .-
+        min_i, min_j = Int.(floor.((grain.lin_pos[1:2] - origo .-
                                     grain.contact_radius) ./ dx)) .+ [1,1]
-        max_i, max_j = Int.(floor.((grain.lin_pos - origo .+
+        max_i, max_j = Int.(floor.((grain.lin_pos[1:2] - origo .+
                                     grain.contact_radius) ./ dx)) .+ [1,1]
 
         # For each cell in box, check if the grain is contained
@@ -466,7 +466,7 @@ function rasterMap(sim::Simulation, dx::Real)
             for j = min_j:max_j
                 cell_mid_point = dx .* Vector{Float64}([i,j]) .- 0.5 * dx
 
-                if (norm(cell_mid_point - grain.lin_pos) -
+                if (norm(cell_mid_point - grain.lin_pos[1:2]) -
                     grain.contact_radius < dist)
                     occupied[i,j] = true
                 end

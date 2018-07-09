@@ -1,8 +1,6 @@
 #!/usr/bin/env julia
 import Compat
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 Compat.@info "Determining if JLD is installed"
 if Granular.hasJLD
     Compat.@info "JLD found, proceeding with JLD-specific tests"

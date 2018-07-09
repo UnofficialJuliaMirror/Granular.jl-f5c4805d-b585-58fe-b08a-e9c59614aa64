@@ -9,8 +9,6 @@ import Plots
 import Granular
 import CurveFit
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 verbose=false
 
 Compat.@info "Testing performance with many interacting grains"

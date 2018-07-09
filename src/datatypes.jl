@@ -24,15 +24,16 @@ mutable struct GrainCylindrical
     lin_disp::Vector{Float64}
 
     # Angular kinematic degrees of freedom for vertical rotation around center
-    ang_pos::Float64
-    ang_vel::Float64
-    ang_acc::Float64
-    torque::Float64
+    ang_pos::Vector{Float64}
+    ang_vel::Vector{Float64}
+    ang_acc::Vector{Float64}
+    torque::Vector{Float64}
 
     # Kinematic constraint flags
     fixed::Bool
     allow_x_acc::Bool
     allow_y_acc::Bool
+    allow_z_acc::Bool
     rotating::Bool
     enabled::Bool
 
@@ -65,8 +66,10 @@ mutable struct GrainCylindrical
     contacts::Vector{Int}
     position_vector::Vector{Vector{Float64}}
     contact_parallel_displacement::Vector{Vector{Float64}}
-    contact_rotation::Vector{Float64}
+    contact_rotation::Vector{Vector{Float64}}
     contact_age::Vector{Float64}
+    contact_area::Vector{Float64}
+    compressive_failure::Vector{Bool}
 
     granular_stress::Vector{Float64}
     ocean_stress::Vector{Float64}
@@ -128,6 +131,7 @@ mutable struct GrainArrays
     fixed::Vector{Int}
     allow_x_acc::Vector{Int}
     allow_y_acc::Vector{Int}
+    allow_z_acc::Vector{Int}
     rotating::Vector{Int}
     enabled::Vector{Int}
 

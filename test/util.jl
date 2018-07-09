@@ -1,8 +1,8 @@
 #!/usr/bin/env julia
+import Granular
 import Compat
 using Compat.Random
-
-Compat.@info "#### $(basename(@__FILE__)) ####"
+using Compat.Test
 
 Compat.@info "Testing power-law RNG"
 
@@ -26,3 +26,12 @@ for i=1:10^5
     @test 0. <= minimum(Granular.randpower(5, 1., 0., 1.))
     @test 1. >= minimum(Granular.randpower(5, 1., 0., 1.))
 end
+
+@test [1,2,0] == Granular.vecTo3d([1,2])
+@test [1,2,3] == Granular.vecTo3d([1,2], fill=3)
+@test [1,3,3] == Granular.vecTo3d([1], fill=3)
+@test [1,3,3] == Granular.vecTo3d(1, fill=3)
+@test [1.,2.,3.] == Granular.vecTo3d([1.,2.], fill=3.)
+@test [1.,3.,3.] == Granular.vecTo3d(1., fill=3.)
+@test [1.,0.,0.] == Granular.vecTo3d(1.)
+@test [1.,0.,0.] == Granular.vecTo3d([1.])

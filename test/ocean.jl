@@ -3,8 +3,6 @@
 # Check if ocean-specific functions and grid operations are functioning 
 # correctly
 
-Compat.@info "#### $(basename(@__FILE__)) ####"
-
 Compat.@info "Testing regular grid generation"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([6, 6, 6], [1., 1., 1.])
@@ -58,15 +56,15 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 
 Compat.@info "Testing vortex interaction (static ocean)"
 sim = deepcopy(sim_init)
-sim.grains[1].ang_vel = 0.1
+sim.grains[1].ang_vel[3] = 0.1
 E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.run!(sim, verbose=false)
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test E_kin_rot_init > E_kin_rot_final  # energy lost to ocean
-@test sim.grains[1].ang_vel > 0.     # check angular velocity orientation
-@test sim.grains[1].ang_pos > 0.     # check angular position orientation
+@test sim.grains[1].ang_vel[3] > 0.     # check angular velocity orientation
+@test sim.grains[1].ang_pos[3] > 0.     # check angular position orientation
 @test E_kin_lin_init ≈ E_kin_lin_final  # no linear velocity gained
 
 Compat.@info "Testing vortex interaction (static ice floe)"
@@ -81,8 +79,8 @@ E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.run!(sim, verbose=false)
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
-@test sim.grains[1].ang_vel > 0.     # check angular velocity orientation
-@test sim.grains[1].ang_pos > 0.     # check angular position orientation
+@test sim.grains[1].ang_vel[3] > 0.     # check angular velocity orientation
+@test sim.grains[1].ang_pos[3] > 0.     # check angular position orientation
 @test E_kin_rot_init < E_kin_rot_final  # rotation after due to ocean vortex
 @test E_kin_lin_init ≈ E_kin_lin_final  # no linear velocity gained
 
@@ -97,8 +95,8 @@ E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.run!(sim, verbose=false)
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
-@test sim.grains[1].ang_vel < 0.     # check angular velocity orientation
-@test sim.grains[1].ang_pos < 0.     # check angular position orientation
+@test sim.grains[1].ang_vel[3] < 0.     # check angular velocity orientation
+@test sim.grains[1].ang_pos[3] < 0.     # check angular position orientation
 @test E_kin_rot_init < E_kin_rot_final  # rotation after due to ocean vortex
 @test E_kin_lin_init ≈ E_kin_lin_final  # no linear velocity gained
 
@@ -113,8 +111,8 @@ E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.run!(sim, verbose=false)
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
-@test sim.grains[1].ang_vel < 0.     # check angular velocity orientation
-@test sim.grains[1].ang_pos < 0.     # check angular position orientation
+@test sim.grains[1].ang_vel[3] < 0.     # check angular velocity orientation
+@test sim.grains[1].ang_pos[3] < 0.     # check angular position orientation
 @test E_kin_rot_init < E_kin_rot_final  # rotation after due to ocean vortex
 @test E_kin_lin_init ≈ E_kin_lin_final  # no linear velocity gained
 
@@ -129,7 +127,7 @@ E_kin_rot_init = Granular.totalGrainKineticRotationalEnergy(sim)
 Granular.run!(sim, verbose=false)
 E_kin_lin_final = Granular.totalGrainKineticTranslationalEnergy(sim)
 E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
-@test sim.grains[1].ang_vel > 0.     # check angular velocity orientation
-@test sim.grains[1].ang_pos > 0.     # check angular position orientation
+@test sim.grains[1].ang_vel[3] > 0.     # check angular velocity orientation
+@test sim.grains[1].ang_pos[3] > 0.     # check angular position orientation
 @test E_kin_rot_init < E_kin_rot_final  # rotation after due to ocean vortex
 @test E_kin_lin_init ≈ E_kin_lin_final  # no linear velocity gained

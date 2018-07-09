@@ -109,7 +109,7 @@ Perform an O(n*log(n)) cell-based contact search between all grains in the
 """
 function findContactsInGrid!(simulation::Simulation, grid::Any)
 
-    distance_modifier = [0., 0.]
+    distance_modifier = [0., 0., 0.]
     i_corrected = 0
     j_corrected = 0
 
@@ -173,7 +173,7 @@ function checkForContacts(simulation::Simulation,
                           r_candidate::Float64;
                           return_when_overlap_found::Bool=false)
 
-    distance_modifier = zeros(2)
+    distance_modifier = zeros(3)
     overlaps_found::Integer = 0
 
     # Inter-grain position vector and grain overlap
@@ -225,7 +225,7 @@ function periodicBoundaryCorrection!(grid::Any, i::Integer, j::Integer)
 
     # vector for correcting inter-particle distance in case of
     # boundary periodicity
-    distance_modifier = zeros(2)
+    distance_modifier = zeros(3)
 
     # i and j are not corrected for periodic boundaries
     i_corrected = i
@@ -275,7 +275,7 @@ written to `simulation.contact_parallel_displacement`.
     boundaries.
 """
 function checkAndAddContact!(sim::Simulation, i::Int, j::Int,
-                             distance_modifier::Vector{Float64} = [0., 0.])
+                             distance_modifier::Vector{Float64} = [0., 0., 0.])
     if i < j
 
         @inbounds if !sim.grains[i].enabled || !sim.grains[j].enabled
@@ -327,8 +327,10 @@ function checkAndAddContact!(sim::Simulation, i::Int, j::Int,
                             position_ij
                         @inbounds fill!(sim.grains[i].
                               contact_parallel_displacement[ic] , 0.)
-                        @inbounds sim.grains[i].contact_rotation[ic] = 0.
+                        @inbounds fill!(sim.grains[i].contact_rotation[ic] , 0.)
                         @inbounds sim.grains[i].contact_age[ic] = 0.
+                        @inbounds sim.grains[i].contact_area[ic] = 0.
+                        @inbounds sim.grains[i].compressive_failure[ic] = false
                         break
                     end
                 end
