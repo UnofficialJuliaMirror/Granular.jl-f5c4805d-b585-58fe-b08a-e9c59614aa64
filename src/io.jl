@@ -798,6 +798,15 @@ function writeGridVTK(grid::Any,
     for ix=1:size(grid.xh, 1)
         for iy=1:size(grid.xh, 2)
             @inbounds porosity[ix, iy, 1] = grid.porosity[ix, iy]
+            if ix == size(grid.xh, 1)
+                @inbounds porosity[ix+1, iy, 1] = grid.porosity[ix, iy]
+            end
+            if iy == size(grid.xh, 2)
+                @inbounds porosity[ix, iy+1, 1] = grid.porosity[ix, iy]
+            end
+            if ix == size(grid.xh, 1) && iy == size(grid.xh, 2)
+                @inbounds porosity[ix+1, iy+1, 1] = grid.porosity[ix, iy]
+            end
         end
     end
     WriteVTK.vtk_point_data(vtkfile, porosity, "Porosity [-]")

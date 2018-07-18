@@ -23,7 +23,7 @@ by the `n` vector.
     (default) and `"triangular"` (see
     [Wikipedia](https://en.wikipedia.org/wiki/Circle_packing#Uniform_packings)).
 * `padding_factor::Real`: percentage-wise padding around each grain to allow for
-    random perturbations to grain position.
+    random perturbations to grain position (default = 0.0).
 * `origo::Vector{Real}`: spatial offset for the packing (default `[0.0, 0.0]`).
 * `size_distribution::String`: grain-size distribution to sample. Valid values
     are "powerlaw" and "uniform".
@@ -36,7 +36,7 @@ function regularPacking!(simulation::Simulation,
                          r_min::Real,
                          r_max::Real;
                          tiling::String="square",
-                         padding_factor::Real=.1,
+                         padding_factor::Real=0.0,
                          origo::Vector{Float64}=[0.0, 0.0],
                          size_distribution::String="powerlaw",
                          size_distribution_parameter::Real=-1.8,
