@@ -1095,26 +1095,30 @@ function findPorosity!(sim::Simulation, grid::Any; verbose::Bool=true)
                         r = sim.grains[i].areal_radius
                         A = grainHorizontalSurfaceArea(sim.grains[i])
 
-                        if sw[1] <= p[1] - r &&
-                            sw[2] <= p[2] - r &&
-                            ne[1] >= p[1] + r &&
-                            ne[2] >= p[2] + r
+                        #= if sw[1] <= p[1] - r && =#
+                        #=     sw[2] <= p[2] - r && =#
+                        #=     ne[1] >= p[1] + r && =#
+                        #=     ne[2] >= p[2] + r =#
+                        if sw[1] <= p[1] &&
+                            sw[2] <= p[2] &&
+                            ne[1] >= p[1] &&
+                            ne[2] >= p[2]
                             # If particle is entirely contained within cell,
                             # assuming a regular and orthogonal grid
                             # TODO: Adjust coordinates with conformal mapping
                             # for irregular grids.
                             particle_area += A
 
-                        elseif sw[1] >= p[1] + r ||
-                            sw[2] >= p[2] + r ||
-                            ne[1] <= p[1] - r ||
-                            ne[2] <= p[2] - r
-                            # particle does not intersect with cell [ix,iy]
-                            continue
+                        #= elseif sw[1] >= p[1] + r || =#
+                        #=     sw[2] >= p[2] + r || =#
+                        #=     ne[1] <= p[1] - r || =#
+                        #=     ne[2] <= p[2] - r =#
+                        #=     # particle does not intersect with cell [ix,iy] =#
+                        #=     continue =#
 
 
-                        else
-                            continue
+                        #= else =#
+                        #=     continue =#
                             # (likely) intersection between grid and grain
 
                             # 1. There is an intersection if one of the cell
