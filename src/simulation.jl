@@ -347,3 +347,62 @@ function reportMemory(variable, head::String, tail::String="")
     @printf("%-20s %s %s\n", head, size_str, tail)
     nothing
 end
+
+export setMaximumNumberOfContactsPerGrain!
+"""
+    setMaximumNumberOfContactsPerGrain!(simulation, number_of_contacts)
+
+Change the maximum number of contacts per grain, which changes simulation.Nc_max
+and reallocates memory for each grain. Larger values require more memory, but
+allow simulation of wider grain-size distributions. The default value is a
+maximum of 32 contacts per grain, which is sufficient for most practical
+purposes.
+
+# Arguments
+* `simulation::Simulation`: the Simulation object to modify
+* `number_of_contacts::Int`: the maximum number of contacts per grain to allow.
+"""
+function setMaximumNumberOfContactsPerGrain!(sim::Simulation,
+                                             number_of_contacts::Int)
+
+    if number_of_contacts < 1
+        error("the parameter number_of_contacts must be a positive integer, " *
+              "but has the value '$number_of_contacts'")
+    end
+    if number_of_contacts == sim.Nc_max
+        error("number_of_contacts equals the current number of contacts " *
+              "sim.Nc_max = $(sim.Nc_max)")
+    end
+
+    Nc_max_orig = sim.Nc_max
+    sim.Nc_max = number_of_contacts
+    diff = sim.Nc_max - Nc_max_orig
+
+    for grain in sim.grains
+
+        if diff > 0
+            # push values to the end of contact arrays if Nc_max > Nc_max_orig
+            for i=1:diff
+                push!(grain.contacts, 0)
+                push!(grain.position_vector, zeros(Float64, 3))
+                push!(grain.contact_parallel_displacement, zeros(Float64, 3))
+                push!(grain.contact_rotation, zeros(Float64, 3))
+                push!(grain.contact_age, 0.0)
+                push!(grain.contact_area, 0.0)
+                push!(grain.compressive_failure, false)
+            end
+
+        else
+            # pop values from the end of contact arrays if Nc_max < Nc_max_orig
+            for i=1:abs(diff)
+                pop!(grain.contacts)
+                pop!(grain.position_vector)
+                pop!(grain.contact_parallel_displacement)
+                pop!(grain.contact_rotation)
+                pop!(grain.contact_age)
+                pop!(grain.contact_area)
+                pop!(grain.compressive_failure)
+            end
+        end
+    end
+end

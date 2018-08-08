@@ -300,3 +300,26 @@ for j=2:(ny-1)
         @test sim.grains[idx].n_contacts == 4
     end
 end
+
+Compat.@info "Test changes to the max. number of contacts"
+sim = Granular.createSimulation()
+nx = 60; ny = 50
+Granular.regularPacking!(sim, [nx, ny], 1., 1., padding_factor=0,
+                         tiling="square")
+@test 32 == sim.Nc_max
+@test_throws ErrorException Granular.setMaximumNumberOfContactsPerGrain!(sim, 0)
+@test_throws ErrorException Granular.setMaximumNumberOfContactsPerGrain!(sim,-1)
+@test_throws ErrorException Granular.setMaximumNumberOfContactsPerGrain!(sim,32)
+
+for Nc_max in [4, 32, 33, 100, 1]
+    info("Nc_max = $Nc_max")
+    Granular.setMaximumNumberOfContactsPerGrain!(sim, Nc_max)
+    for grain in sim.grains
+        @test length(grain.contacts) == Nc_max
+        @test length(grain.position_vector) == Nc_max
+        @test length(grain.contact_rotation) == Nc_max
+        @test length(grain.contact_age) == Nc_max
+        @test length(grain.contact_area) == Nc_max
+        @test length(grain.compressive_failure) == Nc_max
+    end
+end
