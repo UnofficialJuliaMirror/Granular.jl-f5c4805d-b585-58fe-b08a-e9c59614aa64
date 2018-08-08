@@ -245,15 +245,31 @@ function status(folder::String=".";
         end
 
         if length(status_files) > 0
+
+            if Compat.Sys.iswindows()
+                cols = 80
+            else
+                cols = parse(Int, readstring(`tput cols`))
+            end
             if write_header
-                println("--------------------------------------" * 
-                        "--------------------------------------")
-                Compat.printstyled("simulation folder \t", color=:default)
-                Compat.printstyled("      time \t", color=time_color)
-                Compat.printstyled("      completed  ", color=percentage_color)
-                Compat.printstyled("last file \n", color=lastfile_color)
-                println("--------------------------------------" * 
-                        "--------------------------------------")
+                for i=1:cols
+                    print('-')
+                end
+                println()
+
+                left_label_width = 36
+                Compat.printstyled("simulation folder ", color=:default)
+                right_labels_width = 22
+                for i=18:cols-right_labels_width
+                    print(' ')
+                end
+                Compat.printstyled("time  ", color=time_color)
+                Compat.printstyled("complete  ", color=percentage_color)
+                Compat.printstyled("files\n", color=lastfile_color)
+                for i=1:cols
+                    print('-')
+                end
+                println()
             end
 
             for file in status_files
@@ -261,18 +277,29 @@ function status(folder::String=".";
                 id = Compat.replace(file, ".status.txt" => "")
                 id = Compat.replace(id, "./" => "")
                 id = Compat.replace(id, r".*/" => "")
-                time_s = @sprintf "%6.2fs" data[1]
-                time_h = @sprintf "%5.1fh" data[1]/(60. * 60.)
-                percentage = @sprintf "%3.0f%%" data[2]
-                lastfile = @sprintf "%5d" data[3]
+                percentage = @sprintf "%9.0f%%" data[2]
+                lastfile = @sprintf "%7d" data[3]
                 if data[2] < 99.
-                    Compat.printstyled("$id \t", color=id_color_in_progress)
+                    Compat.printstyled("$id", color=id_color_in_progress)
                 else
-                    Compat.printstyled("$id \t", color=id_color_complete)
+                    Compat.printstyled("$id", color=id_color_complete)
                 end
-                Compat.printstyled("$time_s ($time_h) \t", color=time_color)
-                Compat.printstyled("$percentage \t", color=percentage_color)
-                Compat.printstyled("$lastfile \n", color=lastfile_color)
+                right_fields_width = 25
+                for i=length(id):cols-right_fields_width
+                    print(' ')
+                end
+                if data[1] < 60.  # secs
+                    time = @sprintf "%6.2fs" data[1]
+                elseif data[1] < 60.*60.  # mins
+                    time = @sprintf "%6.2fm" data[1]/60.
+                elseif data[1] < 60.*60.*24.  # hours
+                    time = @sprintf "%6.2fh" data[1]/(60. * 60.)
+                else  # days
+                    time = @sprintf "%6.2fd" data[1]/(60. * 60. * 24.)
+                end
+                Compat.printstyled("$time", color=time_color)
+                Compat.printstyled("$percentage", color=percentage_color)
+                Compat.printstyled("$lastfile\n", color=lastfile_color)
 
                 if visualize
                     sim = createSimulation(id)
@@ -280,8 +307,10 @@ function status(folder::String=".";
                 end
             end
             if write_header
-                println("--------------------------------------" * 
-                        "--------------------------------------")
+                for i=1:cols
+                    print('-')
+                end
+                println()
             end
         else
             Compat.@warn "no simulations found in $(pwd())/$folder"
