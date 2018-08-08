@@ -34,3 +34,7 @@ deploy:
     on:
       os: linux
       julia: 0.6
+
+matrix:
+  allow_failures:
+  - julia: 1.0
