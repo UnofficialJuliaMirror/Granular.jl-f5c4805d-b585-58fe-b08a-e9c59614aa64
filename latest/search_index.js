@@ -1041,6 +1041,14 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
+    "location": "lib/public.html#Granular.setMaximumNumberOfContactsPerGrain!-Tuple{Granular.Simulation,Int64}",
+    "page": "Public API",
+    "title": "Granular.setMaximumNumberOfContactsPerGrain!",
+    "category": "method",
+    "text": "setMaximumNumberOfContactsPerGrain!(simulation, number_of_contacts)\n\nChange the maximum number of contacts per grain, which changes simulation.Nc_max and reallocates memory for each grain. Larger values require more memory, but allow simulation of wider grain-size distributions. The default value is a maximum of 32 contacts per grain, which is sufficient for most practical purposes.\n\nArguments\n\nsimulation::Simulation: the Simulation object to modify\nnumber_of_contacts::Int: the maximum number of contacts per grain to allow.\n\n\n\n"
+},
+
+{
     "location": "lib/public.html#Granular.setOutputFileInterval!-Tuple{Granular.Simulation,Float64}",
     "page": "Public API",
     "title": "Granular.setOutputFileInterval!",
