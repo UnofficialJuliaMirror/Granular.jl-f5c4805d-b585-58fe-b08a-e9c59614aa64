@@ -37,4 +37,4 @@ deploy:
 
 matrix:
   allow_failures:
-  - julia: 1.0
+  - julia: nightly
