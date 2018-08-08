@@ -35,7 +35,7 @@ deploy:
       os: linux
       julia: 0.6
       all_branches: true
-      condition: $TRAVIS_BRANCH =~ ^master|v\d+\.\d+(\.\d+)?(-\S*)?$
+      condition: $TRAVIS_BRANCH =~ /^(master|v\d+\.\d+(\.\d+)?(-\S*)?)$/
 
 matrix:
   allow_failures:
