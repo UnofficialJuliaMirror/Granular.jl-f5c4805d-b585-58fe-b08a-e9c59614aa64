@@ -22,7 +22,7 @@ addons:
     - imagemagick
 
 before_script:  # NetCDF is not required, but test its dependent functions anyway
-  - julia -e 'VERSION <= v"0.6.99" && Pkg.add("NetCDF")'
+  - julia -e 'VERSION <= v"0.6.99" && (Pkg.add("NetCDF"); Pkg.build("NetCDF"))'
 
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
