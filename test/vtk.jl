@@ -76,7 +76,7 @@ Granular.writeParaviewPythonScript(sim,
 try
     run(`pvpython $(sim.id)/$(sim.id).py`)
 catch return_signal
-    if !isa(return_signal, IOError)
+    if !isa(return_signal, Base.IOError)
         @test isfile("$(sim.id)/$(sim.id).avi")
     end
 end
@@ -87,7 +87,7 @@ Granular.writeParaviewPythonScript(sim,
 try
     run(`pvpython $(sim.id)/$(sim.id).py`)
 catch return_signal
-    if !isa(return_signal, IOError)
+    if !isa(return_signal, Base.IOError)
         @test isfile("$(sim.id)/$(sim.id).0000.png")
         @test isfile("$(sim.id)/$(sim.id).0014.png")
         Granular.render(sim)

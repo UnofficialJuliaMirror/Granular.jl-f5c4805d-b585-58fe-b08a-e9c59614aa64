@@ -1168,7 +1168,7 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                     rm("$(simulation.id)/$(simulation.id).avi")
                 end
             catch return_signal
-                if isa(return_signal, IOError)
+                if isa(return_signal, Base.IOError)
                     @warn "Could not run external ffmpeg command, " *
                     "skipping conversion from " *
                     "$(simulation.id)/$(simulation.id).avi to mp4."
@@ -1200,14 +1200,14 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                         $(simulation.id)/$(simulation.id)-reverse.gif`)
                 end
             catch return_signal
-                if isa(return_signal, IOError)
+                if isa(return_signal, Base.IOError)
                     @warn "Skipping gif merge since `$convert` " *
                         "was not found."
                 end
             end
         end
     catch return_signal
-        if isa(return_signal, IOError)
+        if isa(return_signal, Base.IOError)
             error("`pvpython` was not found.")
         end
     end
@@ -1318,7 +1318,7 @@ function plotGrainSizeDistribution(simulation::Simulation;
     try
         run(`gnuplot $gnuplotscript`)
     catch return_signal
-        if isa(return_signal, IOError)
+        if isa(return_signal, Base.IOError)
             error("Could not launch external gnuplot process")
         end
     end
@@ -1545,7 +1545,7 @@ function plotGrains(sim::Simulation;
     try
         run(`gnuplot $gnuplotscript`)
     catch return_signal
-        if isa(return_signal, IOError)
+        if isa(return_signal, Base.IOError)
             error("Could not launch external gnuplot process")
         end
     end

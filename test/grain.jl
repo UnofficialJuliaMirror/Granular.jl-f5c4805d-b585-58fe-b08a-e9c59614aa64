@@ -33,7 +33,7 @@ global gnuplot = true
 try
     run(`gnuplot --version`)
 catch return_signal
-    if isa(return_signal, IOError)
+    if isa(return_signal, Base.IOError)
         @warn "Skipping plotting routines: Could not launch gnuplot process"
         global gnuplot = false
     end
