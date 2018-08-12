@@ -2,8 +2,8 @@
 
 # Check the basic dynamic wall functionality
 
-Compat.@info "# Test wall initialization"
-Compat.@info "Testing argument value checks"
+@info "# Test wall initialization"
+@info "Testing argument value checks"
 sim = Granular.createSimulation()
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 2., verbose=false)
 @test_throws ErrorException Granular.addWallLinearFrictionless!(sim,
@@ -23,7 +23,7 @@ sim = Granular.createSimulation()
                                                                 1.)
 
 
-Compat.@info "Check that wall mass equals total grain mass and max. thickness"
+@info "Check that wall mass equals total grain mass and max. thickness"
 sim = Granular.createSimulation()
 @test length(sim.walls) == 0
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 2., verbose=false)
@@ -33,7 +33,7 @@ Granular.addWallLinearFrictionless!(sim, [1., 0.], 1., verbose=true)
 @test sim.walls[1].mass ≈ 1.0
 @test sim.walls[1].thickness ≈ 2.0
 
-Compat.@info "Test wall surface area and defined normal stress"
+@info "Test wall surface area and defined normal stress"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 2., verbose=false)
@@ -58,9 +58,9 @@ sim.walls[1].normal = [1.0, 1.0, 1.0]
 @test_throws ErrorException Granular.getWallSurfaceArea(sim, 1)
 @test_throws ErrorException Granular.getWallSurfaceArea(sim, [1.,1.], 0.5)
 
-Compat.@info "# Test wall-grain interaction: elastic"
+@info "# Test wall-grain interaction: elastic"
 
-Compat.@info "Wall present but no contact"
+@info "Wall present but no contact"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -71,7 +71,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall present but no contact"
+@info "Wall present but no contact"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -82,7 +82,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall at -x"
+@info "Wall at -x"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., youngs_modulus=0.,
@@ -94,7 +94,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] > 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall at -x"
+@info "Wall at -x"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -105,7 +105,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] > 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall at +x"
+@info "Wall at +x"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -116,7 +116,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] < 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall at -y"
+@info "Wall at -y"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -127,7 +127,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] > 0.
 
-Compat.@info "Wall at +y"
+@info "Wall at +y"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -138,9 +138,9 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] < 0.
 
-Compat.@info "# Test wall-grain interaction: elastic-viscous"
+@info "# Test wall-grain interaction: elastic-viscous"
 
-Compat.@info "Wall present but no contact"
+@info "Wall present but no contact"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -152,7 +152,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall present but no contact"
+@info "Wall present but no contact"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -164,7 +164,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall at -x"
+@info "Wall at -x"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -176,7 +176,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] > 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall at +x"
+@info "Wall at +x"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -188,7 +188,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] < 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall at -y"
+@info "Wall at -y"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -200,7 +200,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] > 0.
 
-Compat.@info "Wall at +y"
+@info "Wall at +y"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 1., 2., verbose=false)
@@ -212,7 +212,7 @@ Granular.interactWalls!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] < 0.
 
-Compat.@info "Full collision with wall"
+@info "Full collision with wall"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [1.2, 0.5], 1., 2., verbose=false)
@@ -242,9 +242,9 @@ Granular.run!(sim)
 @test sim.grains[1].lin_vel[2] ≈ 0.
 
 
-Compat.@info "# Testing wall dynamics"
+@info "# Testing wall dynamics"
 
-Compat.@info "Wall present, no contact, fixed (default)"
+@info "Wall present, no contact, fixed (default)"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 2., verbose=false)
@@ -259,7 +259,7 @@ Granular.updateWallKinematics!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall present, no contact, fixed (TY2)"
+@info "Wall present, no contact, fixed (TY2)"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 2., verbose=false)
@@ -274,7 +274,7 @@ Granular.updateWallKinematics!(sim, method="Two-term Taylor")
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall present, no contact, fixed (TY3)"
+@info "Wall present, no contact, fixed (TY3)"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 2., verbose=false)
@@ -290,7 +290,7 @@ Granular.updateWallKinematics!(sim, method="Three-term Taylor")
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall present, contact, fixed"
+@info "Wall present, contact, fixed"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 2., verbose=false)
@@ -302,7 +302,7 @@ Granular.updateWallKinematics!(sim)
 @test sim.walls[1].vel ≈ 0.
 @test sim.walls[1].pos ≈ -0.01
 
-Compat.@info "Wall present, no contact, velocity BC"
+@info "Wall present, no contact, velocity BC"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 2., verbose=false)
@@ -319,7 +319,7 @@ Granular.updateWallKinematics!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall present, no contact, velocity BC (TY2)"
+@info "Wall present, no contact, velocity BC (TY2)"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 2., verbose=false)
@@ -336,7 +336,7 @@ Granular.updateWallKinematics!(sim, method="Two-term Taylor")
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall present, no contact, velocity BC (TY3)"
+@info "Wall present, no contact, velocity BC (TY3)"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 2., verbose=false)
@@ -354,7 +354,7 @@ Granular.updateWallKinematics!(sim, method="Three-term Taylor")
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall present, contact, velocity BC (TY2)"
+@info "Wall present, contact, velocity BC (TY2)"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 2., verbose=false)
@@ -369,7 +369,7 @@ Granular.updateWallKinematics!(sim, method="Two-term Taylor")
 @test sim.walls[1].vel ≈ 1.
 @test sim.walls[1].pos > -0.9
 
-Compat.@info "Wall present, contact, velocity BC (TY2)"
+@info "Wall present, contact, velocity BC (TY2)"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [10., 20., 1.0])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 2., verbose=false)
@@ -383,7 +383,7 @@ Granular.updateWallKinematics!(sim, method="Two-term Taylor")
 @test sim.walls[1].vel ≈ 1.
 @test sim.walls[1].pos > -0.9
 
-Compat.@info "Wall present, contact, normal stress BC"
+@info "Wall present, contact, normal stress BC"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [2., 2., 1.])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 1., verbose=false)
@@ -400,7 +400,7 @@ Granular.updateWallKinematics!(sim)
 @test sim.grains[1].force[1] ≈ 0.
 @test sim.grains[1].force[2] ≈ 0.
 
-Compat.@info "Wall present, contact, normal stress BC"
+@info "Wall present, contact, normal stress BC"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [2., 2., 1.])
 Granular.addGrainCylindrical!(sim, [ 1., 1.], 1., 1., verbose=false)
@@ -428,7 +428,7 @@ for i=1:5
     @test sim.grains[1].force[2] ≈ 0.
 end
 
-Compat.@info "Granular packing, wall present, normal stress BC"
+@info "Granular packing, wall present, normal stress BC"
 sim = Granular.createSimulation()
 Granular.regularPacking!(sim, [5, 5], 1.0, 2.0)
 Granular.fitGridToGrains!(sim, sim.ocean)

@@ -1,9 +1,8 @@
 #!/usr/bin/env julia
-import Compat
 
 # Check the contact search and geometry of a two-particle interaction
 
-Compat.@info "Writing simple simulation to VTK file"
+@info "Writing simple simulation to VTK file"
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.addGrainCylindrical!(sim, [18., 0.], 10., 1., verbose=false)
@@ -12,12 +11,12 @@ Granular.findContacts!(sim, method="all to all")
 Granular.writeVTK(sim, verbose=false)
 
 cmd_post = ""
-if Compat.Sys.islinux()
+if Sys.islinux()
     cmd = "sha256sum"
-elseif Compat.Sys.isapple()
+elseif Sys.isapple()
     cmd = ["shasum", "-a", "256"]
-elseif Compat.Sys.iswindows()
-    Compat.@info "checksum verification not yet implemented on Windows"
+elseif Sys.iswindows()
+    @info "checksum verification not yet implemented on Windows"
     exit()
     cmd = ["powershell", "-Command", "\"Get-FileHash", "-Algorithm", "SHA256"]
     cmd_post = "\""
@@ -47,7 +46,7 @@ oceanpath * "\n"
 
 Granular.removeSimulationFiles(sim)
 
-Compat.@info "Testing VTK write during run!()"
+@info "Testing VTK write during run!()"
 Granular.setOutputFileInterval!(sim, 1e-9)
 Granular.setTotalTime!(sim, 1.5)
 Granular.setTimeStep!(sim)
@@ -58,7 +57,7 @@ Granular.run!(sim, single_step=true)
 Granular.setOutputFileInterval!(sim, 0.1)
 Granular.run!(sim)
 
-Compat.@info "Testing status output"
+@info "Testing status output"
 Granular.status()
 Granular.status(colored_output=false)
 dir = "empty_directory"
@@ -67,13 +66,13 @@ isdir(dir) || mkdir(dir)
 Granular.status(dir)
 rm(dir)
 
-Compat.@info "Testing generation of Paraview Python script"
+@info "Testing generation of Paraview Python script"
 Granular.writeParaviewPythonScript(sim,
                                  save_animation=true,
                                  save_images=false)
 @test isfile("$(sim.id)/$(sim.id).py") && filesize("$(sim.id)/$(sim.id).py") > 0
 
-Compat.@info "Testing Paraview rendering if `pvpython` is present"
+@info "Testing Paraview rendering if `pvpython` is present"
 try
     run(`pvpython $(sim.id)/$(sim.id).py`)
 catch return_signal
@@ -101,7 +100,7 @@ end
     graininteractionchecksum
 @test read(`$(cmd) $(oceanpath)$(cmd_post)`, String) == oceanchecksum
 
-Compat.@info "Writing simple simulation to VTK file"
+@info "Writing simple simulation to VTK file"
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., youngs_modulus=0., verbose=false)
 Granular.addGrainCylindrical!(sim, [18., 0.], 10., 1., youngs_modulus=0., verbose=false)

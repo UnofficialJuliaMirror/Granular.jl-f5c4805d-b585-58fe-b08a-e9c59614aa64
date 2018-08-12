@@ -1,6 +1,9 @@
 import WriteVTK
 import Compat
 using Compat.LinearAlgebra
+using Compat.DelimitedFiles
+using Compat.Dates
+
 
 hasJLD = false
 if VERSION < v"0.7.0-alpha"
@@ -15,10 +18,6 @@ else
         hasJLD = true
     end
 end
-
-import Compat
-using Compat.DelimitedFiles
-using Compat.Dates
 
 ## IO functions
 
@@ -250,7 +249,7 @@ function status(folder::String=".";
             if Compat.Sys.iswindows()
                 cols = 80
             else
-                cols = parse(Int, readstring(`tput cols`))
+                cols = parse(Int, read(`tput cols`, String))
             end
             if write_header
                 for i=1:cols
@@ -289,14 +288,14 @@ function status(folder::String=".";
                 for i=length(id):cols-right_fields_width
                     print(' ')
                 end
-                if data[1] < 60.  # secs
+                if data[1] < 60.0  # secs
                     time = @sprintf "%6.2fs" data[1]
-                elseif data[1] < 60.*60.  # mins
+                elseif data[1] < 60.0*60.0  # mins
                     time = @sprintf "%6.2fm" data[1]/60.
-                elseif data[1] < 60.*60.*24.  # hours
-                    time = @sprintf "%6.2fh" data[1]/(60. * 60.)
+                elseif data[1] < 60.0*60.0*24.0  # hours
+                    time = @sprintf "%6.2fh" data[1]/(60.0 * 60.0)
                 else  # days
-                    time = @sprintf "%6.2fd" data[1]/(60. * 60. * 24.)
+                    time = @sprintf "%6.2fd" data[1]/(60.0 * 60.0 * 24.0)
                 end
                 Compat.printstyled("$time", color=time_color)
                 Compat.printstyled("$percentage", color=percentage_color)

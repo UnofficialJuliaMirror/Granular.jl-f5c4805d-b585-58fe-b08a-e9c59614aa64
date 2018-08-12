@@ -1,3 +1,4 @@
+import Random
 using Compat
 using Compat.LinearAlgebra
 using Compat.Random
@@ -588,7 +589,7 @@ function findEmptyPositionInGridCell(simulation::Simulation,
     for i_iter=1:n_iter
 
         overlap_found = false
-        srand(i*j*seed*i_iter)
+        Random.seed!(i*j*seed*i_iter)
         # generate random candidate position
         x_tilde = rand()
         y_tilde = rand()

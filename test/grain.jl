@@ -2,12 +2,12 @@
 
 # Check the basic icefloe functionality
 
-Compat.@info "Writing simple simulation to VTK file"
+@info "Writing simple simulation to VTK file"
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.printGrainInfo(sim.grains[1])
 
-Compat.@info "Testing grain value checks "
+@info "Testing grain value checks "
 @test_throws ErrorException Granular.addGrainCylindrical!(sim, [.1, .1, .1, .1],
                                                           10., 1.)
 @test_throws ErrorException Granular.addGrainCylindrical!(sim, [.1, .1],
@@ -22,7 +22,7 @@ Compat.@info "Testing grain value checks "
                                                           10., 1., density=-2.)
 @test_throws ErrorException Granular.disableGrain!(sim, 0)
 
-Compat.@info "Testing grain comparison "
+@info "Testing grain comparison "
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
@@ -34,12 +34,12 @@ try
     run(`gnuplot --version`)
 catch return_signal
     if isa(return_signal, Base.UVError)
-        Compat.@warn "Skipping plotting routines: Could not launch gnuplot process"
+        @warn "Skipping plotting routines: Could not launch gnuplot process"
         global gnuplot = false
     end
 end
 if gnuplot
-    Compat.@info "Testing GSD plotting "
+    @info "Testing GSD plotting "
     Granular.plotGrainSizeDistribution(sim)
     @test isfile("test-grain-size-distribution.png")
     rm("test-grain-size-distribution.png")
@@ -54,30 +54,30 @@ if gnuplot
 
     @test_throws ErrorException Granular.plotGrainSizeDistribution(sim, size_type="asdf")
 
-    Compat.@info "Testing grain plotting"
+    @info "Testing grain plotting"
     Granular.plotGrains(sim, show_figure=false)
     @test isfile("test/test.grains.0.png")
     rm("test/test.grains.0.png")
 
-    Compat.@info "  - contact_radius"
+    @info "  - contact_radius"
     Granular.plotGrains(sim, palette_scalar="contact_radius", show_figure=false)
     @test isfile("test/test.grains.0.png")
     rm("test/test.grains.0.png")
-    Compat.@info "  - areal_radius"
+    @info "  - areal_radius"
     Granular.plotGrains(sim, palette_scalar="areal_radius", show_figure=false)
     @test isfile("test/test.grains.0.png")
     rm("test/test.grains.0.png")
-    Compat.@info "  - color"
+    @info "  - color"
     Granular.plotGrains(sim, palette_scalar="color", show_figure=false)
     @test isfile("test/test.grains.0.png")
     rm("test/test.grains.0.png")
 
-    Compat.@info "  - invalid field"
+    @info "  - invalid field"
     @test_throws ErrorException Granular.plotGrains(sim, palette_scalar="asdf",
                                                    show_figure=false)
 end
 
-Compat.@info "Testing external body force routines"
+@info "Testing external body force routines"
 sim = Granular.createSimulation(id="test")
 Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
 Granular.setBodyForce!(sim.grains[1], [1., 2., 0.])
@@ -85,7 +85,7 @@ Granular.setBodyForce!(sim.grains[1], [1., 2., 0.])
 Granular.addBodyForce!(sim.grains[1], [1., 2., 0.])
 @test sim.grains[1].external_body_force ≈ [2., 4., 0.]
 
-Compat.@info "Testing zeroKinematics!()"
+@info "Testing zeroKinematics!()"
 sim.grains[1].force .= ones(3)
 sim.grains[1].lin_acc .= ones(3)
 sim.grains[1].lin_vel .= ones(3)

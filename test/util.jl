@@ -1,10 +1,10 @@
 #!/usr/bin/env julia
 import Granular
-import Compat
-using Compat.Random
-using Compat.Test
+import Random
+using Random
+using Test
 
-Compat.@info "Testing power-law RNG"
+@info "Testing power-law RNG"
 
 @test 1 == length(Granular.randpower())
 @test () == size(Granular.randpower())
@@ -15,7 +15,7 @@ Compat.@info "Testing power-law RNG"
 @test 5 == length(Granular.randpower(5))
 @test (5,) == size(Granular.randpower(5))
 
-srand(1)
+Random.seed!(1)
 for i=1:10^5
     @test 0. <= Granular.randpower() <= 1.
     @test 0. <= Granular.randpower(1, 1., 0., 1.) <= 1.

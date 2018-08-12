@@ -1,4 +1,4 @@
-Compat.@info "Testing temporal functionality"
+@info "Testing temporal functionality"
 
 sim = Granular.createSimulation()
 @test_throws ErrorException Granular.setTimeStep!(sim)

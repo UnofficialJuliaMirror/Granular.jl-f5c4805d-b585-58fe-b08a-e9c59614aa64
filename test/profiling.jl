@@ -1,5 +1,4 @@
 #!/usr/bin/env julia
-using Compat
 if VERSION < v"0.7.0-DEV.2004"
     using Base.Test
 else
@@ -11,7 +10,7 @@ import CurveFit
 
 verbose=false
 
-Compat.@info "Testing performance with many interacting grains"
+@info "Testing performance with many interacting grains"
 
 function timeSingleStepInDenseSimulation(nx::Int; verbose::Bool=true,
                                          profile::Bool=false,
@@ -46,18 +45,18 @@ function timeSingleStepInDenseSimulation(nx::Int; verbose::Bool=true,
                                           fixed=fixed, verbose=false)
         end
     end
-    Compat.printstyled("number of grains: $(length(sim.grains))\n",
+    printstyled("number of grains: $(length(sim.grains))\n",
                        color=:green)
     if grid_sorting
         if include_atmosphere
-            Compat.printstyled("using cell-based spatial decomposition " *
+            printstyled("using cell-based spatial decomposition " *
                              " (ocean + atmosphere)\n", color=:green)
         else
-            Compat.printstyled("using cell-based spatial " * 
+            printstyled("using cell-based spatial " * 
                              "decomposition (ocean)\n", color=:green)
         end
     else
-        Compat.printstyled("using all-to-all contact search\n", color=:green)
+        printstyled("using all-to-all contact search\n", color=:green)
     end
 
     Granular.setTotalTime!(sim, 1.0)
@@ -103,7 +102,7 @@ memory_usage_all_to_all = zeros(length(nx))
 memory_usage_cell_sorting = zeros(length(nx))
 memory_usage_cell_sorting2 = zeros(length(nx))
 for i=1:length(nx)
-    Compat.@info "nx = $(nx[i])"
+    @info "nx = $(nx[i])"
     t_elapsed_all_to_all[i], memory_usage_all_to_all[i] =
         timeSingleStepInDenseSimulation(Int(nx[i]), grid_sorting=false)
     t_elapsed_cell_sorting[i], memory_usage_cell_sorting[i] =

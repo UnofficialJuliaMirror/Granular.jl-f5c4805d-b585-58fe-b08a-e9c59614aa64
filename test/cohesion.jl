@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-using Compat.Test
+using Test
 import Granular
 
 # Check for conservation of kinetic energy (=momentum) during a normal collision 
@@ -14,7 +14,7 @@ sim_init.grains[1].youngs_modulus = 1e-5  # repulsion is negligible
 sim_init.grains[2].youngs_modulus = 1e-5  # repulsion is negligible
 Granular.setTimeStep!(sim_init, verbose=verbose)
 
-Compat.@info "# Check contact age scheme"
+@info "# Check contact age scheme"
 sim = deepcopy(sim_init)
 Granular.setTotalTime!(sim, 10.)
 sim.time_step = 1.
@@ -22,7 +22,7 @@ Granular.run!(sim, verbose=verbose)
 Granular.removeSimulationFiles(sim)
 @test sim.grains[1].contact_age[1] ≈ sim.time
 
-Compat.@info "# Check if bonds add tensile strength"
+@info "# Check if bonds add tensile strength"
 sim = Granular.createSimulation(id="cohesion")
 Granular.addGrainCylindrical!(sim, [0., 0.], 10., 1., tensile_strength=500e3)
 Granular.addGrainCylindrical!(sim, [20.1, 0.], 10., 1., tensile_strength=500e3)
@@ -38,7 +38,7 @@ Granular.removeSimulationFiles(sim)
 @test sim.grains[1].ang_vel ≈ zeros(3)
 @test sim.grains[2].ang_vel ≈ zeros(3)
 
-Compat.@info "# Add shear strength and test bending resistance (one grain rotating)"
+@info "# Add shear strength and test bending resistance (one grain rotating)"
 sim = Granular.createSimulation(id="cohesion")
 Granular.addGrainCylindrical!(sim, [0., 0.], 10.1, 1., tensile_strength=500e3,
     shear_strength=500e3)
@@ -66,7 +66,7 @@ E_therm_final = Granular.totalGrainThermalEnergy(sim)
 @test E_kin_lin_init ≈ E_kin_lin_final
 @test E_kin_rot_init > E_kin_rot_final + E_therm_final
 
-Compat.@info "# Add shear strength and test bending resistance (one grain rotating)"
+@info "# Add shear strength and test bending resistance (one grain rotating)"
 sim = Granular.createSimulation(id="cohesion")
 Granular.addGrainCylindrical!(sim, [0., 0.], 10.1, 1., tensile_strength=500e3,
     shear_strength=500e3)
@@ -94,7 +94,7 @@ E_therm_final = Granular.totalGrainThermalEnergy(sim)
 @test E_kin_lin_init ≈ E_kin_lin_final
 @test E_kin_rot_init > E_kin_rot_final + E_therm_final
 
-Compat.@info "# Add shear strength and test bending resistance (both grains rotating)"
+@info "# Add shear strength and test bending resistance (both grains rotating)"
 sim = Granular.createSimulation(id="cohesion")
 Granular.addGrainCylindrical!(sim, [0., 0.], 10.0000001, 1., tensile_strength=500e3,
     shear_strength=500e3)
@@ -123,7 +123,7 @@ E_therm_final = Granular.totalGrainThermalEnergy(sim)
 @test E_kin_lin_init ≈ E_kin_lin_final
 @test E_kin_rot_init > E_kin_rot_final + E_therm_final
 
-Compat.@info "# Break bond through bending I"
+@info "# Break bond through bending I"
 sim = Granular.createSimulation(id="cohesion")
 Granular.addGrainCylindrical!(sim, [0., 0.], 10.0000001, 1., tensile_strength=500e3,
     shear_strength=500e3)
@@ -153,7 +153,7 @@ E_therm_final = Granular.totalGrainThermalEnergy(sim)
 @test sim.grains[1].n_contacts == 0
 @test sim.grains[2].n_contacts == 0
 
-Compat.@info "# Break bond through bending II"
+@info "# Break bond through bending II"
 sim = Granular.createSimulation(id="cohesion")
 Granular.addGrainCylindrical!(sim, [0., 0.], 10.1, 1., tensile_strength=500e3,
     shear_strength=50e3)

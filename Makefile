@@ -1,12 +1,12 @@
 default: test
 
 .PHONY: test
-test: test-julia-0.6 test-julia-1.0
+test: test-julia-1.0 #test-julia-0.6 
 
 .PHONY: test-julia-0.6
 test-julia-0.6:
 	@#julia --color=yes -e 'Pkg.test("Granular")'
-	julia --color=yes -e 'Pkg.test("Granular")' \
+	julia-0.6 --color=yes -e 'Pkg.test("Granular")' \
 		&& notify-send Granular.jl tests completed successfully on Julia 0.6 \
 		|| notify-send Granular.jl failed on Julia 0.6
 

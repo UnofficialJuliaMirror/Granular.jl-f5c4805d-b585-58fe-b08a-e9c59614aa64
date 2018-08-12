@@ -1,10 +1,9 @@
-import Compat
-using Compat.Test
-using Compat.LinearAlgebra
+using Test
+using LinearAlgebra
 import Granular
 
 function run_test(filename::String)
-    Compat.printstyled("Info: #### $filename ####\n", color=:green)
+    printstyled("Info: #### $filename ####\n", color=:green)
     include(filename)
 end
 

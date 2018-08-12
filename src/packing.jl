@@ -1,5 +1,6 @@
 ## Functions for creating grain packings
 import Compat
+import Random
 using Compat.LinearAlgebra
 using Compat.Random
 
@@ -45,7 +46,7 @@ function regularPacking!(simulation::Simulation,
     r_rand = 0.
     pos = zeros(2)
     h = .5   # disc tickness
-    srand(seed)
+    Random.seed!(seed)
 
     if tiling == "square"
         dx = r_max * 2. * (1. + padding_factor)  # cell size
@@ -179,7 +180,7 @@ function irregularPacking!(simulation::Simulation;
                            seed::Integer=1,
                            plot_during_packing::Bool=false,
                            verbose::Bool=true)
-    srand(seed)
+    Random.seed!(seed)
 
     active_list = Int[]  # list of points to originate search from
     i = 0
@@ -372,7 +373,7 @@ function rasterPacking!(sim::Simulation,
     h = .5   # disc tickness
     dx = r_max * 2. * (1. + padding_factor)  # cell size
     dx_padding = r_max * 2. * padding_factor
-    srand(seed)
+    Random.seed!(seed)
 
     np_init = length(sim.grains)
 

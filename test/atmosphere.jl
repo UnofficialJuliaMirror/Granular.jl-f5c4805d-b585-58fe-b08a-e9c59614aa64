@@ -3,7 +3,7 @@
 # Check if atmosphere-specific functions and grid operations are functioning 
 # correctly
 
-Compat.@info "Testing regular grid generation"
+@info "Testing regular grid generation"
 sim = Granular.createSimulation()
 sim.atmosphere = Granular.createRegularAtmosphereGrid([6, 6, 6], [1., 1., 1.])
 @test size(sim.atmosphere.xq) == (7, 7)
@@ -21,7 +21,7 @@ sim.atmosphere = Granular.createRegularAtmosphereGrid([6, 6, 6], [1., 1., 1.])
 @test sim.atmosphere.u ≈ zeros(7, 7, 6, 1)
 @test sim.atmosphere.v ≈ zeros(7, 7, 6, 1)
 
-Compat.@info "Testing velocity drag interaction (static atmosphere)"
+@info "Testing velocity drag interaction (static atmosphere)"
 Granular.addGrainCylindrical!(sim, [.5, .5], .25, .1)
 Granular.setTotalTime!(sim, 5.)
 Granular.setTimeStep!(sim)
@@ -37,7 +37,7 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test sim.grains[1].atmosphere_stress[1] < 0.
 @test sim.grains[1].atmosphere_stress[2] ≈ 0.
 
-Compat.@info "Testing velocity drag interaction (static ice floe)"
+@info "Testing velocity drag interaction (static ice floe)"
 sim = deepcopy(sim_init)
 sim.atmosphere.v[:, :, 1, 1] .= 0.1
 E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -50,7 +50,7 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test sim.grains[1].atmosphere_stress[1] ≈ 0.
 @test sim.grains[1].atmosphere_stress[2] > 0.
 
-Compat.@info "Testing vortex interaction (static atmosphere)"
+@info "Testing vortex interaction (static atmosphere)"
 sim = deepcopy(sim_init)
 sim.grains[1].ang_vel[3] = 0.1
 E_kin_lin_init = Granular.totalGrainKineticTranslationalEnergy(sim)
@@ -63,7 +63,7 @@ E_kin_rot_final = Granular.totalGrainKineticRotationalEnergy(sim)
 @test sim.grains[1].ang_pos[3] > 0.     # check angular position orientation
 @test E_kin_lin_init ≈ E_kin_lin_final  # no linear velocity gained
 
-Compat.@info "Testing vortex interaction (static ice floe)"
+@info "Testing vortex interaction (static ice floe)"
 sim = deepcopy(sim_init)
 sim.atmosphere = Granular.createRegularAtmosphereGrid([1, 1, 1], [1., 1., 1.])
 sim.grains[1].lin_pos[1] = 0.5

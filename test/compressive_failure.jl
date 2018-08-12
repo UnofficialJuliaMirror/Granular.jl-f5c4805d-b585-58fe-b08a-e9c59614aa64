@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-using Compat.Test
+using Test
 import Granular
 
 verbose = false
@@ -49,12 +49,12 @@ function plot_interaction(sim::Granular.Simulation, output::String)
     PyPlot.savefig(output)
 end
 
-Compat.@info "Testing compressive failure: uniaxial compression"
+@info "Testing compressive failure: uniaxial compression"
 sim = Granular.createSimulation("compressive_failure_uniaxial")
-Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
+Granular.addGrainCylindrical!(sim, [0.0,0.0], 1.0, 0.5,
                               fracture_toughness=1285e3,
-                              lin_vel=[1., 0.], fixed=true, verbose=verbose)
-Granular.addGrainCylindrical!(sim, [2.,0.], 1., 0.5,
+                              lin_vel=[1.0, 0.0], fixed=true, verbose=verbose)
+Granular.addGrainCylindrical!(sim, [2.0,0.0], 1.0, 0.5,
                               fracture_toughness=1285e3,
                               fixed=true, verbose=verbose)
 @test count(x->x==true, sim.grains[1].compressive_failure) == 0
@@ -78,12 +78,12 @@ end
 @test sim.grains[1].torque ≈ zeros(3)
 @test sim.grains[2].torque ≈ zeros(3)
 
-Compat.@info "Testing compressive failure: shear"
+@info "Testing compressive failure: shear"
 sim = Granular.createSimulation("compressive_failure_shear")
-Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
+Granular.addGrainCylindrical!(sim, [0.0,0.0], 1.0, 0.5,
                               fracture_toughness=1285e3,
-                              lin_vel=[0., 1.], fixed=true, verbose=verbose)
-Granular.addGrainCylindrical!(sim, [1.5,1.5], 1., 0.5,
+                              lin_vel=[0.0, 1.0], fixed=true, verbose=verbose)
+Granular.addGrainCylindrical!(sim, [1.5,1.5], 1.0, 0.5,
                               fracture_toughness=1285e3,
                               fixed=true, verbose=verbose)
 @test count(x->x==true, sim.grains[1].compressive_failure) == 0
@@ -111,12 +111,12 @@ end
 @test sim.grains[2].torque[1:2] ≈ zeros(2)
 @test sim.grains[2].torque[3] < 0.0
 
-Compat.@info "Testing robustness of overlap calculations"
+@info "Testing robustness of overlap calculations"
 sim = Granular.createSimulation("overlap")
-Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
+Granular.addGrainCylindrical!(sim, [0.0,0.0], 1.0, 0.5,
                               fracture_toughness=1285e3,
-                              lin_vel=[0., 1.], fixed=true, verbose=verbose)
-Granular.addGrainCylindrical!(sim, [2.,0.], 1., 0.5,
+                              lin_vel=[0., 1.0], fixed=true, verbose=verbose)
+Granular.addGrainCylindrical!(sim, [2.0,0.0], 1.0, 0.5,
                               fracture_toughness=1285e3,
                               fixed=true, verbose=verbose)
 @test count(x->x==true, sim.grains[1].compressive_failure) == 0
@@ -128,11 +128,11 @@ Granular.run!(sim, single_step=true, verbose=verbose)
 @test count(x->x==true, sim.grains[1].compressive_failure) == 0
 
 sim = Granular.createSimulation("overlap")
-Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
-                              fracture_toughness=1.,
+Granular.addGrainCylindrical!(sim, [0.,0.], 1.0, 0.5,
+                              fracture_toughness=1.0,
                               fixed=true, verbose=verbose)
-Granular.addGrainCylindrical!(sim, [0.0+1e-9,0.], 1., 0.5,
-                              fracture_toughness=1.,
+Granular.addGrainCylindrical!(sim, [0.0+1e-9,0.0], 1.0, 0.5,
+                              fracture_toughness=1.0,
                               fixed=true, verbose=verbose)
 Granular.setTimeStep!(sim, verbose=verbose)
 Granular.setTotalTime!(sim, 1.0)
@@ -141,11 +141,11 @@ Granular.run!(sim, single_step=true, verbose=verbose)
 @test sim.grains[1].contact_area[1] ≈ π*1.0^2
 
 sim = Granular.createSimulation("overlap")
-Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
-                              fracture_toughness=1.,
+Granular.addGrainCylindrical!(sim, [0.,0.], 1.0, 0.5,
+                              fracture_toughness=1.0,
                               fixed=true, verbose=verbose)
-Granular.addGrainCylindrical!(sim, [0.1,0.], 1., 0.5,
-                              fracture_toughness=1.,
+Granular.addGrainCylindrical!(sim, [0.1,0.], 1.0, 0.5,
+                              fracture_toughness=1.0,
                               fixed=true, verbose=verbose)
 Granular.setTimeStep!(sim, verbose=verbose)
 Granular.setTotalTime!(sim, 1.0)
@@ -155,11 +155,11 @@ Granular.run!(sim, single_step=true, verbose=verbose)
 @test sim.grains[1].contact_area[1] > 0.
 
 sim = Granular.createSimulation("overlap")
-Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
-                              fracture_toughness=1.,
+Granular.addGrainCylindrical!(sim, [0.0,0.0], 1.0, 0.5,
+                              fracture_toughness=1.0,
                               fixed=true, verbose=verbose)
-Granular.addGrainCylindrical!(sim, [0.+1e-9,0.], 0.1, 0.5,
-                              fracture_toughness=1.,
+Granular.addGrainCylindrical!(sim, [0.0+1e-9,0.0], 0.1, 0.5,
+                              fracture_toughness=1.0,
                               fixed=true, verbose=verbose)
 @test count(x->x==true, sim.grains[1].compressive_failure) == 0
 Granular.setTimeStep!(sim, verbose=verbose)
@@ -170,11 +170,11 @@ Granular.run!(sim, single_step=true, verbose=verbose)
 @test sim.grains[1].contact_area[1] ≈ π*0.1^2
 
 sim = Granular.createSimulation("overlap")
-Granular.addGrainCylindrical!(sim, [0.,0.], 1., 0.5,
-                              fracture_toughness=1.,
+Granular.addGrainCylindrical!(sim, [0.0,0.0], 1.0, 0.5,
+                              fracture_toughness=1.0,
                               fixed=true, verbose=verbose)
 Granular.addGrainCylindrical!(sim, [0.3,0.4], 0.1, 0.5,
-                              fracture_toughness=1.,
+                              fracture_toughness=1.0,
                               fixed=true, verbose=verbose)
 @test count(x->x==true, sim.grains[1].compressive_failure) == 0
 Granular.setTimeStep!(sim, verbose=verbose)

@@ -1,12 +1,12 @@
 #!/usr/bin/env julia
-using Compat.Test
+using Test
 import Granular
 
 verbose = false
 plot = false
 plot_packings=false
 
-Compat.@info "Testing regular packing generation (power law GSD)"
+@info "Testing regular packing generation (power law GSD)"
 sim = Granular.createSimulation()
 Granular.regularPacking!(sim, [2, 2], 1., 1., size_distribution="powerlaw")
 @test 4 == length(sim.grains)
@@ -23,7 +23,7 @@ for grain in sim.grains
 end
 plot && Granular.plotGrains(sim, filetype="regular-powerlaw.png", show_figure=false)
 
-Compat.@info "Testing regular packing generation (uniform GSD)"
+@info "Testing regular packing generation (uniform GSD)"
 sim = Granular.createSimulation()
 Granular.regularPacking!(sim, [2, 2], 1., 1., size_distribution="uniform")
 @test 4 == length(sim.grains)
@@ -41,7 +41,7 @@ end
 plot && Granular.plotGrains(sim, filetype="regular-uniform.png", show_figure=false)
 
 
-Compat.@info "Testing irregular (Poisson-disk) packing generation (monodisperse size)"
+@info "Testing irregular (Poisson-disk) packing generation (monodisperse size)"
 sim = Granular.createSimulation("poisson1-monodisperse-nopadding")
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
 Granular.irregularPacking!(sim,
@@ -52,7 +52,7 @@ Granular.irregularPacking!(sim,
                            verbose=verbose)
 @test length(sim.grains) > 23
 
-Compat.@info "Testing irregular (Poisson-disk) packing generation (wide PSD)"
+@info "Testing irregular (Poisson-disk) packing generation (wide PSD)"
 sim = Granular.createSimulation("poisson2-wide-nopadding")
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
 Granular.irregularPacking!(sim,
@@ -82,7 +82,7 @@ Granular.irregularPacking!(sim,
                            verbose=verbose)
 @test length(sim.grains) > 280
 
-Compat.@info "Testing irregular packing with inactive boundaries"
+@info "Testing irregular packing with inactive boundaries"
 sim = Granular.createSimulation("poisson-inactive")
 sim.ocean = Granular.createRegularOceanGrid([5, 5, 1], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "inactive", verbose=verbose)
@@ -98,7 +98,7 @@ for grain in sim.grains
     @test grain.n_contacts == 0
 end
 
-Compat.@info "Testing irregular packing with periodic boundaries"
+@info "Testing irregular packing with periodic boundaries"
 sim = Granular.createSimulation("poisson-periodic")
 sim.ocean = Granular.createRegularOceanGrid([5, 5, 1], [1., 1., 1.])
 Granular.setGridBoundaryConditions!(sim.ocean, "periodic", verbose=verbose)
@@ -115,7 +115,7 @@ for grain in sim.grains
 end
 
 
-Compat.@info "Testing raster-based mapping algorithm"
+@info "Testing raster-based mapping algorithm"
 sim = Granular.createSimulation("raster-packing1")
 sim.ocean = Granular.createRegularOceanGrid([1, 1, 1], [1., 1., 1.])
 Granular.addGrainCylindrical!(sim, [0.5, 0.5], 0.4, 1.0)
@@ -153,14 +153,14 @@ occupied_ans = Array{Bool}([
 sim_init = deepcopy(sim)
 plot && Granular.plotGrains(sim, filetype="rastermap.png", show_figure=false)
 
-Compat.@info "Testing raster-based mapping algorithm (power law GSD)"
+@info "Testing raster-based mapping algorithm (power law GSD)"
 sim = deepcopy(sim_init)
 np_init = length(sim.grains)
 Granular.rasterPacking!(sim, 0.02, 0.04, verbose=verbose)
 @test np_init < length(sim.grains)
 plot && Granular.plotGrains(sim, filetype="powerlaw.png", show_figure=false)
 
-Compat.@info "Testing raster-based mapping algorithm (uniform GSD)"
+@info "Testing raster-based mapping algorithm (uniform GSD)"
 sim = deepcopy(sim_init)
 np_init = length(sim.grains)
 Granular.rasterPacking!(sim, 0.02, 0.04, size_distribution="uniform",
@@ -168,14 +168,14 @@ Granular.rasterPacking!(sim, 0.02, 0.04, size_distribution="uniform",
 @test np_init < length(sim.grains)
 plot && Granular.plotGrains(sim, filetype="uniform.png", show_figure=false)
 
-Compat.@info "Tesing square packing"
+@info "Tesing square packing"
 sim = Granular.createSimulation()
 Granular.regularPacking!(sim, [5,6], 1.0, 1.0, tiling="square",
                         padding_factor=0.0)
 @test length(sim.grains) == 5*6
 plot && Granular.plotGrains(sim, filetype="square.png", show_figure=false)
 
-Compat.@info "Tesing triangular packing"
+@info "Tesing triangular packing"
 sim = Granular.createSimulation()
 Granular.regularPacking!(sim, [6,6], 1.0, 1.0, tiling="triangular",
                         padding_factor=0.0)

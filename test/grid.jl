@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-using Compat.Test
+using Test
 import Granular
 
 # Check the grid interpolation and sorting functions
@@ -9,7 +9,7 @@ if Granular.hasNetCDF
     ocean = Granular.readOceanNetCDF("Baltic/00010101.ocean_month.nc",
                                    "Baltic/ocean_hgrid.nc")
 
-    Compat.@info "Testing coordinate retrieval functions"
+    @info "Testing coordinate retrieval functions"
     sw, se, ne, nw = Granular.getCellCornerCoordinates(ocean.xq, ocean.yq, 1, 1)
     @test sw ≈ [6., 53.]
     @test se ≈ [7., 53.]
@@ -17,12 +17,12 @@ if Granular.hasNetCDF
     @test nw ≈ [6., 54.]
     @test Granular.getCellCenterCoordinates(ocean.xh, ocean.yh, 1, 1) ≈ [6.5, 53.5]
 
-    Compat.@info "Testing area-determination methods"
+    @info "Testing area-determination methods"
     @test Granular.areaOfTriangle([0., 0.], [1., 0.], [0., 1.]) ≈ .5
     @test Granular.areaOfTriangle([1., 0.], [0., 1.], [0., 0.]) ≈ .5
     @test Granular.areaOfQuadrilateral([1., 0.], [0., 1.], [0., 0.], [1., 1.]) ≈ 1.
 
-    Compat.@info "Testing area-based cell content determination"
+    @info "Testing area-based cell content determination"
     @test Granular.isPointInCell(ocean, 1, 1, [6.5, 53.5], sw, se, ne, nw) == true
     @test Granular.isPointInCell(ocean, 1, 1, [6.5, 53.5]) == true
     @test Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [6.5, 53.5]) ≈
@@ -43,7 +43,7 @@ if Granular.hasNetCDF
     x_tilde, _ = Granular.getNonDimensionalCellCoordinates(ocean, 1, 1, [0., 53.5])
     @test x_tilde < 0.
 
-    Compat.@info "Testing conformal mapping methods"
+    @info "Testing conformal mapping methods"
     @test Granular.conformalQuadrilateralCoordinates([0., 0.],
                                                    [5., 0.],
                                                    [5., 3.],
@@ -65,7 +65,7 @@ if Granular.hasNetCDF
                                                                          [5., 0.],
                                                                          [7.5,-1.5])
 
-    Compat.@info "Checking cell content using conformal mapping methods"
+    @info "Checking cell content using conformal mapping methods"
     @test Granular.isPointInCell(ocean, 1, 1, [6.4, 53.4], sw, se, ne, nw, 
                                method="Conformal") == true
     @test Granular.isPointInCell(ocean, 1, 1, [6.1, 53.5], sw, se, ne, nw, 
@@ -83,7 +83,7 @@ if Granular.hasNetCDF
     @test Granular.isPointInCell(ocean, 1, 1, [0.0, 53.5], sw, se, ne, nw,
                                method="Conformal") == false
 
-    Compat.@info "Testing bilinear interpolation scheme on conformal mapping"
+    @info "Testing bilinear interpolation scheme on conformal mapping"
     ocean.u[1, 1, 1, 1] = 1.0
     ocean.u[2, 1, 1, 1] = 1.0
     ocean.u[2, 2, 1, 1] = 0.0
@@ -112,12 +112,12 @@ if Granular.hasNetCDF
     @test val[1] ≈ .25
     @test val[2] ≈ .25
 
-    Compat.@info "Testing cell binning - Area-based approach"
+    @info "Testing cell binning - Area-based approach"
     @test Granular.findCellContainingPoint(ocean, [6.2,53.4], method="Area") == (1, 1)
     @test Granular.findCellContainingPoint(ocean, [7.2,53.4], method="Area") == (2, 1)
     @test Granular.findCellContainingPoint(ocean, [0.2,53.4], method="Area") == (0, 0)
 
-    Compat.@info "Testing cell binning - Conformal mapping"
+    @info "Testing cell binning - Conformal mapping"
     @test Granular.findCellContainingPoint(ocean, [6.2,53.4], method="Conformal") == 
         (1, 1)
     @test Granular.findCellContainingPoint(ocean, [7.2,53.4], method="Conformal") == 
@@ -139,7 +139,7 @@ if Granular.hasNetCDF
     @test sim.ocean.grain_list[2, 1] == [3]
 end
 
-Compat.@info "Testing ocean drag"
+@info "Testing ocean drag"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
 sim.ocean.u[:,:,1,1] .= 5.
@@ -167,7 +167,7 @@ Granular.addOceanDrag!(sim)
 @test sim.grains[2].force[1] < 0.
 @test sim.grains[2].force[2] > 0.
 
-Compat.@info "Testing curl function"
+@info "Testing curl function"
 ocean.u[1, 1, 1, 1] = 1.0
 ocean.u[2, 1, 1, 1] = 1.0
 ocean.u[2, 2, 1, 1] = 0.0
@@ -186,7 +186,7 @@ ocean.u[1, 2, 1, 1] = 1.0
 ocean.v[:, :, 1, 1] .= 0.0
 @test Granular.curl(ocean, .5, .5, 1, 1, 1, 1, sw, se, ne, nw) < 0.
 
-Compat.@info "Testing atmosphere drag"
+@info "Testing atmosphere drag"
 sim = Granular.createSimulation()
 sim.atmosphere = Granular.createRegularAtmosphereGrid([4, 4, 2], [4., 4., 2.])
 atmosphere = Granular.createRegularAtmosphereGrid([4, 4, 2], [4., 4., 2.])
@@ -212,7 +212,7 @@ Granular.addAtmosphereDrag!(sim)
 @test sim.grains[2].force[1] < 0.
 @test sim.grains[2].force[2] > 0.
 
-Compat.@info "Testing curl function"
+@info "Testing curl function"
 atmosphere.u[1, 1, 1, 1] = 1.0
 atmosphere.u[2, 1, 1, 1] = 1.0
 atmosphere.u[2, 2, 1, 1] = 0.0
@@ -230,8 +230,8 @@ atmosphere.v[:, :, 1, 1] .= 0.0
 @test Granular.curl(atmosphere, .5, .5, 1, 1, 1, 1, sw, se, ne, nw) < 0.
 
 
-Compat.@info "Testing findEmptyPositionInGridCell"
-Compat.@info "# Insert into empty cell"
+@info "Testing findEmptyPositionInGridCell"
+@info "# Insert into empty cell"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
 Granular.sortGrainsInGrid!(sim, sim.ocean, verbose=verbose)
@@ -240,7 +240,7 @@ pos = Granular.findEmptyPositionInGridCell(sim, sim.ocean, 1, 1, 0.5,
 @test pos != false
 @test Granular.isPointInCell(sim.ocean, 1, 1, pos) == true
 
-Compat.@info "# Insert into cell with one other ice floe"
+@info "# Insert into cell with one other ice floe"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
 Granular.addGrainCylindrical!(sim, [.25, .25], .25, 1., verbose=verbose)
@@ -250,7 +250,7 @@ pos = Granular.findEmptyPositionInGridCell(sim, sim.ocean, 1, 1, .25,
 @test pos != false
 @test Granular.isPointInCell(sim.ocean, 1, 1, pos) == true
 
-Compat.@info "# Insert into cell with two other grains"
+@info "# Insert into cell with two other grains"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
 Granular.addGrainCylindrical!(sim, [.25, .25], .25, 1., verbose=verbose)
@@ -261,7 +261,7 @@ pos = Granular.findEmptyPositionInGridCell(sim, sim.ocean, 1, 1, .25, n_iter=30,
 @test pos != false
 @test Granular.isPointInCell(sim.ocean, 1, 1, pos) == true
 
-Compat.@info "# Insert into full cell"
+@info "# Insert into full cell"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
 Granular.addGrainCylindrical!(sim, [.25, .25], 1., 1., verbose=verbose)
@@ -273,7 +273,7 @@ pos = Granular.findEmptyPositionInGridCell(sim, sim.ocean, 1, 1, 0.5,
                                          verbose=false)
 @test pos == false
 
-Compat.@info "# Insert into empty cell"
+@info "# Insert into empty cell"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
 Granular.sortGrainsInGrid!(sim, sim.ocean, verbose=verbose)
@@ -282,7 +282,7 @@ pos = Granular.findEmptyPositionInGridCell(sim, sim.ocean, 2, 2, 0.5,
 @test pos != false
 @test Granular.isPointInCell(sim.ocean, 2, 2, pos) == true
 
-Compat.@info "# Insert into full cell"
+@info "# Insert into full cell"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
 Granular.addGrainCylindrical!(sim, [1.5, 1.5], 1., 1., verbose=verbose)
@@ -294,7 +294,7 @@ pos = Granular.findEmptyPositionInGridCell(sim, sim.ocean, 2, 2, 0.5,
                                          verbose=false)
 @test pos == false
 
-Compat.@info "Test default sorting with ocean/atmosphere grids"
+@info "Test default sorting with ocean/atmosphere grids"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
 sim.atmosphere = Granular.createRegularAtmosphereGrid([4, 4, 2], [4., 4.000001, 2.])
@@ -319,7 +319,7 @@ Granular.run!(sim, single_step=true, verbose=verbose)
 @test sim.atmosphere.grain_list[2, 2] == []
 @test sim.atmosphere.grain_list[3, 3] == [3]
 
-Compat.@info "Test optimization when ocean/atmosphere grids are collocated"
+@info "Test optimization when ocean/atmosphere grids are collocated"
 sim = Granular.createSimulation()
 sim.ocean = Granular.createRegularOceanGrid([4, 4, 2], [4., 4., 2.])
 sim.atmosphere = Granular.createRegularAtmosphereGrid([4, 4, 2], [4., 4., 2.])
@@ -344,7 +344,7 @@ Granular.run!(sim, single_step=true, verbose=false)
 @test sim.atmosphere.grain_list[2, 2] == []
 @test sim.atmosphere.grain_list[3, 3] == [3]
 
-Compat.@info "Testing automatic grid-size adjustment"
+@info "Testing automatic grid-size adjustment"
 # ocean grid
 sim = Granular.createSimulation()
 @test_throws ErrorException Granular.fitGridToGrains!(sim, sim.ocean)
@@ -405,7 +405,7 @@ Granular.fitGridToGrains!(sim, sim.atmosphere, padding=.5, verbose=true)
 @test sim.atmosphere.xq[end,end] ≈ 3.5
 @test sim.atmosphere.yq[end,end] ≈ 5.5
 
-Compat.@info "Testing porosity estimation"
+@info "Testing porosity estimation"
 sim = Granular.createSimulation()
 dx = 1.0; dy = 1.0
 nx = 3; ny = 3
