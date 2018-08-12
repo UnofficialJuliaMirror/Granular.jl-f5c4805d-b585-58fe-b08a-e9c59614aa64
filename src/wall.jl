@@ -1,7 +1,5 @@
 ## Manage dynamic walls in the model
 
-import Compat
-
 export addWallLinearFrictionless!
 """
     function addWallLinear!(simulation, normal, pos[, bc, mass, thickness, 
@@ -112,7 +110,7 @@ function addWallLinearFrictionless!(simulation::Simulation,
             mass += grain.mass
         end
         if verbose
-            Compat.@info "Setting wall mass to total grain mass: $mass kg"
+            @info "Setting wall mass to total grain mass: $mass kg"
         end
     end
 
@@ -129,7 +127,7 @@ function addWallLinearFrictionless!(simulation::Simulation,
             end
         end
         if verbose
-            Compat.@info "Setting wall thickness to max grain thickness: $thickness m"
+            @info "Setting wall thickness to max grain thickness: $thickness m"
         end
     end
 

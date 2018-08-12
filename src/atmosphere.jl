@@ -1,6 +1,5 @@
-import Compat
-using Compat.Test
-using Compat.LinearAlgebra
+using Test
+using LinearAlgebra
 
 export createEmptyAtmosphere
 "Returns empty ocean type for initialization purposes."
@@ -81,22 +80,22 @@ function createRegularAtmosphereGrid(n::Vector{Int},
                                      bc_east::Integer = 1,
                                      bc_north::Integer = 1)
 
-    xq = repeat(Compat.range(origo[1], stop=origo[1] + L[1], length=n[1] + 1),
+    xq = repeat(range(origo[1], stop=origo[1] + L[1], length=n[1] + 1),
                 outer=[1, n[2] + 1])
-    yq = repeat(Compat.range(origo[2], stop=origo[2] + L[2], length=n[2] + 1)',
+    yq = repeat(range(origo[2], stop=origo[2] + L[2], length=n[2] + 1)',
                 outer=[n[1] + 1, 1])
 
     dx = L./n
-    xh = repeat(Compat.range(origo[1] + .5*dx[1],
-                             stop=origo[1] + L[1] - .5*dx[1],
-                             length=n[1]),
+    xh = repeat(range(origo[1] + .5*dx[1],
+                      stop=origo[1] + L[1] - .5*dx[1],
+                      length=n[1]),
                 outer=[1, n[2]])
-    yh = repeat(Compat.range(origo[2] + .5*dx[2],
-                             stop=origo[1] + L[2] - .5*dx[2],
-                             length=n[2])',
+    yh = repeat(range(origo[2] + .5*dx[2],
+                      stop=origo[1] + L[2] - .5*dx[2],
+                      length=n[2])',
                 outer=[n[1], 1])
 
-    zl = -Compat.range(.5*dx[3], stop=L[3] - .5*dx[3], length=n[3])
+    zl = -range(.5*dx[3], stop=L[3] - .5*dx[3], length=n[3])
 
     u = zeros(n[1] + 1, n[2] + 1, n[3], length(time))
     v = zeros(n[1] + 1, n[2] + 1, n[3], length(time))

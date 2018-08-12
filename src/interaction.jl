@@ -1,6 +1,5 @@
 ## Interaction functions
-import Compat
-using Compat.LinearAlgebra
+using LinearAlgebra
 
 export interact!
 """

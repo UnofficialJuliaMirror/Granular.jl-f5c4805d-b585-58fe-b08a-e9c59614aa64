@@ -1,10 +1,10 @@
-import Compat
-using Compat.Test
-using Compat.LinearAlgebra
+import Pkg
+using Test
+using LinearAlgebra
 
 hasNetCDF = false
 if VERSION < v"0.7.0-alpha"
-    if typeof(Compat.Pkg.installed("NetCDF")) == VersionNumber
+    if typeof(Pkg.installed("NetCDF")) == VersionNumber
         import NetCDF
         hasNetCDF = true
     end
@@ -16,7 +16,7 @@ else
     end
 end
 if !hasNetCDF
-    Compat.@warn "Package NetCDF not found. " *
+    @warn "Package NetCDF not found. " *
          "Ocean/atmosphere grid read not supported. " * 
          "If required, install NetCDF and its " *
          "requirements with `Pkg.add(\"NetCDF\")`."
@@ -64,7 +64,7 @@ function readOceanNetCDF(velocity_file::String, grid_file::String;
                          regular_grid::Bool=false)
 
     if !hasNetCDF
-        Compat.@warn "Package NetCDF not found. " *
+        @warn "Package NetCDF not found. " *
             "Ocean/atmosphere grid read not supported. " * 
              "Please install NetCDF and its " *
              "requirements with `Pkg.add(\"NetCDF\")`."
@@ -128,7 +128,7 @@ layer thicknesses, interface heights, and vertical coordinates.
 function readOceanStateNetCDF(filename::String)
 
     if !hasNetCDF
-        Compat.@warn "Package NetCDF not found. " *
+        @warn "Package NetCDF not found. " *
             "Ocean/atmosphere grid read not supported. " * 
              "Please install NetCDF and its " *
              "requirements with `Pkg.add(\"NetCDF\")`."
@@ -169,7 +169,7 @@ located in the simulation `INPUT/` subdirectory.
 function readOceanGridNetCDF(filename::String)
 
     if !hasNetCDF
-        Compat.@warn "Package NetCDF not found. " *
+        @warn "Package NetCDF not found. " *
             "Ocean/atmosphere grid read not supported. " * 
              "Please install NetCDF and its " *
              "requirements with `Pkg.add(\"NetCDF\")`."
@@ -296,25 +296,25 @@ function createRegularOceanGrid(n::Vector{Int},
                                 bc_east::Integer = 1,
                                 bc_north::Integer = 1)
 
-    xq = repeat(Compat.range(origo[1], stop=origo[1] + L[1],
-                             length=n[1] + 1),
+    xq = repeat(range(origo[1], stop=origo[1] + L[1],
+                      length=n[1] + 1),
                 outer=[1, n[2] + 1])
-    yq = repeat(Compat.range(origo[2], stop=origo[2] + L[2],
-                             length=n[2] + 1)',
+    yq = repeat(range(origo[2], stop=origo[2] + L[2],
+                      length=n[2] + 1)',
                 outer=[n[1] + 1, 1])
 
     dx = L./n
-    xh = repeat(Compat.range(origo[1] + .5*dx[1],
-                             stop=origo[1] + L[1] - .5*dx[1],
-                             length=n[1]),
+    xh = repeat(range(origo[1] + .5*dx[1],
+                      stop=origo[1] + L[1] - .5*dx[1],
+                      length=n[1]),
                 outer=[1, n[2]])
-    yh = repeat(Compat.range(origo[2] + .5*dx[2],
-                             stop=origo[2] + L[2] - .5*dx[2],
-                             length=n[2])',
+    yh = repeat(range(origo[2] + .5*dx[2],
+                      stop=origo[2] + L[2] - .5*dx[2],
+                      length=n[2])',
                 outer=[n[1], 1])
 
-    zl = -Compat.range(.5*dx[3], stop=L[3] - .5*dx[3], length=n[3])
-    zi = -Compat.range(0., stop=L[3], length=n[3] + 1)
+    zl = -range(.5*dx[3], stop=L[3] - .5*dx[3], length=n[3])
+    zi = -range(0., stop=L[3], length=n[3] + 1)
 
     u = zeros(n[1] + 1, n[2] + 1, n[3], length(time))
     v = zeros(n[1] + 1, n[2] + 1, n[3], length(time))

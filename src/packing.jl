@@ -1,8 +1,7 @@
 ## Functions for creating grain packings
-import Compat
 import Random
-using Compat.LinearAlgebra
-using Compat.Random
+using LinearAlgebra
+using Random
 
 export regularPacking!
 """
@@ -355,7 +354,7 @@ function irregularPacking!(simulation::Simulation;
 
     if verbose
         println("")
-        Compat.@info "Generated $(length(simulation.grains) - np_init) points"
+        @info "Generated $(length(simulation.grains) - np_init) points"
     end
 end
 
@@ -407,7 +406,7 @@ function rasterPacking!(sim::Simulation,
         end
     end
     if verbose
-        Compat.@info "Generated $(length(sim.grains) - np_init) points"
+        @info "Generated $(length(sim.grains) - np_init) points"
     end
 end
 

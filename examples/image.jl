@@ -3,8 +3,7 @@
 import Granular
 import FileIO
 import Colors
-import Compat
-using Compat.Random
+using Random
 
 const verbose = true
 
@@ -45,7 +44,7 @@ const h = .5
 
 sim = Granular.createSimulation(id="image")
 
-Compat.@info "nx = $nx, ny = $ny"
+@info "nx = $nx, ny = $ny"
 
 for iy=1:size(img_bw, 1)
     for ix=1:size(img_bw, 2)
@@ -109,7 +108,7 @@ end
 r = dx/4.
 
 ## N-S wall segments
-for y in Compat.range(r, stop=Ly-r, length=Int(round((Ly - 2.*r)/(r*2))))
+for y in range(r, stop=Ly-r, length=Int(round((Ly - 2.*r)/(r*2))))
     Granular.addGrainCylindrical!(sim, [r, y], r, h, fixed=true,
                                   youngs_modulus=youngs_modulus,
                                   verbose=false)
@@ -119,7 +118,7 @@ for y in Compat.range(r, stop=Ly-r, length=Int(round((Ly - 2.*r)/(r*2))))
 end
 
 ## E-W wall segments
-for x in Compat.range(3.*r, stop=Lx-3.*r, length=Int(round((Lx - 6.*r)/(r*2))))
+for x in range(3.*r, stop=Lx-3.*r, length=Int(round((Lx - 6.*r)/(r*2))))
     Granular.addGrainCylindrical!(sim, [x, r], r, h, fixed=true,
                                   youngs_modulus=youngs_modulus,
                                   verbose=false)

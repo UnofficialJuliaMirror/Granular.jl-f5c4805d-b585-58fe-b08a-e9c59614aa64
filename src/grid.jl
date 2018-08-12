@@ -1,7 +1,6 @@
 import Random
-using Compat
-using Compat.LinearAlgebra
-using Compat.Random
+using LinearAlgebra
+using Random
 
 """
     bilinearInterpolation(field, x_tilde, y_tilde, i, j, k, it)
@@ -218,7 +217,7 @@ function sortGrainsInGrid!(simulation::Simulation, grid::Any; verbose=true)
                   i > grid.n[1] || j > grid.n[2]))
 
                 if verbose
-                    Compat.@info "Disabling grain $idx at pos (" *
+                    @info "Disabling grain $idx at pos (" *
                          "$(simulation.grains[idx].lin_pos))"
                 end
                 disableGrain!(simulation, idx)
@@ -595,7 +594,7 @@ function findEmptyPositionInGridCell(simulation::Simulation,
         y_tilde = rand()
         bilinearInterpolation!(pos, grid.xq, grid.yq, x_tilde, y_tilde, i, j)
         if verbose
-            Compat.@info "trying position $pos in cell $i,$j"
+            @info "trying position $pos in cell $i,$j"
         end
 
         # do not penetrate outside of grid boundaries
@@ -629,8 +628,7 @@ function findEmptyPositionInGridCell(simulation::Simulation,
 
                         if overlap < 0.
                             if verbose
-                                Compat.@info "overlap with $grain_idx in " *
-                                    "cell $i,$j"
+                                @info "overlap with $grain_idx in cell $i,$j"
                             end
                             overlap_found = true
                             break
@@ -652,12 +650,12 @@ function findEmptyPositionInGridCell(simulation::Simulation,
 
     if spot_found
         if verbose
-            Compat.@info "Found position $pos in cell $i,$j"
+            @info "Found position $pos in cell $i,$j"
         end
         return pos
     else
         if verbose
-            Compat.@warn "could not insert an grain into " *
+            @warn "could not insert an grain into " *
                  "$(typeof(grid)) grid cell ($i, $j)"
         end
         return false
@@ -743,22 +741,22 @@ function setGridBoundaryConditions!(grid::Any,
         error("Mode '$mode' not recognized as a valid boundary condition type")
     end
 
-    if Compat.occursin("west", grid_face) || Compat.occursin("-x", grid_face)
+    if occursin("west", grid_face) || occursin("-x", grid_face)
         grid.bc_west = grid_bc_flags[mode]
         something_changed = true
     end
 
-    if Compat.occursin("south", grid_face) || Compat.occursin("-y", grid_face)
+    if occursin("south", grid_face) || occursin("-y", grid_face)
         grid.bc_south = grid_bc_flags[mode]
         something_changed = true
     end
 
-    if Compat.occursin("east", grid_face) || Compat.occursin("+x", grid_face)
+    if occursin("east", grid_face) || occursin("+x", grid_face)
         grid.bc_east = grid_bc_flags[mode]
         something_changed = true
     end
 
-    if Compat.occursin("north", grid_face) || Compat.occursin("+y", grid_face)
+    if occursin("north", grid_face) || occursin("+y", grid_face)
         grid.bc_north = grid_bc_flags[mode]
         something_changed = true
     end
@@ -1044,7 +1042,7 @@ function fitGridToGrains!(simulation::Simulation, grid::Any;
     end
 
     if verbose
-        Compat.@info "Created regular $(typeof(grid)) grid from " *
+        @info "Created regular $(typeof(grid)) grid from " *
              "[$min_x, $min_y] to [$max_x, $max_y] " *
              "with a cell size of $dx ($n)."
     end
@@ -1055,14 +1053,14 @@ end
 function findPorosity!(sim::Simulation, grid::Any; verbose::Bool=true)
 
     if !isassigned(grid.grain_list)
-        Compat.@info "Sorting grains in grid"
+        @info "Sorting grains in grid"
         sortGrainsInGrid!(sim, grid, verbose=verbose)
     end
 
-    @compat sw = Vector{Float64}(undef, 2)
-    @compat se = Vector{Float64}(undef, 2)
-    @compat ne = Vector{Float64}(undef, 2)
-    @compat nw = Vector{Float64}(undef, 2)
+    sw = Vector{Float64}(undef, 2)
+    se = Vector{Float64}(undef, 2)
+    ne = Vector{Float64}(undef, 2)
+    nw = Vector{Float64}(undef, 2)
     cell_area = 0.0
     p = zeros(2)
     r = 0.0

@@ -1,5 +1,4 @@
-import Compat
-using Compat.LinearAlgebra
+using LinearAlgebra
 
 ## Contact mapping
 export findContacts!
@@ -308,9 +307,9 @@ function checkAndAddContact!(sim::Simulation, i::Int, j::Int,
                     # Test if this contact exceeds the number of contacts
                     if ic == (sim.Nc_max + 1)
                         for ic=1:sim.Nc_max
-                            Compat.@warn "grains[$i].contacts[$ic] = " *
+                            @warn "grains[$i].contacts[$ic] = " *
                                  "$(sim.grains[i].contacts[ic])"
-                            Compat.@warn "grains[$i].contact_age[$ic] = " *
+                            @warn "grains[$i].contact_age[$ic] = " *
                                  "$(sim.grains[i].contact_age[ic])"
                         end
                         error("contact $i-$j exceeds max. number of " *

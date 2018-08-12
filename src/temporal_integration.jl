@@ -1,4 +1,3 @@
-import Compat
 
 export updateGrainKinematics!
 """

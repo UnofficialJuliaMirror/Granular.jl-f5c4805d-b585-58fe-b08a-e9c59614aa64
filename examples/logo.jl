@@ -1,8 +1,7 @@
 #!/usr/bin/env julia
 
 import Granular
-import Compat
-using Compat.Random
+using Random
 
 const verbose = true
 
@@ -55,7 +54,7 @@ const youngs_modulus = 2e6
 sim = Granular.createSimulation(id="logo")
 
 print(logo_string)
-Compat.@info "nx = $nx, ny = $ny"
+@info "nx = $nx, ny = $ny"
 
 for iy=1:length(logo_string_split)
     for ix=1:length(logo_string_split[iy])
@@ -139,23 +138,23 @@ end
 r = dx/4.
 
 ## N-S wall segments
-for y in Compat.range(r, stop=Ly-r, length=Int(round((Ly - 2.*r)/(r*2))))
+for y in range(r, stop=Ly-r, length=Int(round((Ly - 2.*r)/(r*2))))
     Granular.addGrainCylindrical!(sim, [r, y], r, h, fixed=true,
-                                    youngs_modulus=youngs_modulus,
-                                    verbose=false)
+                                  youngs_modulus=youngs_modulus,
+                                  verbose=false)
     Granular.addGrainCylindrical!(sim, [Lx-r, y], r, h, fixed=true,
-                                    youngs_modulus=youngs_modulus,
-                                    verbose=false)
+                                  youngs_modulus=youngs_modulus,
+                                  verbose=false)
 end
 
 ## E-W wall segments
-for x in Compat.range(3.*r, stop=Lx-3.*r, length=Int(round((Lx - 6.*r)/(r*2))))
+for x in range(3.*r, stop=Lx-3.*r, length=Int(round((Lx - 6.*r)/(r*2))))
     Granular.addGrainCylindrical!(sim, [x, r], r, h, fixed=true,
-                                    youngs_modulus=youngs_modulus,
-                                    verbose=false)
+                                  youngs_modulus=youngs_modulus,
+                                  verbose=false)
     Granular.addGrainCylindrical!(sim, [x, Ly-r], r, h, fixed=true,
-                                    youngs_modulus=youngs_modulus,
-                                    verbose=false)
+                                  youngs_modulus=youngs_modulus,
+                                  verbose=false)
 end
 
 

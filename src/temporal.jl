@@ -1,5 +1,3 @@
-import Compat
-
 export setTotalTime!
 """
     setTotalTime!(simulation::Simulation, t::Float64)
@@ -56,7 +54,7 @@ this value is zero or negative, no output files will be written.
 function setOutputFileInterval!(simulation::Simulation, t::Float64; 
     verbose=true)
     if t <= 0.0 && verbose
-        Compat.@info "No output files will be written"
+        @info "No output files will be written"
     end
     simulation.file_time_step = t
     nothing
@@ -163,7 +161,7 @@ function setTimeStep!(simulation::Simulation;
     end
 
     if verbose
-        Compat.@info "Time step length t=$(simulation.time_step) s"
+        @info "Time step length t=$(simulation.time_step) s"
     end
     nothing
 end

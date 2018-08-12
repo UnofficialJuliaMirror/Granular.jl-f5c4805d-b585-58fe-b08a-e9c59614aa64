@@ -1,13 +1,11 @@
 import WriteVTK
-import Compat
-using Compat.LinearAlgebra
-using Compat.DelimitedFiles
-using Compat.Dates
-
+import Pkg
+import Dates
+using DelimitedFiles
 
 hasJLD = false
 if VERSION < v"0.7.0-alpha"
-    if typeof(Compat.Pkg.installed("JLD")) == VersionNumber
+    if typeof(Pkg.installed("JLD")) == VersionNumber
         import JLD
         hasJLD = true
     end
@@ -37,7 +35,7 @@ function writeSimulation(simulation::Simulation;
                          folder::String=".",
                          verbose::Bool=true)
     if !hasJLD
-        Compat.@warn "Package JLD not found. " *
+        @warn "Package JLD not found. " *
             "Simulation save/read not supported. " * 
              "Please install JLD and its " *
              "requirements with `Pkg.add(\"JLD\")`."
@@ -52,7 +50,7 @@ function writeSimulation(simulation::Simulation;
         JLD.save(filename, "simulation", simulation)
 
         if verbose
-            Compat.@info "simulation written to $filename"
+            @info "simulation written to $filename"
         end
     end
     nothing
@@ -73,7 +71,7 @@ Return `Simulation` content read from disk using the JDL format.
 function readSimulation(filename::String;
                          verbose::Bool=true)
     if !hasJLD
-        Compat.@warn "Package JLD not found. " *
+        @warn "Package JLD not found. " *
             "Simulation save/read not supported. " * 
              "Please install JLD and its " *
              "requirements with `Pkg.add(\"JLD\")`."
@@ -81,7 +79,7 @@ function readSimulation(filename::String;
     else
         return JLD.load(filename, "simulation")
         if verbose
-            Compat.@info "Read simulation from $filename"
+            @info "Read simulation from $filename"
         end
     end
 end
@@ -104,7 +102,7 @@ function readSimulation(simulation::Simulation;
                          step::Integer = -1,
                          verbose::Bool = true)
     if !hasJLD
-        Compat.@warn "Package JLD not found. Simulation save/read not supported. " * 
+        @warn "Package JLD not found. Simulation save/read not supported. " * 
              "Please install JLD and its " *
              "requirements with `Pkg.add(\"JLD\")`."
         nothing
@@ -114,7 +112,7 @@ function readSimulation(simulation::Simulation;
         end
         filename = string(simulation.id, "/", simulation.id, ".$step.jld")
         if verbose
-            Compat.@info "Read simulation from $filename"
+            @info "Read simulation from $filename"
         end
         return JLD.load(filename, "simulation")
     end
@@ -139,7 +137,7 @@ function writeSimulationStatus(simulation::Simulation;
                         simulation.time/simulation.time_total*100.
                         float(simulation.file_number)])
     if verbose
-        Compat.@info "Wrote status to $filename"
+        @info "Wrote status to $filename"
     end
     nothing
 end
@@ -165,7 +163,7 @@ function readSimulationStatus(simulation_id::String;
 
     data = readdlm(filename)
     if verbose
-        Compat.@info "$simulation_id:\n" *
+        @info "$simulation_id:\n" *
              "  time:             $(data[1]) s\n" *
              "  complete:         $(data[2])%\n" *
              "  last output file: $(Int(round(data[3])))\n"
@@ -233,12 +231,12 @@ function status(folder::String=".";
 
         status_files = String[]
         println()
-        println(Dates.format(DateTime(now()), Dates.RFC1123Format))
+        println(Dates.format(Dates.DateTime(Dates.now()), Dates.RFC1123Format))
 
         for (root, dirs, files) in walkdir(folder, follow_symlinks=false)
 
             for file in files
-                if Compat.occursin(".status.txt", file)
+                if occursin(".status.txt", file)
                     push!(status_files, joinpath(root, file))
                 end
             end
@@ -246,7 +244,7 @@ function status(folder::String=".";
 
         if length(status_files) > 0
 
-            if Compat.Sys.iswindows()
+            if Sys.iswindows()
                 cols = 80
             else
                 cols = parse(Int, read(`tput cols`, String))
@@ -258,14 +256,14 @@ function status(folder::String=".";
                 println()
 
                 left_label_width = 36
-                Compat.printstyled("simulation folder ", color=:default)
+                printstyled("simulation folder ", color=:default)
                 right_labels_width = 22
                 for i=18:cols-right_labels_width
                     print(' ')
                 end
-                Compat.printstyled("time  ", color=time_color)
-                Compat.printstyled("complete  ", color=percentage_color)
-                Compat.printstyled("files\n", color=lastfile_color)
+                printstyled("time  ", color=time_color)
+                printstyled("complete  ", color=percentage_color)
+                printstyled("files\n", color=lastfile_color)
                 for i=1:cols
                     print('-')
                 end
@@ -274,15 +272,15 @@ function status(folder::String=".";
 
             for file in status_files
                 data = readdlm(file)
-                id = Compat.replace(file, ".status.txt" => "")
-                id = Compat.replace(id, "./" => "")
-                id = Compat.replace(id, r".*/" => "")
+                id = replace(file, ".status.txt" => "")
+                id = replace(id, "./" => "")
+                id = replace(id, r".*/" => "")
                 percentage = @sprintf "%9.0f%%" data[2]
                 lastfile = @sprintf "%7d" data[3]
                 if data[2] < 99.
-                    Compat.printstyled("$id", color=id_color_in_progress)
+                    printstyled("$id", color=id_color_in_progress)
                 else
-                    Compat.printstyled("$id", color=id_color_complete)
+                    printstyled("$id", color=id_color_complete)
                 end
                 right_fields_width = 25
                 for i=length(id):cols-right_fields_width
@@ -297,9 +295,9 @@ function status(folder::String=".";
                 else  # days
                     time = @sprintf "%6.2fd" data[1]/(60.0 * 60.0 * 24.0)
                 end
-                Compat.printstyled("$time", color=time_color)
-                Compat.printstyled("$percentage", color=percentage_color)
-                Compat.printstyled("$lastfile\n", color=lastfile_color)
+                printstyled("$time", color=time_color)
+                printstyled("$percentage", color=percentage_color)
+                printstyled("$lastfile\n", color=lastfile_color)
 
                 if visualize
                     sim = createSimulation(id)
@@ -313,7 +311,7 @@ function status(folder::String=".";
                 println()
             end
         else
-            Compat.@warn "no simulations found in $(pwd())/$folder"
+            @warn "no simulations found in $(pwd())/$folder"
         end
 
         if loop && t_int > 0
@@ -485,7 +483,7 @@ function writeGrainVTK(simulation::Simulation,
 
     outfiles = WriteVTK.vtk_save(vtkfile)
     if verbose
-        Compat.@info "Output file: $(outfiles[1])"
+        @info "Output file: $(outfiles[1])"
     end
     nothing
 end
@@ -849,7 +847,7 @@ function writeGridVTK(grid::Any,
 
     outfiles = WriteVTK.vtk_save(vtkfile)
     if verbose
-        Compat.@info "Output file: $(outfiles[1])"
+        @info "Output file: $(outfiles[1])"
     end
     nothing
 end
@@ -1122,7 +1120,7 @@ FrameWindow=[0, $(simulation.file_number)])
         end
     end
     if verbose
-        Compat.@info "$(filename) written, execute with " *
+        @info "$(filename) written, execute with " *
              "'pvpython $(vtk_folder)/$(simulation.id).py'"
     end
 end
@@ -1170,8 +1168,8 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                     rm("$(simulation.id)/$(simulation.id).avi")
                 end
             catch return_signal
-                if isa(return_signal, Base.UVError)
-                    Compat.@warn "Could not run external ffmpeg command, " *
+                if isa(return_signal, IOError)
+                    @warn "Could not run external ffmpeg command, " *
                     "skipping conversion from " *
                     "$(simulation.id)/$(simulation.id).avi to mp4."
                 end
@@ -1202,14 +1200,14 @@ function render(simulation::Simulation; pvpython::String="pvpython",
                         $(simulation.id)/$(simulation.id)-reverse.gif`)
                 end
             catch return_signal
-                if isa(return_signal, Base.UVError)
-                    Compat.@warn "Skipping gif merge since `$convert` " *
+                if isa(return_signal, IOError)
+                    @warn "Skipping gif merge since `$convert` " *
                         "was not found."
                 end
             end
         end
     catch return_signal
-        if isa(return_signal, Base.UVError)
+        if isa(return_signal, IOError)
             error("`pvpython` was not found.")
         end
     end
@@ -1293,7 +1291,7 @@ function plotGrainSizeDistribution(simulation::Simulation;
     gnuplotscript = Base.Filesystem.tempname()
 
     #if maximum(diameters) ≈ minimum(diameters)
-        #Compat.@info "Overriding `nbins = $nbins` -> `nbins = 1`."
+        #@info "Overriding `nbins = $nbins` -> `nbins = 1`."
         #nbins = 1
     #end
 
@@ -1320,13 +1318,13 @@ function plotGrainSizeDistribution(simulation::Simulation;
     try
         run(`gnuplot $gnuplotscript`)
     catch return_signal
-        if isa(return_signal, Base.UVError)
+        if isa(return_signal, IOError)
             error("Could not launch external gnuplot process")
         end
     end
 
     if verbose
-        Compat.@info filename
+        @info filename
     end
 end
 
@@ -1547,13 +1545,13 @@ function plotGrains(sim::Simulation;
     try
         run(`gnuplot $gnuplotscript`)
     catch return_signal
-        if isa(return_signal, Base.UVError)
+        if isa(return_signal, IOError)
             error("Could not launch external gnuplot process")
         end
     end
 
     if verbose
-        Compat.@info filename
+        @info filename
     end
 
     if show_figure

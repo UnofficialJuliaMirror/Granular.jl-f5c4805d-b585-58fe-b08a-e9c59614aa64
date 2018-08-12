@@ -1,8 +1,7 @@
 ## Manage grains in the model
 
-import Compat
-using Compat.Test
-using Compat.LinearAlgebra
+using Test
+using LinearAlgebra
 
 export addGrainCylindrical!
 """

@@ -1,5 +1,4 @@
-import Compat
-using Compat.Printf
+using Printf
 
 ## General simulation functions
 
@@ -112,7 +111,7 @@ function run!(simulation::Simulation;
         if simulation.ocean.xq ≈ simulation.atmosphere.xq &&
             simulation.ocean.yq ≈ simulation.atmosphere.yq
             if verbose
-                Compat.@info "identical ocean and atmosphere grids, " *
+                @info "identical ocean and atmosphere grids, " *
                     "turning on grid optimizations"
             end
             simulation.atmosphere.collocated_with_ocean_grid = true
@@ -219,7 +218,7 @@ function addGrain!(simulation::Simulation,
     push!(simulation.grains, grain)
 
     if verbose
-        Compat.@info "Added grain $(length(simulation.grains))"
+        @info "Added grain $(length(simulation.grains))"
     end
     nothing
 end
@@ -239,7 +238,7 @@ function addWall!(simulation::Simulation,
     push!(simulation.walls, wall)
 
     if verbose
-        Compat.@info "Added wall $(length(simulation.walls))"
+        @info "Added wall $(length(simulation.walls))"
     end
     nothing
 end
