@@ -131,7 +131,7 @@ function readSimulationStatus(simulation_id::String;
     if verbose
         @info "$simulation_id:\n" *
              "  time:             $(data[1]) s\n" *
-             "  complete:         $(data[2])%\n" *
+             "  complete:         $(abs(data[2]))%\n" *
              "  last output file: $(Int(round(data[3])))\n"
     end
     return Int(round(data[3]))
