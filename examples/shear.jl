@@ -101,8 +101,7 @@ Granular.run!(sim)
 Granular.render(sim, trim=false)
 
 # Save the simulation state to disk in case we need to reuse the current state
-# This step requires the JLD2 package (Pkg.add("JLD2"))
-#Granular.writeSimulation(sim)
+Granular.writeSimulation(sim)
 
 # Also copy the simulation in memory, in case we want to loop over different
 # normal stresses below:
@@ -193,7 +192,7 @@ Granular.render(sim, trim=false)
 
 # Save the simulation state to disk in case we need to reuse the consolidated
 # state (e.g. different shear velocities below)
-#Granular.writeSimulation(sim)
+Granular.writeSimulation(sim)
 
 # Also copy the simulation in memory, in case we want to loop over different
 # normal stresses below:
@@ -274,7 +273,7 @@ end
 Granular.render(sim, trim=false)
 
 # Save the simulation state to disk in case we need to reuse the sheared state
-#Granular.writeSimulation(sim)
+Granular.writeSimulation(sim)
 
 # Plot time vs. shear stress and dilation
 PyPlot.subplot(211)

@@ -30,9 +30,7 @@ julia> Pkg.add("Granular")
 ```
 
 This will install the contents of this repository in the folder 
-`~/.julia/v$(JULIA_VERSION)/Granular` and install its requirements.  The 
-package [JLD2](https://github.com/simonster/JLD2.jl) is used for model restarts 
-and is recommended but not required, and is not automatically installed.
+`~/.julia/v$(JULIA_VERSION)/Granular` and install its requirements.
 
 ## Development installation
 If desired, the current developmental version of the [Granular.jl Github 

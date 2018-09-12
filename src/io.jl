@@ -1,21 +1,8 @@
 import WriteVTK
 import Pkg
 import Dates
+import JLD2
 using DelimitedFiles
-
-hasJLD2 = false
-if VERSION < v"0.7.0-alpha"
-    if typeof(Pkg.installed("JLD2")) == VersionNumber
-        import JLD2
-        hasJLD2 = true
-    end
-else
-    import Pkg
-    if haskey(Pkg.installed(), "JLD2")
-        import JLD2
-        hasJLD2 = true
-    end
-end
 
 ## IO functions
 
@@ -34,24 +21,17 @@ function writeSimulation(simulation::Simulation;
                          filename::String="",
                          folder::String=".",
                          verbose::Bool=true)
-    if !hasJLD2
-        @warn "Package JLD2 not found. " *
-            "Simulation save/read not supported. " * 
-             "Please install JLD2 and its " *
-             "requirements with `Pkg.add(\"JLD2\")`."
-    else
-        if filename == ""
-            folder = folder * "/" * simulation.id
-            mkpath(folder)
-            filename = string(folder, "/", simulation.id, ".",
-                              simulation.file_number, ".jld2")
-        end
+    if filename == ""
+        folder = folder * "/" * simulation.id
+        mkpath(folder)
+        filename = string(folder, "/", simulation.id, ".",
+                          simulation.file_number, ".jld2")
+    end
 
-        JLD2.save(filename, "simulation", simulation)
+    JLD2.@save(filename, simulation)
 
-        if verbose
-            @info "simulation written to $filename"
-        end
+    if verbose
+        @info "simulation written to $filename"
     end
     nothing
 end
@@ -70,18 +50,9 @@ Return `Simulation` content read from disk using the JLD2 format.
 """
 function readSimulation(filename::String;
                          verbose::Bool=true)
-    if !hasJLD2
-        @warn "Package JLD2 not found. " *
-            "Simulation save/read not supported. " * 
-             "Please install JLD2 and its " *
-             "requirements with `Pkg.add(\"JLD2\")`."
-        nothing
-    else
-        return JLD2.load(filename, "simulation")
-        if verbose
-            @info "Read simulation from $filename"
-        end
-    end
+    simulation = createSimulation()
+    JLD2.@load(filename, simulation)
+    return simulation
 end
 """
     readSimulation(simulation::Simulation;
@@ -101,21 +72,16 @@ Read the simulation state from disk and return as new simulation object.
 function readSimulation(simulation::Simulation;
                          step::Integer = -1,
                          verbose::Bool = true)
-    if !hasJLD2
-        @warn "Package JLD2 not found. Simulation save/read not supported. " * 
-             "Please install JLD2 and its " *
-             "requirements with `Pkg.add(\"JLD2\")`."
-        nothing
-    else
-        if step == -1
-            step = readSimulationStatus(simulation)
-        end
-        filename = string(simulation.id, "/", simulation.id, ".$step.jld")
-        if verbose
-            @info "Read simulation from $filename"
-        end
-        return JLD2.load(filename, "simulation")
+    if step == -1
+        step = readSimulationStatus(simulation)
     end
+    filename = string(simulation.id, "/", simulation.id, ".$step.jld2")
+    if verbose
+        @info "Read simulation from $filename"
+    end
+    simulation = createSimulation()
+    JLD2.@load(filename, simulation)
+    return simulation
 end
 
 export writeSimulationStatus
@@ -1225,7 +1191,7 @@ function removeSimulationFiles(simulation::Simulation; folder::String=".")
     run(`bash -c "rm -rf $(folder)/$(simulation.id).*.vtp"`)
     run(`bash -c "rm -rf $(folder)/$(simulation.id).*.vts"`)
     run(`bash -c "rm -rf $(folder)/$(simulation.id).status.txt"`)
-    run(`bash -c "rm -rf $(folder)/$(simulation.id).*.jld"`)
+    run(`bash -c "rm -rf $(folder)/$(simulation.id).*.jld2"`)
     run(`bash -c "rm -rf $(folder)/$(simulation.id).py"`)
     run(`bash -c "rm -rf $(folder)/$(simulation.id).avi"`)
     run(`bash -c "rm -rf $(folder)/$(simulation.id).*.png"`)
