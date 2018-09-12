@@ -26,4 +26,4 @@ run_test("temporal.jl")
 if Granular.hasNetCDF
     run_test("netcdf.jl")
 end
-run_test("jld.jl")
+run_test("jld2.jl")

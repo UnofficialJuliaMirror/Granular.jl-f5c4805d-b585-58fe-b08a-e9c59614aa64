@@ -61,7 +61,7 @@ export run!
          show_file_output = true,
          single_step = false,
          temporal_integration_method = "Three-term Taylor"],
-         write_jld = false)
+         write_jld2 = false)
 
 Run the `simulation` through time until `simulation.time` equals or exceeds 
 `simulatim.time_total`.  This function requires that all grains are added to 
@@ -85,7 +85,7 @@ to disk.
     is increased accordingly.
 * `temporal_integration_method::String="Three-term Taylor"`: type of integration 
     method to use.  See `updateGrainKinematics` for details.
-* `write_jld::Bool=false`: write simulation state to disk as JLD files (see 
+* `write_jld2::Bool=false`: write simulation state to disk as JLD2 files (see 
     `Granular.writeSimulation(...)` whenever saving VTK output.
 """
 function run!(simulation::Simulation;
@@ -94,7 +94,7 @@ function run!(simulation::Simulation;
               show_file_output::Bool=true,
               single_step::Bool=false,
               temporal_integration_method::String="Three-term Taylor",
-              write_jld::Bool=false)
+              write_jld2::Bool=false)
 
     if single_step && simulation.time >= simulation.time_total
         simulation.time_total += simulation.time_step
@@ -130,7 +130,7 @@ function run!(simulation::Simulation;
             if show_file_output
                 println()
             end
-            if write_jld
+            if write_jld2
                 writeSimulation(simulation, verbose=show_file_output)
             end
             writeVTK(simulation, verbose=show_file_output)
