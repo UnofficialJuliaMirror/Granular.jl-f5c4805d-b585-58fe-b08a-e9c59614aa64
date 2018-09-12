@@ -1,10 +1,10 @@
 #!/usr/bin/env julia
 
-@info "Determining if JLD is installed"
-if Granular.hasJLD
-    @info "JLD found, proceeding with JLD-specific tests"
+@info "Determining if JLD2 is installed"
+if Granular.hasJLD2
+    @info "JLD2 found, proceeding with JLD2-specific tests"
 
-    @info "Writing simple simulation to JLD file"
+    @info "Writing simple simulation to JLD2 file"
     sim = Granular.createSimulation(id="test")
     Granular.addGrainCylindrical!(sim, [ 0., 0.], 10., 1., verbose=false)
     Granular.addGrainCylindrical!(sim, [18., 0.], 10., 1., verbose=false)
@@ -15,15 +15,15 @@ if Granular.hasJLD
     Granular.writeSimulation(sim)
     Granular.writeSimulationStatus(sim)
 
-    @info "Reading from JLD file by specifying the input file name"
-    sim2 = Granular.readSimulation("./test/test.1.jld")
+    @info "Reading from JLD2 file by specifying the input file name"
+    sim2 = Granular.readSimulation("./test/test.1.jld2")
     Granular.compareSimulations(sim, sim2)
 
-    @info "Reading and overwriting from JLD file by simulation id"
+    @info "Reading and overwriting from JLD2 file by simulation id"
     sim3 = Granular.createSimulation("test")
     @test 1 == Granular.readSimulationStatus(sim3)
     sim3 = Granular.readSimulation(sim3)
     Granular.compareSimulations(sim, sim3)
 
-    rm("./test/test.1.jld")
+    rm("./test/test.1.jld2")
 end

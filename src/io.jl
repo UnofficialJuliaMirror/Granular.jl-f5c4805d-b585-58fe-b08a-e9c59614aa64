@@ -3,17 +3,17 @@ import Pkg
 import Dates
 using DelimitedFiles
 
-hasJLD = false
+hasJLD2 = false
 if VERSION < v"0.7.0-alpha"
-    if typeof(Pkg.installed("JLD")) == VersionNumber
-        import JLD
-        hasJLD = true
+    if typeof(Pkg.installed("JLD2")) == VersionNumber
+        import JLD2
+        hasJLD2 = true
     end
 else
     import Pkg
-    if haskey(Pkg.installed(), "JLD")
-        import JLD
-        hasJLD = true
+    if haskey(Pkg.installed(), "JLD2")
+        import JLD2
+        hasJLD2 = true
     end
 end
 
@@ -26,7 +26,7 @@ export writeSimulation
                          folder::String=".",
                          verbose::Bool=true)
 
-Write all content from `Simulation` to disk in JDL format.  If the `filename` 
+Write all content from `Simulation` to disk in JLD2 format.  If the `filename` 
 parameter is not specified, it will be saved to a subdirectory under the current 
 directory named after the simulation identifier `simulation.id`.
 """
@@ -34,20 +34,20 @@ function writeSimulation(simulation::Simulation;
                          filename::String="",
                          folder::String=".",
                          verbose::Bool=true)
-    if !hasJLD
-        @warn "Package JLD not found. " *
+    if !hasJLD2
+        @warn "Package JLD2 not found. " *
             "Simulation save/read not supported. " * 
-             "Please install JLD and its " *
-             "requirements with `Pkg.add(\"JLD\")`."
+             "Please install JLD2 and its " *
+             "requirements with `Pkg.add(\"JLD2\")`."
     else
         if filename == ""
             folder = folder * "/" * simulation.id
             mkpath(folder)
             filename = string(folder, "/", simulation.id, ".",
-                              simulation.file_number, ".jld")
+                              simulation.file_number, ".jld2")
         end
 
-        JLD.save(filename, "simulation", simulation)
+        JLD2.save(filename, "simulation", simulation)
 
         if verbose
             @info "simulation written to $filename"
@@ -61,7 +61,7 @@ export readSimulation
     readSimulation(filename::String="";
                    verbose::Bool=true)
 
-Return `Simulation` content read from disk using the JDL format.
+Return `Simulation` content read from disk using the JLD2 format.
 
 # Arguments
 * `filename::String`: path to file on disk containing the simulation
@@ -70,14 +70,14 @@ Return `Simulation` content read from disk using the JDL format.
 """
 function readSimulation(filename::String;
                          verbose::Bool=true)
-    if !hasJLD
-        @warn "Package JLD not found. " *
+    if !hasJLD2
+        @warn "Package JLD2 not found. " *
             "Simulation save/read not supported. " * 
-             "Please install JLD and its " *
-             "requirements with `Pkg.add(\"JLD\")`."
+             "Please install JLD2 and its " *
+             "requirements with `Pkg.add(\"JLD2\")`."
         nothing
     else
-        return JLD.load(filename, "simulation")
+        return JLD2.load(filename, "simulation")
         if verbose
             @info "Read simulation from $filename"
         end
@@ -101,10 +101,10 @@ Read the simulation state from disk and return as new simulation object.
 function readSimulation(simulation::Simulation;
                          step::Integer = -1,
                          verbose::Bool = true)
-    if !hasJLD
-        @warn "Package JLD not found. Simulation save/read not supported. " * 
-             "Please install JLD and its " *
-             "requirements with `Pkg.add(\"JLD\")`."
+    if !hasJLD2
+        @warn "Package JLD2 not found. Simulation save/read not supported. " * 
+             "Please install JLD2 and its " *
+             "requirements with `Pkg.add(\"JLD2\")`."
         nothing
     else
         if step == -1
@@ -114,7 +114,7 @@ function readSimulation(simulation::Simulation;
         if verbose
             @info "Read simulation from $filename"
         end
-        return JLD.load(filename, "simulation")
+        return JLD2.load(filename, "simulation")
     end
 end
 
