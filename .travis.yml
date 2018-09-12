@@ -32,7 +32,7 @@ deploy:
     script: julia -e 'import Pkg; cd(Pkg.dir("Granular")); Pkg.add("Coverage"); Pkg.add("Documenter"); using Coverage; Codecov.submit(Codecov.process_folder()); cd(Pkg.dir("Granular")); include(joinpath("docs", "make.jl"))'
     on:
       os: linux
-      julia: 0.6
+      julia: 1.0
       all_branches: true
       condition: $TRAVIS_BRANCH =~ /^(master|v\d+\.\d+(\.\d+)?(-\S*)?)$/
 
