@@ -25,7 +25,7 @@ makedocs(
 
 deploydocs(
     repo = "github.com/anders-dc/Granular.jl.git",
-    julia = "0.6",
+    julia = "1.0",
     deps = nothing,
     make = nothing,
     target = "build",
