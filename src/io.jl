@@ -213,7 +213,7 @@ function status(folder::String=".";
             if Sys.iswindows()
                 cols = 80
             else
-                cols = parse(Int, read(`tput cols`, String))
+                cols = displaysize(stdout)[2]
             end
             if write_header
                 for i=1:cols
