@@ -93,7 +93,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Installation",
     "title": "Stable installation (recommended)",
     "category": "section",
-    "text": "The latest stable release of Granular.jl can be installed directly from the  Julia shell by:julia> Pkg.add(\"Granular\")This will install the contents of this repository in the folder  ~/.julia/v$(JULIA_VERSION)/Granular and install its requirements."
+    "text": "The latest stable release of Granular.jl can be installed directly from the  Julia shell by:julia> ]\n(v1.0) pkg> add GranularThis will install the contents of this repository in the folder  ~/.julia/packages/Granular and install its requirements."
 },
 
 {
@@ -101,15 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Installation",
     "title": "Development installation",
     "category": "section",
-    "text": "If desired, the current developmental version of the Granular.jl Github  repository can be installed with the  command:julia> Pkg.clone(\"git://github.com/anders-dc/Granular.jl\")Please note: The developmental version is considered unstable and should only  be used over the stable version if there is a compelling reason to do so."
-},
-
-{
-    "location": "man/installation.html#Keeping-the-package-up-to-date-1",
-    "page": "Installation",
-    "title": "Keeping the package up to date",
-    "category": "section",
-    "text": "With the Pkg.update() command, Julia checks and updates all installed  packages to their newest versions."
+    "text": "If desired, the current developmental version of the Granular.jl Github  repository can be installed with the  command:julia> ]\n(v1.0) pkg> add Granular#masterPlease note: The developmental version is considered unstable and should only  be used over the stable version if there is a compelling reason to do so.If you want to modify the code base, install the source code in the  ~/.julia/dev/ directory with the following command:(v1.0) pkg> dev Granular"
 },
 
 {
@@ -117,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Installation",
     "title": "Package tests",
     "category": "section",
-    "text": "The Granular.jl package contains many tests that verify that the functionality  works as intended.  The extent of test coverage of the source code is monitored  and published with CodeCov.The package tests are during development continuously run with  Travis-CI for Mac (latest stable  release) and Linux (Ubuntu stable (trusty)), and  AppVeyor for Windows.The test scripts are contained in the test/ directory, can be run locally  with the following command:julia> Pkg.test(\"Granular\")In case any of these tests fail, please open a Github  Issue describing the problems  so further investigation and diagnosis can follow."
+    "text": "The Granular.jl package contains many tests that verify that the functionality  works as intended.  The extent of test coverage of the source code is monitored  and published with CodeCov.The package tests are during development continuously run with  Travis-CI for Mac (latest stable  release) and Linux (Ubuntu stable), and  AppVeyor for Windows.The test scripts are contained in the test/ directory, can be run locally  with the following command:julia> ]\n(v1.0) pkg> test GranularIn case any of these tests fail, please open a Github  Issue describing the problems  so further investigation and diagnosis can follow."
 },
 
 {
