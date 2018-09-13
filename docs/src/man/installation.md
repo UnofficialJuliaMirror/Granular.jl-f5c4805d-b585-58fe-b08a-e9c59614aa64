@@ -26,11 +26,12 @@ The latest stable release of Granular.jl can be installed directly from the
 Julia shell by:
 
 ```julia-repl
-julia> Pkg.add("Granular")
+julia> ]
+(v1.0) pkg> add Granular
 ```
 
 This will install the contents of this repository in the folder 
-`~/.julia/v$(JULIA_VERSION)/Granular` and install its requirements.
+`~/.julia/packages/Granular` and install its requirements.
 
 ## Development installation
 If desired, the current developmental version of the [Granular.jl Github 
@@ -38,15 +39,19 @@ repository](https://github.com/anders-dc/Granular.jl) can be installed with the
 command:
 
 ```julia-repl
-julia> Pkg.clone("git://github.com/anders-dc/Granular.jl")
+julia> ]
+(v1.0) pkg> add Granular#master
 ```
 
 *Please note:* The developmental version is considered unstable and should only 
 be used over the stable version if there is a compelling reason to do so.
 
-## Keeping the package up to date
-With the `Pkg.update()` command, Julia checks and updates all installed 
-packages to their newest versions.
+If you want to modify the code base, install the source code in the 
+`~/.julia/dev/` directory with the following command:
+
+```julia-repl
+(v1.0) pkg> dev Granular
+```
 
 ## Package tests
 The Granular.jl package contains many tests that verify that the functionality 
@@ -55,14 +60,15 @@ and published with [CodeCov](https://codecov.io/gh/anders-dc/Granular.jl).
 
 The package tests are during development continuously run with 
 [Travis-CI](https://travis-ci.org/anders-dc/Granular.jl) for Mac (latest stable 
-release) and Linux (Ubuntu stable (trusty)), and 
+release) and Linux (Ubuntu stable), and 
 [AppVeyor](https://ci.appveyor.com/project/anders-dc/seaice-jl) for Windows.
 
 The test scripts are contained in the `test/` directory, can be run locally 
 with the following command:
 
 ```julia-repl
-julia> Pkg.test("Granular")
+julia> ]
+(v1.0) pkg> test Granular
 ```
 
 In case any of these tests fail, please open a [Github 

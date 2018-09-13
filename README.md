@@ -14,23 +14,25 @@ A [Julia](https://julialang.org) package for simulating granular mechanics.
 release can be installed directly from the Julia shell by:
 
 ```julia
-julia> Pkg.add("Granular")
+julia> ]
+(v1.0) pkg> add Granular
 ```
 
-If you want to install the latest development version from the Github 
-repository, instead install the package with:
+The package contents will be installed in the directory 
+`~/.julia/packages/Granular`, together with the packages specified as 
+[requirements](REQUIRE). If you want to install the latest development version 
+from the Github repository, instead install the package with:
 
 ```julia
-julia> Pkg.clone("git://github.com/anders-dc/Granular.jl")
+julia> ]
+(v1.0) pkg> add Granular#master
 ```
 
-The package contents will be installed in the folder 
-`~/.julia/v$(JULIA_VERSION)/Granular`, and the packages specified as 
-[requirements](REQUIRE). You can run the package tests, which are contained in
-the [test/ directory](test/), with the following command:
+You can run the package tests for any version with
+the following command:
 
 ```julia
-julia> Pkg.test("Granular")
+(v1.0) pkg> test Granular
 ```
 
 For more information on installation and usage, please refer to the 
