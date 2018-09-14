@@ -210,11 +210,7 @@ function status(folder::String=".";
 
         if length(status_files) > 0
 
-            if Sys.iswindows()
-                cols = 80
-            else
-                cols = displaysize(stdout)[2]
-            end
+            cols = displaysize(stdout)[2]
             if write_header
                 for i=1:cols
                     print('-')
