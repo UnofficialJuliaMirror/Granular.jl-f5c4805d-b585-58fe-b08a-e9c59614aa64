@@ -44,7 +44,6 @@ jobs:
           os: linux
           julia: 1.0
           all_branches: true
-
     - stage: docs
       julia: 1.0
       os: linux
