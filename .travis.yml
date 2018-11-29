@@ -27,7 +27,7 @@ matrix:
 stages:  # Set order of stages
   - prepare
   - test
-  - docs
+  - deploy
 
 jobs:
   include:
@@ -41,15 +41,16 @@ jobs:
       script:
         - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
         - julia -e 'Pkg.test("Granular"; coverage=true)';
-      after_success:
-        - julia -e 'import Pkg; cd(Pkg.dir("Granular"));
-                    Pkg.add("Coverage"); using Coverage;
-                    Codecov.submit(process_folder())'
-    - stage: docs
+
+    - stage: deploy
       julia: 1.0
       os: linux
       script:
         - julia --project=docs/ -e 'using Pkg; Pkg.instantiate();
                                     Pkg.develop(PackageSpec(path=pwd()))'
         - julia --project=docs/ docs/make.jl
+      script:
+        - julia -e 'import Pkg; cd(Pkg.dir("Granular"));
+                    Pkg.add("Coverage"); using Coverage;
+                    Codecov.submit(process_folder())'
       after_success: skip
