@@ -26,7 +26,7 @@ matrix:
 
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'import Pkg; Pkg.add("NetCDF"); Pkg.build("NetCDF")
+  - julia -e 'import Pkg; Pkg.add("NetCDF"); Pkg.build("NetCDF");
               Pkg.clone(pwd()); Pkg.build("Granular");
               Pkg.test("Granular"; coverage=true)'
 
