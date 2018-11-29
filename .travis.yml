@@ -24,26 +24,24 @@ matrix:
   allow_failures:
   - julia: nightly
 
-stages:  # Set order of stages
-  - test
-  - docs
+script:
+  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  - julia -e 'VERSION >= v"0.7" && (import Pkg; Pkg.add("NetCDF");
+              Pkg.build("NetCDF"))'
+  - julia -e 'import Pkg; Pkg.clone(pwd()); Pkg.build("Granular");
+              Pkg.test("Granular"; coverage=true)';
+
+deploy:
+  - provider: script
+    script: julia -e 'import Pkg; Pkg.add("Coverage"); using Coverage;
+              Codecov.submit(Codecov.process_folder());'
+    on:
+      os: linux
+      julia: 1.0
+      all_branches: true
 
 jobs:
   include:
-    - stage: test
-      script:
-        - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-        - julia -e 'VERSION >= v"0.7" && (import Pkg; Pkg.add("NetCDF");
-                    Pkg.build("NetCDF"))'
-        - julia -e 'import Pkg; Pkg.clone(pwd()); Pkg.build("Granular");
-                    Pkg.test("Granular"; coverage=true)';
-      after_success: 
-        - julia -e 'import Pkg; Pkg.add("Coverage"); using Coverage;
-                    Codecov.submit(Codecov.process_folder());'
-        on:
-          os: linux
-          julia: 1.0
-          all_branches: true
     - stage: docs
       julia: 1.0
       os: linux
@@ -52,3 +50,8 @@ jobs:
                                     Pkg.develop(PackageSpec(path=pwd()))'
         - julia --project=docs/ docs/make.jl
       after_success: skip
+      on:
+        os: linux
+        julia: 1.0
+        all_branches: true
+        condition: $TRAVIS_BRANCH == "master" || -n $TRAVIS_TAG
