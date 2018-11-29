@@ -6,6 +6,14 @@ notifications:
     on_success: never  # default: change
     on_failure: always # default: always
 
+os:
+  - linux
+  - osx
+
+julia:
+  - 1.0
+  - nightly
+
 addons:
   apt:
     packages:
@@ -23,12 +31,6 @@ stages:  # Set order of stages
 jobs:
   include:
     - stage: test
-      os:
-        - linux
-        - osx
-      julia:
-        - 1.0
-        - nightly
       before_script:  # NetCDF is an optional dependency
         - julia -e 'VERSION >= v"0.7" && (import Pkg; Pkg.add("NetCDF");
                     Pkg.build("NetCDF"))'
