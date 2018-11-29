@@ -27,16 +27,14 @@ script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia -e 'import Pkg; Pkg.clone(pwd()); Pkg.build("Granular"); Pkg.test("Granular"; coverage=true)';
 
-deploy:
-  - provider: script
-    script: 
-    - julia -e 'import Pkg; cd(Pkg.dir("Granular")); Pkg.add("Documenter"); include(joinpath("docs", "make.jl"))'
-    - julia -e 'import Pkg; cd(Pkg.dir("Granular")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
-    on:
-      os: linux
-      julia: 1.0
-      all_branches: true
-      condition: $TRAVIS_BRANCH == "master" || -n $TRAVIS_TAG
+after_success:
+  - julia -e 'using Pkg; ps=Pkg.PackageSpec(name="Documenter", version="0.19"); Pkg.add(ps); Pkg.pin(ps); include(joinpath("docs", "make.jl"))'
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
+  on:
+    os: linux
+    julia: 1.0
+    all_branches: true
+    condition: $TRAVIS_BRANCH == "master" || -n $TRAVIS_TAG
 
 matrix:
   allow_failures:
