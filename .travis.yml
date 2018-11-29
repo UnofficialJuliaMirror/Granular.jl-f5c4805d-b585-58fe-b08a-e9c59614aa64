@@ -28,9 +28,19 @@ script:
   - julia -e 'import Pkg; Pkg.clone(pwd()); Pkg.build("Granular"); Pkg.test("Granular"; coverage=true)';
 
 after_success:
-  - julia -e 'using Pkg; Pkg.add("Documenter"); include(joinpath("docs", "make.jl"))'
   - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
 
 matrix:
   allow_failures:
   - julia: nightly
+
+jobs:
+  include:
+    - stage: "Documentation"
+      julia: 1.0
+      os: linux
+      script:
+        - julia --project=docs/ -e 'using Pkg; Pkg.instantiate();
+                                    Pkg.develop(PackageSpec(path=pwd()))'
+        - julia --project=docs/ docs/make.jl
+      after_success: skip
