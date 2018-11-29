@@ -29,7 +29,9 @@ script:
 
 deploy:
   - provider: script
-    script: julia -e 'import Pkg; cd(Pkg.dir("Granular")); Pkg.add("Coverage"); ps=Pkg.PackageSpec(name="Documenter", version="0.19"); Pkg.add(ps); Pkg.pin(ps); using Coverage; Codecov.submit(Codecov.process_folder()); cd(Pkg.dir("Granular")); include(joinpath("docs", "make.jl"))'
+    script: 
+    - julia -e 'import Pkg; cd(Pkg.dir("Granular")); Pkg.add("Documenter"); include(joinpath("docs", "make.jl"))'
+    - julia -e 'import Pkg; cd(Pkg.dir("Granular")); Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
     on:
       os: linux
       julia: 1.0
