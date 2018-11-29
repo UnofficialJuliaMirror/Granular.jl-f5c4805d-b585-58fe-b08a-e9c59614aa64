@@ -18,18 +18,17 @@ julia> ]
 (v1.0) pkg> add Granular
 ```
 
-The package contents will be installed in the directory 
-`~/.julia/packages/Granular`, together with the packages specified as 
-[requirements](REQUIRE). If you want to install the latest development version 
-from the Github repository, instead install the package with:
+The package contents area installed in the directory 
+`~/.julia/packages/Granular`, together with the [required packages](REQUIRE). 
+If you want to install the latest development version from the Github 
+repository, instead install the package with:
 
 ```julia
 julia> ]
 (v1.0) pkg> add Granular#master
 ```
 
-You can run the package tests for any version with
-the following command:
+You can run the package tests for any version with the following command:
 
 ```julia
 (v1.0) pkg> test Granular
@@ -39,4 +38,5 @@ For more information on installation and usage, please refer to the
 [documentation](https://anders-dc.github.io/Granular.jl/latest).
 
 ## Author
-[Anders Damsgaard](https://adamsgaard.dk), Geophysical Fluid Dynamics Laboratory, Princeton University.
+[Anders Damsgaard](https://adamsgaard.dk), Geophysical Fluid Dynamics 
+Laboratory, Princeton University.
