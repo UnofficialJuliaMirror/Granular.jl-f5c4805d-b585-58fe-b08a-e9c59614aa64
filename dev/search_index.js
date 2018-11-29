@@ -1,7 +1,7 @@
 var documenterSearchIndex = {"docs": [
 
 {
-    "location": "index.html#",
+    "location": "#",
     "page": "Home",
     "title": "Home",
     "category": "page",
@@ -9,7 +9,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#Granular.jl-1",
+    "location": "#Granular.jl-1",
     "page": "Home",
     "title": "Granular.jl",
     "category": "section",
@@ -17,7 +17,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#Author-1",
+    "location": "#Author-1",
     "page": "Home",
     "title": "Author",
     "category": "section",
@@ -25,7 +25,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#License-1",
+    "location": "#License-1",
     "page": "Home",
     "title": "License",
     "category": "section",
@@ -33,7 +33,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#Manual-Outline-1",
+    "location": "#Manual-Outline-1",
     "page": "Home",
     "title": "Manual Outline",
     "category": "section",
@@ -41,7 +41,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "index.html#Library-Outline-1",
+    "location": "#Library-Outline-1",
     "page": "Home",
     "title": "Library Outline",
     "category": "section",
@@ -49,7 +49,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/installation.html#",
+    "location": "man/installation/#",
     "page": "Installation",
     "title": "Installation",
     "category": "page",
@@ -57,7 +57,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/installation.html#Installation-1",
+    "location": "man/installation/#Installation-1",
     "page": "Installation",
     "title": "Installation",
     "category": "section",
@@ -65,7 +65,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/installation.html#Prerequisites-1",
+    "location": "man/installation/#Prerequisites-1",
     "page": "Installation",
     "title": "Prerequisites",
     "category": "section",
@@ -73,7 +73,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/installation.html#Installing-Julia-1",
+    "location": "man/installation/#Installing-Julia-1",
     "page": "Installation",
     "title": "Installing Julia",
     "category": "section",
@@ -81,7 +81,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/installation.html#Installing-Paraview-1",
+    "location": "man/installation/#Installing-Paraview-1",
     "page": "Installation",
     "title": "Installing Paraview",
     "category": "section",
@@ -89,7 +89,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/installation.html#Stable-installation-(recommended)-1",
+    "location": "man/installation/#Stable-installation-(recommended)-1",
     "page": "Installation",
     "title": "Stable installation (recommended)",
     "category": "section",
@@ -97,7 +97,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/installation.html#Development-installation-1",
+    "location": "man/installation/#Development-installation-1",
     "page": "Installation",
     "title": "Development installation",
     "category": "section",
@@ -105,7 +105,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/installation.html#Package-tests-1",
+    "location": "man/installation/#Package-tests-1",
     "page": "Installation",
     "title": "Package tests",
     "category": "section",
@@ -113,7 +113,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/package_contents.html#",
+    "location": "man/package_contents/#",
     "page": "Package contents",
     "title": "Package contents",
     "category": "page",
@@ -121,7 +121,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/package_contents.html#Package-contents-1",
+    "location": "man/package_contents/#Package-contents-1",
     "page": "Package contents",
     "title": "Package contents",
     "category": "section",
@@ -129,7 +129,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/package_contents.html#File-locations-after-installation-1",
+    "location": "man/package_contents/#File-locations-after-installation-1",
     "page": "Package contents",
     "title": "File locations after installation",
     "category": "section",
@@ -137,7 +137,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/package_contents.html#Example-scripts-1",
+    "location": "man/package_contents/#Example-scripts-1",
     "page": "Package contents",
     "title": "Example scripts",
     "category": "section",
@@ -145,7 +145,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/methods.html#",
+    "location": "man/methods/#",
     "page": "Computational methods",
     "title": "Computational methods",
     "category": "page",
@@ -153,7 +153,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/methods.html#Computational-methods-1",
+    "location": "man/methods/#Computational-methods-1",
     "page": "Computational methods",
     "title": "Computational methods",
     "category": "section",
@@ -161,7 +161,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#",
+    "location": "man/getting_started/#",
     "page": "Getting started",
     "title": "Getting started",
     "category": "page",
@@ -169,7 +169,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Getting-started-1",
+    "location": "man/getting_started/#Getting-started-1",
     "page": "Getting started",
     "title": "Getting started",
     "category": "section",
@@ -177,7 +177,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Collision-between-two-particles-1",
+    "location": "man/getting_started/#Collision-between-two-particles-1",
     "page": "Getting started",
     "title": "Collision between two particles",
     "category": "section",
@@ -185,7 +185,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Simulation-setup-1",
+    "location": "man/getting_started/#Simulation-setup-1",
     "page": "Getting started",
     "title": "Simulation setup",
     "category": "section",
@@ -193,7 +193,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Adding-grains-one-by-one-1",
+    "location": "man/getting_started/#Adding-grains-one-by-one-1",
     "page": "Getting started",
     "title": "Adding grains one by one",
     "category": "section",
@@ -201,7 +201,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Setting-temporal-parameters-for-the-simulation-1",
+    "location": "man/getting_started/#Setting-temporal-parameters-for-the-simulation-1",
     "page": "Getting started",
     "title": "Setting temporal parameters for the simulation",
     "category": "section",
@@ -209,7 +209,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Running-the-simulation-1",
+    "location": "man/getting_started/#Running-the-simulation-1",
     "page": "Getting started",
     "title": "Running the simulation",
     "category": "section",
@@ -217,7 +217,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Visualizing-the-output-1",
+    "location": "man/getting_started/#Visualizing-the-output-1",
     "page": "Getting started",
     "title": "Visualizing the output",
     "category": "section",
@@ -225,7 +225,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Exercises-1",
+    "location": "man/getting_started/#Exercises-1",
     "page": "Getting started",
     "title": "Exercises",
     "category": "section",
@@ -233,7 +233,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Sedimentation-of-grains-1",
+    "location": "man/getting_started/#Sedimentation-of-grains-1",
     "page": "Getting started",
     "title": "Sedimentation of grains",
     "category": "section",
@@ -241,7 +241,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Creating-a-pseudo-random-grain-packing-1",
+    "location": "man/getting_started/#Creating-a-pseudo-random-grain-packing-1",
     "page": "Getting started",
     "title": "Creating a pseudo-random grain packing",
     "category": "section",
@@ -249,7 +249,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Creating-a-fluid-grid-1",
+    "location": "man/getting_started/#Creating-a-fluid-grid-1",
     "page": "Getting started",
     "title": "Creating a fluid grid",
     "category": "section",
@@ -257,7 +257,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Adding-gravitational-acceleration-1",
+    "location": "man/getting_started/#Adding-gravitational-acceleration-1",
     "page": "Getting started",
     "title": "Adding gravitational acceleration",
     "category": "section",
@@ -265,7 +265,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Setting-temporal-parameters-1",
+    "location": "man/getting_started/#Setting-temporal-parameters-1",
     "page": "Getting started",
     "title": "Setting temporal parameters",
     "category": "section",
@@ -273,7 +273,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Running-the-simulation-2",
+    "location": "man/getting_started/#Running-the-simulation-2",
     "page": "Getting started",
     "title": "Running the simulation",
     "category": "section",
@@ -281,7 +281,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "man/getting_started.html#Exercises-2",
+    "location": "man/getting_started/#Exercises-2",
     "page": "Getting started",
     "title": "Exercises",
     "category": "section",
@@ -289,7 +289,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#",
+    "location": "lib/public/#",
     "page": "Public API",
     "title": "Public API",
     "category": "page",
@@ -297,7 +297,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Public-API-documentation-1",
+    "location": "lib/public/#Public-API-documentation-1",
     "page": "Public API",
     "title": "Public API documentation",
     "category": "section",
@@ -305,7 +305,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#main-index-1",
+    "location": "lib/public/#main-index-1",
     "page": "Public API",
     "title": "Index",
     "category": "section",
@@ -313,7 +313,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.Granular",
+    "location": "lib/public/#Granular.Granular",
     "page": "Public API",
     "title": "Granular.Granular",
     "category": "module",
@@ -321,7 +321,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.addAtmosphereDrag!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.addAtmosphereDrag!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.addAtmosphereDrag!",
     "category": "method",
@@ -329,7 +329,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.addBodyForce!-Tuple{Granular.GrainCylindrical,Array{Float64,1}}",
+    "location": "lib/public/#Granular.addBodyForce!-Tuple{Granular.GrainCylindrical,Array{Float64,1}}",
     "page": "Public API",
     "title": "Granular.addBodyForce!",
     "category": "method",
@@ -337,7 +337,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.addGrain!",
+    "location": "lib/public/#Granular.addGrain!",
     "page": "Public API",
     "title": "Granular.addGrain!",
     "category": "function",
@@ -345,7 +345,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.addGrainCylindrical!-Tuple{Granular.Simulation,Array{Float64,1},Float64,Float64}",
+    "location": "lib/public/#Granular.addGrainCylindrical!-Tuple{Granular.Simulation,Array{Float64,1},Float64,Float64}",
     "page": "Public API",
     "title": "Granular.addGrainCylindrical!",
     "category": "method",
@@ -353,7 +353,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.addOceanDrag!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.addOceanDrag!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.addOceanDrag!",
     "category": "method",
@@ -361,7 +361,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.addWall!",
+    "location": "lib/public/#Granular.addWall!",
     "page": "Public API",
     "title": "Granular.addWall!",
     "category": "function",
@@ -369,7 +369,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.addWallLinearFrictionless!-Tuple{Granular.Simulation,Array{Float64,1},Float64}",
+    "location": "lib/public/#Granular.addWallLinearFrictionless!-Tuple{Granular.Simulation,Array{Float64,1},Float64}",
     "page": "Public API",
     "title": "Granular.addWallLinearFrictionless!",
     "category": "method",
@@ -377,7 +377,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.applyAtmosphereDragToGrain!-Tuple{Granular.GrainCylindrical,Float64,Float64}",
+    "location": "lib/public/#Granular.applyAtmosphereDragToGrain!-Tuple{Granular.GrainCylindrical,Float64,Float64}",
     "page": "Public API",
     "title": "Granular.applyAtmosphereDragToGrain!",
     "category": "method",
@@ -385,7 +385,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.applyAtmosphereVorticityToGrain!-Tuple{Granular.GrainCylindrical,Float64}",
+    "location": "lib/public/#Granular.applyAtmosphereVorticityToGrain!-Tuple{Granular.GrainCylindrical,Float64}",
     "page": "Public API",
     "title": "Granular.applyAtmosphereVorticityToGrain!",
     "category": "method",
@@ -393,7 +393,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.applyOceanDragToGrain!-Tuple{Granular.GrainCylindrical,Float64,Float64}",
+    "location": "lib/public/#Granular.applyOceanDragToGrain!-Tuple{Granular.GrainCylindrical,Float64,Float64}",
     "page": "Public API",
     "title": "Granular.applyOceanDragToGrain!",
     "category": "method",
@@ -401,7 +401,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.applyOceanVorticityToGrain!-Tuple{Granular.GrainCylindrical,Float64}",
+    "location": "lib/public/#Granular.applyOceanVorticityToGrain!-Tuple{Granular.GrainCylindrical,Float64}",
     "page": "Public API",
     "title": "Granular.applyOceanVorticityToGrain!",
     "category": "method",
@@ -409,7 +409,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.areaOfQuadrilateral-NTuple{4,Array{Float64,1}}",
+    "location": "lib/public/#Granular.areaOfQuadrilateral-NTuple{4,Array{Float64,1}}",
     "page": "Public API",
     "title": "Granular.areaOfQuadrilateral",
     "category": "method",
@@ -417,7 +417,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.areaOfTriangle-Tuple{Array{Float64,1},Array{Float64,1},Array{Float64,1}}",
+    "location": "lib/public/#Granular.areaOfTriangle-Tuple{Array{Float64,1},Array{Float64,1},Array{Float64,1}}",
     "page": "Public API",
     "title": "Granular.areaOfTriangle",
     "category": "method",
@@ -425,7 +425,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.checkAndAddContact!",
+    "location": "lib/public/#Granular.checkAndAddContact!",
     "page": "Public API",
     "title": "Granular.checkAndAddContact!",
     "category": "function",
@@ -433,7 +433,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.checkForContacts-Tuple{Granular.Simulation,Any,Array{Float64,1},Float64}",
+    "location": "lib/public/#Granular.checkForContacts-Tuple{Granular.Simulation,Any,Array{Float64,1},Float64}",
     "page": "Public API",
     "title": "Granular.checkForContacts",
     "category": "method",
@@ -441,7 +441,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.checkTimeParameters-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.checkTimeParameters-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.checkTimeParameters",
     "category": "method",
@@ -449,7 +449,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.compareAtmospheres-Tuple{Granular.Atmosphere,Granular.Atmosphere}",
+    "location": "lib/public/#Granular.compareAtmospheres-Tuple{Granular.Atmosphere,Granular.Atmosphere}",
     "page": "Public API",
     "title": "Granular.compareAtmospheres",
     "category": "method",
@@ -457,7 +457,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.compareGrains-Tuple{Granular.GrainCylindrical,Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.compareGrains-Tuple{Granular.GrainCylindrical,Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.compareGrains",
     "category": "method",
@@ -465,7 +465,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.compareOceans-Tuple{Granular.Ocean,Granular.Ocean}",
+    "location": "lib/public/#Granular.compareOceans-Tuple{Granular.Ocean,Granular.Ocean}",
     "page": "Public API",
     "title": "Granular.compareOceans",
     "category": "method",
@@ -473,7 +473,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.compareSimulations-Tuple{Granular.Simulation,Granular.Simulation}",
+    "location": "lib/public/#Granular.compareSimulations-Tuple{Granular.Simulation,Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.compareSimulations",
     "category": "method",
@@ -481,7 +481,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.conformalQuadrilateralCoordinates-NTuple{5,Array{Float64,1}}",
+    "location": "lib/public/#Granular.conformalQuadrilateralCoordinates-NTuple{5,Array{Float64,1}}",
     "page": "Public API",
     "title": "Granular.conformalQuadrilateralCoordinates",
     "category": "method",
@@ -489,7 +489,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.convertGrainDataToArrays-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.convertGrainDataToArrays-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.convertGrainDataToArrays",
     "category": "method",
@@ -497,7 +497,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.createEmptyAtmosphere-Tuple{}",
+    "location": "lib/public/#Granular.createEmptyAtmosphere-Tuple{}",
     "page": "Public API",
     "title": "Granular.createEmptyAtmosphere",
     "category": "method",
@@ -505,7 +505,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.createEmptyOcean-Tuple{}",
+    "location": "lib/public/#Granular.createEmptyOcean-Tuple{}",
     "page": "Public API",
     "title": "Granular.createEmptyOcean",
     "category": "method",
@@ -513,7 +513,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.createRegularAtmosphereGrid-Tuple{Array{Int64,1},Array{Float64,1}}",
+    "location": "lib/public/#Granular.createRegularAtmosphereGrid-Tuple{Array{Int64,1},Array{Float64,1}}",
     "page": "Public API",
     "title": "Granular.createRegularAtmosphereGrid",
     "category": "method",
@@ -521,7 +521,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.createRegularOceanGrid-Tuple{Array{Int64,1},Array{Float64,1}}",
+    "location": "lib/public/#Granular.createRegularOceanGrid-Tuple{Array{Int64,1},Array{Float64,1}}",
     "page": "Public API",
     "title": "Granular.createRegularOceanGrid",
     "category": "method",
@@ -529,7 +529,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.createSimulation-Tuple{}",
+    "location": "lib/public/#Granular.createSimulation-Tuple{}",
     "page": "Public API",
     "title": "Granular.createSimulation",
     "category": "method",
@@ -537,7 +537,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.disableAtmosphereDrag!-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.disableAtmosphereDrag!-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.disableAtmosphereDrag!",
     "category": "method",
@@ -545,7 +545,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.disableGrain!-Tuple{Granular.Simulation,Int64}",
+    "location": "lib/public/#Granular.disableGrain!-Tuple{Granular.Simulation,Int64}",
     "page": "Public API",
     "title": "Granular.disableGrain!",
     "category": "method",
@@ -553,7 +553,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.disableOceanDrag!-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.disableOceanDrag!-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.disableOceanDrag!",
     "category": "method",
@@ -561,7 +561,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.disableOutputFiles!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.disableOutputFiles!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.disableOutputFiles!",
     "category": "method",
@@ -569,7 +569,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.enableAtmosphereDrag!-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.enableAtmosphereDrag!-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.enableAtmosphereDrag!",
     "category": "method",
@@ -577,7 +577,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.enableOceanDrag!-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.enableOceanDrag!-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.enableOceanDrag!",
     "category": "method",
@@ -585,7 +585,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.findCellContainingPoint",
+    "location": "lib/public/#Granular.findCellContainingPoint",
     "page": "Public API",
     "title": "Granular.findCellContainingPoint",
     "category": "function",
@@ -593,7 +593,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.findContacts!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.findContacts!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.findContacts!",
     "category": "method",
@@ -601,7 +601,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.findContactsAllToAll!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.findContactsAllToAll!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.findContactsAllToAll!",
     "category": "method",
@@ -609,7 +609,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.findContactsInGrid!-Tuple{Granular.Simulation,Any}",
+    "location": "lib/public/#Granular.findContactsInGrid!-Tuple{Granular.Simulation,Any}",
     "page": "Public API",
     "title": "Granular.findContactsInGrid!",
     "category": "method",
@@ -617,7 +617,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.findEmptyPositionInGridCell-Tuple{Granular.Simulation,Any,Int64,Int64,Float64}",
+    "location": "lib/public/#Granular.findEmptyPositionInGridCell-Tuple{Granular.Simulation,Any,Int64,Int64,Float64}",
     "page": "Public API",
     "title": "Granular.findEmptyPositionInGridCell",
     "category": "method",
@@ -625,7 +625,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.findLargestGrainStiffness-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.findLargestGrainStiffness-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.findLargestGrainStiffness",
     "category": "method",
@@ -633,7 +633,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.findSmallestGrainMass-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.findSmallestGrainMass-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.findSmallestGrainMass",
     "category": "method",
@@ -641,7 +641,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.fitGridToGrains!-Tuple{Granular.Simulation,Any}",
+    "location": "lib/public/#Granular.fitGridToGrains!-Tuple{Granular.Simulation,Any}",
     "page": "Public API",
     "title": "Granular.fitGridToGrains!",
     "category": "method",
@@ -649,7 +649,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.getCellCenterCoordinates-Tuple{Array{Float64,2},Array{Float64,2},Int64,Int64}",
+    "location": "lib/public/#Granular.getCellCenterCoordinates-Tuple{Array{Float64,2},Array{Float64,2},Int64,Int64}",
     "page": "Public API",
     "title": "Granular.getCellCenterCoordinates",
     "category": "method",
@@ -657,7 +657,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.getCellCornerCoordinates-Tuple{Array{Float64,2},Array{Float64,2},Int64,Int64}",
+    "location": "lib/public/#Granular.getCellCornerCoordinates-Tuple{Array{Float64,2},Array{Float64,2},Int64,Int64}",
     "page": "Public API",
     "title": "Granular.getCellCornerCoordinates",
     "category": "method",
@@ -665,7 +665,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.getGridCornerCoordinates-Tuple{Array{Float64,2},Array{Float64,2}}",
+    "location": "lib/public/#Granular.getGridCornerCoordinates-Tuple{Array{Float64,2},Array{Float64,2}}",
     "page": "Public API",
     "title": "Granular.getGridCornerCoordinates",
     "category": "method",
@@ -673,7 +673,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.getNonDimensionalCellCoordinates-Tuple{Any,Int64,Int64,Array{Float64,1}}",
+    "location": "lib/public/#Granular.getNonDimensionalCellCoordinates-Tuple{Any,Int64,Int64,Array{Float64,1}}",
     "page": "Public API",
     "title": "Granular.getNonDimensionalCellCoordinates",
     "category": "method",
@@ -681,7 +681,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.getWallNormalStress-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.getWallNormalStress-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.getWallNormalStress",
     "category": "method",
@@ -689,7 +689,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.getWallSurfaceArea-Tuple{Granular.Simulation,Integer}",
+    "location": "lib/public/#Granular.getWallSurfaceArea-Tuple{Granular.Simulation,Integer}",
     "page": "Public API",
     "title": "Granular.getWallSurfaceArea",
     "category": "method",
@@ -697,7 +697,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.grainCircumreference-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.grainCircumreference-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.grainCircumreference",
     "category": "method",
@@ -705,7 +705,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.grainHorizontalSurfaceArea-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.grainHorizontalSurfaceArea-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.grainHorizontalSurfaceArea",
     "category": "method",
@@ -713,7 +713,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.grainKineticRotationalEnergy-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.grainKineticRotationalEnergy-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.grainKineticRotationalEnergy",
     "category": "method",
@@ -721,7 +721,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.grainKineticTranslationalEnergy-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.grainKineticTranslationalEnergy-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.grainKineticTranslationalEnergy",
     "category": "method",
@@ -729,7 +729,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.grainMass-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.grainMass-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.grainMass",
     "category": "method",
@@ -737,7 +737,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.grainMomentOfInertia-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.grainMomentOfInertia-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.grainMomentOfInertia",
     "category": "method",
@@ -745,7 +745,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.grainSideSurfaceArea-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.grainSideSurfaceArea-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.grainSideSurfaceArea",
     "category": "method",
@@ -753,7 +753,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.grainThermalEnergy-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.grainThermalEnergy-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.grainThermalEnergy",
     "category": "method",
@@ -761,7 +761,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.grainVolume-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.grainVolume-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.grainVolume",
     "category": "method",
@@ -769,7 +769,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.harmonicMean-Tuple{Number,Number}",
+    "location": "lib/public/#Granular.harmonicMean-Tuple{Number,Number}",
     "page": "Public API",
     "title": "Granular.harmonicMean",
     "category": "method",
@@ -777,7 +777,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.incrementCurrentTime!-Tuple{Granular.Simulation,Float64}",
+    "location": "lib/public/#Granular.incrementCurrentTime!-Tuple{Granular.Simulation,Float64}",
     "page": "Public API",
     "title": "Granular.incrementCurrentTime!",
     "category": "method",
@@ -785,7 +785,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.interGrainPositionVector-Tuple{Granular.Simulation,Int64,Int64}",
+    "location": "lib/public/#Granular.interGrainPositionVector-Tuple{Granular.Simulation,Int64,Int64}",
     "page": "Public API",
     "title": "Granular.interGrainPositionVector",
     "category": "method",
@@ -793,7 +793,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.interact!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.interact!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.interact!",
     "category": "method",
@@ -801,7 +801,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.interactGrains!-Tuple{Granular.Simulation,Int64,Int64,Int64}",
+    "location": "lib/public/#Granular.interactGrains!-Tuple{Granular.Simulation,Int64,Int64,Int64}",
     "page": "Public API",
     "title": "Granular.interactGrains!",
     "category": "method",
@@ -809,7 +809,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.interpolateAtmosphereState-Tuple{Granular.Atmosphere,Float64}",
+    "location": "lib/public/#Granular.interpolateAtmosphereState-Tuple{Granular.Atmosphere,Float64}",
     "page": "Public API",
     "title": "Granular.interpolateAtmosphereState",
     "category": "method",
@@ -817,7 +817,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.interpolateOceanState-Tuple{Granular.Ocean,Float64}",
+    "location": "lib/public/#Granular.interpolateOceanState-Tuple{Granular.Ocean,Float64}",
     "page": "Public API",
     "title": "Granular.interpolateOceanState",
     "category": "method",
@@ -825,7 +825,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.interpolateOceanVelocitiesToCorners-Tuple{Array{Float64,4},Array{Float64,4}}",
+    "location": "lib/public/#Granular.interpolateOceanVelocitiesToCorners-Tuple{Array{Float64,4},Array{Float64,4}}",
     "page": "Public API",
     "title": "Granular.interpolateOceanVelocitiesToCorners",
     "category": "method",
@@ -833,7 +833,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.irregularPacking!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.irregularPacking!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.irregularPacking!",
     "category": "method",
@@ -841,7 +841,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.isPointInCell",
+    "location": "lib/public/#Granular.isPointInCell",
     "page": "Public API",
     "title": "Granular.isPointInCell",
     "category": "function",
@@ -849,7 +849,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.isPointInGrid",
+    "location": "lib/public/#Granular.isPointInGrid",
     "page": "Public API",
     "title": "Granular.isPointInGrid",
     "category": "function",
@@ -857,7 +857,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.plotGrainSizeDistribution-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.plotGrainSizeDistribution-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.plotGrainSizeDistribution",
     "category": "method",
@@ -865,7 +865,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.plotGrains-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.plotGrains-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.plotGrains",
     "category": "method",
@@ -873,7 +873,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.printGrainInfo-Tuple{Granular.GrainCylindrical}",
+    "location": "lib/public/#Granular.printGrainInfo-Tuple{Granular.GrainCylindrical}",
     "page": "Public API",
     "title": "Granular.printGrainInfo",
     "category": "method",
@@ -881,7 +881,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.printMemoryUsage-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.printMemoryUsage-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.printMemoryUsage",
     "category": "method",
@@ -889,7 +889,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.randpower",
+    "location": "lib/public/#Granular.randpower",
     "page": "Public API",
     "title": "Granular.randpower",
     "category": "function",
@@ -897,7 +897,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.readOceanGridNetCDF-Tuple{String}",
+    "location": "lib/public/#Granular.readOceanGridNetCDF-Tuple{String}",
     "page": "Public API",
     "title": "Granular.readOceanGridNetCDF",
     "category": "method",
@@ -905,7 +905,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.readOceanNetCDF-Tuple{String,String}",
+    "location": "lib/public/#Granular.readOceanNetCDF-Tuple{String,String}",
     "page": "Public API",
     "title": "Granular.readOceanNetCDF",
     "category": "method",
@@ -913,7 +913,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.readOceanStateNetCDF-Tuple{String}",
+    "location": "lib/public/#Granular.readOceanStateNetCDF-Tuple{String}",
     "page": "Public API",
     "title": "Granular.readOceanStateNetCDF",
     "category": "method",
@@ -921,7 +921,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.readSimulation-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.readSimulation-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.readSimulation",
     "category": "method",
@@ -929,7 +929,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.readSimulation-Tuple{String}",
+    "location": "lib/public/#Granular.readSimulation-Tuple{String}",
     "page": "Public API",
     "title": "Granular.readSimulation",
     "category": "method",
@@ -937,7 +937,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.readSimulationStatus-Tuple{String}",
+    "location": "lib/public/#Granular.readSimulationStatus-Tuple{String}",
     "page": "Public API",
     "title": "Granular.readSimulationStatus",
     "category": "method",
@@ -945,7 +945,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.reflectGrainsFromImpermeableBoundaries!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.reflectGrainsFromImpermeableBoundaries!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.reflectGrainsFromImpermeableBoundaries!",
     "category": "method",
@@ -953,7 +953,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.regularPacking!-Tuple{Granular.Simulation,Array{Int64,1},Real,Real}",
+    "location": "lib/public/#Granular.regularPacking!-Tuple{Granular.Simulation,Array{Int64,1},Real,Real}",
     "page": "Public API",
     "title": "Granular.regularPacking!",
     "category": "method",
@@ -961,7 +961,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.removeSimulationFiles-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.removeSimulationFiles-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.removeSimulationFiles",
     "category": "method",
@@ -969,7 +969,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.render-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.render-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.render",
     "category": "method",
@@ -977,7 +977,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.reportGridBoundaryConditions-Tuple{Any}",
+    "location": "lib/public/#Granular.reportGridBoundaryConditions-Tuple{Any}",
     "page": "Public API",
     "title": "Granular.reportGridBoundaryConditions",
     "category": "method",
@@ -985,7 +985,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.reportSimulationTimeToStdout-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.reportSimulationTimeToStdout-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.reportSimulationTimeToStdout",
     "category": "method",
@@ -993,7 +993,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.resetTime!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.resetTime!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.resetTime!",
     "category": "method",
@@ -1001,7 +1001,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.run!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.run!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.run!",
     "category": "method",
@@ -1009,7 +1009,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.setBodyForce!-Tuple{Granular.GrainCylindrical,Array{Float64,1}}",
+    "location": "lib/public/#Granular.setBodyForce!-Tuple{Granular.GrainCylindrical,Array{Float64,1}}",
     "page": "Public API",
     "title": "Granular.setBodyForce!",
     "category": "method",
@@ -1017,7 +1017,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.setCurrentTime!-Tuple{Granular.Simulation,Float64}",
+    "location": "lib/public/#Granular.setCurrentTime!-Tuple{Granular.Simulation,Float64}",
     "page": "Public API",
     "title": "Granular.setCurrentTime!",
     "category": "method",
@@ -1025,7 +1025,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.setGridBoundaryConditions!",
+    "location": "lib/public/#Granular.setGridBoundaryConditions!",
     "page": "Public API",
     "title": "Granular.setGridBoundaryConditions!",
     "category": "function",
@@ -1033,7 +1033,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.setMaximumNumberOfContactsPerGrain!-Tuple{Granular.Simulation,Int64}",
+    "location": "lib/public/#Granular.setMaximumNumberOfContactsPerGrain!-Tuple{Granular.Simulation,Int64}",
     "page": "Public API",
     "title": "Granular.setMaximumNumberOfContactsPerGrain!",
     "category": "method",
@@ -1041,7 +1041,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.setOutputFileInterval!-Tuple{Granular.Simulation,Float64}",
+    "location": "lib/public/#Granular.setOutputFileInterval!-Tuple{Granular.Simulation,Float64}",
     "page": "Public API",
     "title": "Granular.setOutputFileInterval!",
     "category": "method",
@@ -1049,7 +1049,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.setTimeStep!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.setTimeStep!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.setTimeStep!",
     "category": "method",
@@ -1057,7 +1057,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.setTotalTime!-Tuple{Granular.Simulation,Float64}",
+    "location": "lib/public/#Granular.setTotalTime!-Tuple{Granular.Simulation,Float64}",
     "page": "Public API",
     "title": "Granular.setTotalTime!",
     "category": "method",
@@ -1065,7 +1065,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.sortGrainsInGrid!-Tuple{Granular.Simulation,Any}",
+    "location": "lib/public/#Granular.sortGrainsInGrid!-Tuple{Granular.Simulation,Any}",
     "page": "Public API",
     "title": "Granular.sortGrainsInGrid!",
     "category": "method",
@@ -1073,7 +1073,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.status",
+    "location": "lib/public/#Granular.status",
     "page": "Public API",
     "title": "Granular.status",
     "category": "function",
@@ -1081,7 +1081,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.totalGrainKineticRotationalEnergy-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.totalGrainKineticRotationalEnergy-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.totalGrainKineticRotationalEnergy",
     "category": "method",
@@ -1089,7 +1089,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.totalGrainKineticTranslationalEnergy-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.totalGrainKineticTranslationalEnergy-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.totalGrainKineticTranslationalEnergy",
     "category": "method",
@@ -1097,7 +1097,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.totalGrainThermalEnergy-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.totalGrainThermalEnergy-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.totalGrainThermalEnergy",
     "category": "method",
@@ -1105,7 +1105,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.updateGrainKinematics!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.updateGrainKinematics!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.updateGrainKinematics!",
     "category": "method",
@@ -1113,7 +1113,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.updateGrainKinematicsThreeTermTaylor!-Tuple{Granular.GrainCylindrical,Granular.Simulation}",
+    "location": "lib/public/#Granular.updateGrainKinematicsThreeTermTaylor!-Tuple{Granular.GrainCylindrical,Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.updateGrainKinematicsThreeTermTaylor!",
     "category": "method",
@@ -1121,7 +1121,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.updateGrainKinematicsTwoTermTaylor!-Tuple{Granular.GrainCylindrical,Granular.Simulation}",
+    "location": "lib/public/#Granular.updateGrainKinematicsTwoTermTaylor!-Tuple{Granular.GrainCylindrical,Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.updateGrainKinematicsTwoTermTaylor!",
     "category": "method",
@@ -1129,7 +1129,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.updateWallKinematics!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.updateWallKinematics!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.updateWallKinematics!",
     "category": "method",
@@ -1137,7 +1137,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.updateWallKinematicsThreeTermTaylor!-Tuple{Granular.WallLinearFrictionless,Granular.Simulation}",
+    "location": "lib/public/#Granular.updateWallKinematicsThreeTermTaylor!-Tuple{Granular.WallLinearFrictionless,Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.updateWallKinematicsThreeTermTaylor!",
     "category": "method",
@@ -1145,7 +1145,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.updateWallKinematicsTwoTermTaylor!-Tuple{Granular.WallLinearFrictionless,Granular.Simulation}",
+    "location": "lib/public/#Granular.updateWallKinematicsTwoTermTaylor!-Tuple{Granular.WallLinearFrictionless,Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.updateWallKinematicsTwoTermTaylor!",
     "category": "method",
@@ -1153,7 +1153,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.vecTo3d-Tuple{Any}",
+    "location": "lib/public/#Granular.vecTo3d-Tuple{Any}",
     "page": "Public API",
     "title": "Granular.vecTo3d",
     "category": "method",
@@ -1161,7 +1161,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.writeGrainInteractionVTK-Tuple{Granular.Simulation,String}",
+    "location": "lib/public/#Granular.writeGrainInteractionVTK-Tuple{Granular.Simulation,String}",
     "page": "Public API",
     "title": "Granular.writeGrainInteractionVTK",
     "category": "method",
@@ -1169,7 +1169,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.writeGrainVTK-Tuple{Granular.Simulation,String}",
+    "location": "lib/public/#Granular.writeGrainVTK-Tuple{Granular.Simulation,String}",
     "page": "Public API",
     "title": "Granular.writeGrainVTK",
     "category": "method",
@@ -1177,7 +1177,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.writeParaviewPythonScript-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.writeParaviewPythonScript-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.writeParaviewPythonScript",
     "category": "method",
@@ -1185,7 +1185,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.writeSimulation-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.writeSimulation-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.writeSimulation",
     "category": "method",
@@ -1193,7 +1193,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.writeSimulationStatus-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.writeSimulationStatus-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.writeSimulationStatus",
     "category": "method",
@@ -1201,7 +1201,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.writeVTK-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.writeVTK-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.writeVTK",
     "category": "method",
@@ -1209,7 +1209,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.zeroForcesAndTorques!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.zeroForcesAndTorques!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.zeroForcesAndTorques!",
     "category": "method",
@@ -1217,7 +1217,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Granular.zeroKinematics!-Tuple{Granular.Simulation}",
+    "location": "lib/public/#Granular.zeroKinematics!-Tuple{Granular.Simulation}",
     "page": "Public API",
     "title": "Granular.zeroKinematics!",
     "category": "method",
@@ -1225,7 +1225,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/public.html#Public-Interface-1",
+    "location": "lib/public/#Public-Interface-1",
     "page": "Public API",
     "title": "Public Interface",
     "category": "section",
@@ -1233,7 +1233,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/internals.html#",
+    "location": "lib/internals/#",
     "page": "Internals",
     "title": "Internals",
     "category": "page",
@@ -1241,7 +1241,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/internals.html#Package-internal-documentation-1",
+    "location": "lib/internals/#Package-internal-documentation-1",
     "page": "Internals",
     "title": "Package-internal documentation",
     "category": "section",
@@ -1249,7 +1249,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/internals.html#Index-1",
+    "location": "lib/internals/#Index-1",
     "page": "Internals",
     "title": "Index",
     "category": "section",
@@ -1257,7 +1257,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/internals.html#Internal-Interface-1",
+    "location": "lib/internals/#Internal-Interface-1",
     "page": "Internals",
     "title": "Internal Interface",
     "category": "section",
@@ -1265,7 +1265,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/internals.html#",
+    "location": "lib/internals/#",
     "page": "Package-internal documentation",
     "title": "Package-internal documentation",
     "category": "page",
@@ -1273,7 +1273,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/internals.html#Package-internal-documentation-1",
+    "location": "lib/internals/#Package-internal-documentation-1",
     "page": "Package-internal documentation",
     "title": "Package-internal documentation",
     "category": "section",
@@ -1281,7 +1281,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/internals.html#Index-1",
+    "location": "lib/internals/#Index-1",
     "page": "Package-internal documentation",
     "title": "Index",
     "category": "section",
@@ -1289,7 +1289,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/internals.html#Internal-Interface-1",
+    "location": "lib/internals/#Internal-Interface-1",
     "page": "Package-internal documentation",
     "title": "Internal Interface",
     "category": "section",
