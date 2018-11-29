@@ -28,16 +28,9 @@ script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia -e 'import Pkg; Pkg.add("NetCDF"); Pkg.build("NetCDF");
               Pkg.clone(pwd()); Pkg.build("Granular");
-              Pkg.test("Granular"; coverage=true)'
-
-deploy:
-  - provider: script
-    script: julia -e 'import Pkg; Pkg.add("Coverage"); using Coverage;
-                      Codecov.submit(Codecov.process_folder())'
-    on:
-      os: linux
-      julia: 1.0
-      all_branches: true
+              Pkg.test("Granular"; coverage=true);
+              Pkg.add("Coverage"); using Coverage;
+              Codecov.submit(Codecov.process_folder())'
 
 jobs:
   include:
