@@ -37,6 +37,9 @@ jobs:
                     Pkg.build("NetCDF"))'
         - julia -e 'import Pkg; Pkg.clone(pwd()); Pkg.build("Granular");
                     Pkg.test("Granular"; coverage=true)';
+      after_success: 
+        - julia -e 'import Pkg; Pkg.add("Coverage"); using Coverage;
+                    Codecov.submit(process_folder())'
 
     - stage: docs
       julia: 1.0
@@ -45,7 +48,4 @@ jobs:
         - julia --project=docs/ -e 'using Pkg; Pkg.instantiate();
                                     Pkg.develop(PackageSpec(path=pwd()))'
         - julia --project=docs/ docs/make.jl
-      script: 
-        - julia -e 'import Pkg; Pkg.add("Coverage"); using Coverage;
-                    Codecov.submit(process_folder())'
       after_success: skip
