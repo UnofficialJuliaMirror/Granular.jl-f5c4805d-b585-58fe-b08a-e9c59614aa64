@@ -11,8 +11,8 @@ julia:
 
 notifications:
   email:
-      on_success: never # default: change
-      on_failure: always # default: always
+    on_success: never # default: change
+    on_failure: always # default: always
 
 addons:
   apt:
@@ -28,13 +28,8 @@ script:
   - julia -e 'import Pkg; Pkg.clone(pwd()); Pkg.build("Granular"); Pkg.test("Granular"; coverage=true)';
 
 after_success:
-  - julia -e 'using Pkg; ps=Pkg.PackageSpec(name="Documenter", version="0.19"); Pkg.add(ps); Pkg.pin(ps); include(joinpath("docs", "make.jl"))'
+  - julia -e 'using Pkg; Pkg.add("Documenter"); include(joinpath("docs", "make.jl"))'
   - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
-  on:
-    os: linux
-    julia: 1.0
-    all_branches: true
-    condition: $TRAVIS_BRANCH == "master" || -n $TRAVIS_TAG
 
 matrix:
   allow_failures:
