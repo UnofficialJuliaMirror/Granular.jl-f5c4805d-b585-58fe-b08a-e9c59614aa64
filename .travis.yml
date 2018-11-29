@@ -25,24 +25,20 @@ matrix:
   - julia: nightly
 
 stages:  # Set order of stages
-  - prepare
   - test
-  - deploy
+  - docs
 
 jobs:
   include:
-    - stage: prepare
-      script:  # NetCDF is an optional dependency
-        - julia -e 'VERSION >= v"0.7" && (import Pkg; Pkg.add("NetCDF");
-                    Pkg.build("NetCDF"))'
-        - julia -e 'import Pkg; Pkg.clone(pwd()); Pkg.build("Granular");'
-
     - stage: test
       script:
         - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-        - julia -e 'Pkg.test("Granular"; coverage=true)';
+        - julia -e 'VERSION >= v"0.7" && (import Pkg; Pkg.add("NetCDF");
+                    Pkg.build("NetCDF"))'
+        - julia -e 'import Pkg; Pkg.clone(pwd()); Pkg.build("Granular");
+                    Pkg.test("Granular"; coverage=true)';
 
-    - stage: deploy
+    - stage: docs
       julia: 1.0
       os: linux
       script:
