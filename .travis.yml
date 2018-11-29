@@ -39,7 +39,11 @@ jobs:
                     Pkg.test("Granular"; coverage=true)';
       after_success: 
         - julia -e 'import Pkg; Pkg.add("Coverage"); using Coverage;
-                    Codecov.submit(process_folder())'
+                    Codecov.submit(Codecov.process_folder());'
+        on:
+          os: linux
+          julia: 1.0
+          all_branches: true
 
     - stage: docs
       julia: 1.0
