@@ -47,7 +47,7 @@ jobs:
         - julia --project=docs/ docs/make.jl
       script:
         - julia -e 'import Pkg; import Granular;
-                    joinpath(dirname(pathof(Granular)), "..", paths...)
+                    joinpath(dirname(pathof(Granular)), "..", paths...);
                     Pkg.add("Coverage"); using Coverage;
                     Codecov.submit(process_folder())'
       after_success: skip
