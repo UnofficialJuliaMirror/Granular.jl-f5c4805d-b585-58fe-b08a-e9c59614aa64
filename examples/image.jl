@@ -14,7 +14,7 @@ img = FileIO.load(img_file)
 # resize the image if it is too large, preceed with lopass to avoid antialias
 max_pixels = 100^2
 if size(img, 1)*size(img, 2) > max_pixels
-    cp(img_file, "backup-" * img_file, remove_destination=true)
+    cp(img_file, "backup-" * img_file, force=true)
     run(`convert $(img_file) -resize "$(max_pixels)@>" $(img_file)`)
     img = FileIO.load(img_file)
 end
