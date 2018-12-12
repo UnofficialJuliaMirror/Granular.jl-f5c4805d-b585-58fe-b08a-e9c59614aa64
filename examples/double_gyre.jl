@@ -59,7 +59,7 @@ n_walls = length(sim.grains)
 # Initialize ice floes everywhere
 floe_padding = .5*r
 noise_amplitude = .8*floe_padding
-srand(1)
+Random.seed!(1)
 for y in (4.*r + noise_amplitude):(2.*r + floe_padding):(L[2] - 4.*r - 
                                                          noise_amplitude)
                                                          

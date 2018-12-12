@@ -86,7 +86,7 @@ dy = sqrt((2.*r_walls)^2. - dx^2.)
 spacing_to_boundaries = 4.*r
 floe_padding = .5*r
 noise_amplitude = floe_padding
-srand(1)
+Random.seed!(1)
 for y in (L[2] - r - noise_amplitude):(-(2.*r + floe_padding)):((L[2] - 
     Ly_constriction)/2. + Ly_constriction)
     for x in (r + noise_amplitude):(2.*r + floe_padding):(Lx - r - 

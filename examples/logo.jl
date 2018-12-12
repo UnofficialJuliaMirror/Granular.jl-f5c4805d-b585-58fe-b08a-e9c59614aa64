@@ -119,12 +119,12 @@ if forcing == "gyres"
     end
 
 elseif forcing == "down"
-    srand(1)
+    Random.seed!(1)
     sim.ocean.u[:, :, 1, 1] = (rand(nx+1, ny+1) - .5)*.1
     sim.ocean.v[:, :, 1, 1] = -5.
 
 elseif forcing == "convergent"
-    srand(1)
+    Random.seed!(1)
     sim.ocean.u[:, :, 1, 1] = (rand(nx+1, ny+1) - .5)*.1
     for j=1:size(sim.ocean.u, 2)
         sim.ocean.v[:, j, 1, 1] = -(j/ny - .5)*10.
