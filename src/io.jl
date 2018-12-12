@@ -1517,9 +1517,9 @@ function plotGrains(sim::Simulation;
     end
 
     if show_figure
-        if is_apple()
+        if Sys.isapple()
             run(`open $(filename)`)
-        elseif is_linux()
+        elseif Sys.islinux()
             run(`xdg-open $(filename)`)
         end
     end
