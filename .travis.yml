@@ -20,6 +20,11 @@ addons:
     packages:
     - gnuplot
     - imagemagick
+    - libmbedcrypto0
+    - libmbedtls-dev
+    - libmbedtls10
+    - libmbedx509-0
+    - mbedtls
 
 matrix:
   allow_failures:
