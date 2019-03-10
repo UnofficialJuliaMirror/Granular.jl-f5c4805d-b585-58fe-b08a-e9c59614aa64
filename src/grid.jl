@@ -436,7 +436,7 @@ end
 
 export getCellCenterCoordinates
 """
-    getCellCenterCoordinates(grid, i, j)
+    getCellCenterCoordinates(grid.xh, grid.yh, i, j)
 
 Returns grid center coordinates (h-point).
 
