@@ -6,7 +6,9 @@ sim = Granular.createSimulation(id="sedimentation")
 
 # Generate 10 grains along x and 25 grains along y, with radii between 0.2 and
 # 1.0 m.
-Granular.regularPacking!(sim, [7, 25], 0.02, 0.2)
+Granular.regularPacking!(sim, [7, 25], 0.02, 0.2,
+                         tiling="triangular",
+                         padding_factor=0.1)
 
 # Visualize the grain-size distribution
 #Granular.plotGrainSizeDistribution(sim)
