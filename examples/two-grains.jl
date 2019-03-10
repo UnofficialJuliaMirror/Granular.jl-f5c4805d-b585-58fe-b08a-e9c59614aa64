@@ -16,7 +16,7 @@ Granular.addGrainCylindrical!(sim, [0.5, 0.0], 0.1, 0.05)
 
 # Set a velocity of 0.5 m/s along +x for the first grain, to make it bump into
 # the second grain.
-sim.grains[1].lin_vel = [1.0, 0.0]
+sim.grains[1].lin_vel[1:2] = [1.0, 0.0]
 
 # Before we can run the simulation, we need to specify the computational time
 # step, how often to produce output files for visualization, and for how long to
