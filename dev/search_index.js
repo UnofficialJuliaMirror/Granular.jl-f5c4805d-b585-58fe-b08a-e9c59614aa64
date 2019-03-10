@@ -653,7 +653,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Public API",
     "title": "Granular.getCellCenterCoordinates",
     "category": "method",
-    "text": "getCellCenterCoordinates(grid, i, j)\n\nReturns grid center coordinates (h-point).\n\nArguments\n\nxh::Array{Float64, 2}: nominal longitude of h-points [degrees_E]\nyh::Array{Float64, 2}: nominal latitude of h-points [degrees_N]\ni::Int: x-index of cell.\nj::Int: y-index of cell.\n\n\n\n\n\n"
+    "text": "getCellCenterCoordinates(grid.xh, grid.yh, i, j)\n\nReturns grid center coordinates (h-point).\n\nArguments\n\nxh::Array{Float64, 2}: nominal longitude of h-points [degrees_E]\nyh::Array{Float64, 2}: nominal latitude of h-points [degrees_N]\ni::Int: x-index of cell.\nj::Int: y-index of cell.\n\n\n\n\n\n"
 },
 
 {
