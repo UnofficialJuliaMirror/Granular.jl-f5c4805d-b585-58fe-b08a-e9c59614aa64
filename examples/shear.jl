@@ -9,39 +9,39 @@ import PyPlot
 ################################################################################
 
 # Common simulation identifier
-const id_prefix = "test0"
+id_prefix = "test0"
 
 # Gravitational acceleration vector (cannot be zero; required for Step 1)
-const g = [0., -9.8]
+g = [0., -9.8]
 
 # Grain package geometry during initialization
-const nx = 10                         # Grains along x (horizontal)
-const ny = 50                         # Grains along y (vertical)
+nx = 10                         # Grains along x (horizontal)
+ny = 50                         # Grains along y (vertical)
 
 # Grain-size parameters
-const r_min = 0.03                    # Min. grain radius [m]
-const r_max = 0.1                     # Max. grain radius [m]
-const gsd_type = "powerlaw"           # "powerlaw" or "uniform" sizes between r_min and r_max
-const gsd_powerlaw_exponent = -1.8    # GSD power-law exponent
-const gsd_seed = 1                    # Value to seed random-size generation
+r_min = 0.03                    # Min. grain radius [m]
+r_max = 0.1                     # Max. grain radius [m]
+gsd_type = "powerlaw"           # "powerlaw" or "uniform" sizes between r_min and r_max
+gsd_powerlaw_exponent = -1.8    # GSD power-law exponent
+gsd_seed = 1                    # Value to seed random-size generation
 
 # Grain mechanical properties
-const youngs_modulus = 2e7            # Elastic modulus [Pa]
-const poissons_ratio = 0.185          # Shear-stiffness ratio [-]
-const tensile_strength = 0.0          # Inter-grain bond strength [Pa]
-const contact_dynamic_friction = 0.4  # Coulomb-frictional coefficient [-]
-const rotating = true                 # Allow grain rotation
+youngs_modulus = 2e7            # Elastic modulus [Pa]
+poissons_ratio = 0.185          # Shear-stiffness ratio [-]
+tensile_strength = 0.0          # Inter-grain bond strength [Pa]
+contact_dynamic_friction = 0.4  # Coulomb-frictional coefficient [-]
+rotating = true                 # Allow grain rotation
 
 # Normal stress for the consolidation and shear [Pa]
-const N = 20e3
+N = 20e3
 
 # Shear velocity to apply to the top grains [m/s]
-const vel_shear = 0.5
+vel_shear = 0.5
 
 # Simulation duration of individual steps [s]
-const t_init  = 2.0
-const t_cons  = 2.5
-const t_shear = 5.0
+t_init  = 2.0
+t_cons  = 2.5
+t_shear = 5.0
 
 ################################################################################
 #### Step 1: Create a loose granular assemblage and let it settle at -y        #
@@ -121,6 +121,7 @@ Granular.zeroKinematics!(sim)
 # Add a dynamic wall to the top which adds a normal stress downwards.  The
 # normal of this wall is downwards, and we place it at the top of the granular
 # assemblage.  Here, the inter-grain viscosity is also removed.
+let
 y_top = -Inf
 for grain in sim.grains
     grain.contact_viscosity_normal = 0.
@@ -131,23 +132,26 @@ end
 Granular.addWallLinearFrictionless!(sim, [0., 1.], y_top,
                                     bc="normal stress", normal_stress=-N,
                                     contact_viscosity_normal=1e3)
+end
 @info "Placing top wall at y=$y_top"
 
 # Resize the grid to span the current state
 Granular.fitGridToGrains!(sim, sim.ocean)
 
 # Lock the grains at the very bottom so that the lower boundary is rough
+let
 y_bot = Inf
 for grain in sim.grains
     if y_bot > grain.lin_pos[2] - grain.contact_radius
         y_bot = grain.lin_pos[2] - grain.contact_radius
     end
 end
-const fixed_thickness = 2. * r_max
+fixed_thickness = 2. * r_max
 for grain in sim.grains
     if grain.lin_pos[2] <= fixed_thickness
         grain.fixed = true  # set x and y acceleration to zero
     end
+end
 end
 
 # Set current time to zero and reset output file counter
@@ -220,7 +224,8 @@ time = Float64[]
 shear_stress = Float64[]
 shear_strain = Float64[]
 dilation = Float64[]
-const thickness_initial = sim.walls[1].pos - y_bot
+thickness_initial = sim.walls[1].pos - y_bot
+let
 x_min = +Inf
 x_max = -Inf
 for grain in sim.grains
@@ -231,7 +236,9 @@ for grain in sim.grains
         x_max = grain.lin_pos[1] + grain.contact_radius
     end
 end
-const surface_area = (x_max - x_min)
+surface_area = (x_max - x_min)
+end
+let
 shear_force = 0.
 while sim.time < sim.time_total
 
@@ -267,6 +274,7 @@ while sim.time < sim.time_total
     # Determine the current dilation
     append!(dilation, (sim.walls[1].pos - y_bot)/thickness_initial)
 
+end
 end
 
 # Try to render the simulation if `pvpython` is installed on the system
