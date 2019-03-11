@@ -7,6 +7,7 @@ import PyPlot
 ################################################################################
 #### SIMULATION PARAMETERS                                                     #
 ################################################################################
+let
 
 # Common simulation identifier
 id_prefix = "test0"
@@ -121,7 +122,6 @@ Granular.zeroKinematics!(sim)
 # Add a dynamic wall to the top which adds a normal stress downwards.  The
 # normal of this wall is downwards, and we place it at the top of the granular
 # assemblage.  Here, the inter-grain viscosity is also removed.
-let
 y_top = -Inf
 for grain in sim.grains
     grain.contact_viscosity_normal = 0.
@@ -132,14 +132,12 @@ end
 Granular.addWallLinearFrictionless!(sim, [0., 1.], y_top,
                                     bc="normal stress", normal_stress=-N,
                                     contact_viscosity_normal=1e3)
-end
 @info "Placing top wall at y=$y_top"
 
 # Resize the grid to span the current state
 Granular.fitGridToGrains!(sim, sim.ocean)
 
 # Lock the grains at the very bottom so that the lower boundary is rough
-let
 y_bot = Inf
 for grain in sim.grains
     if y_bot > grain.lin_pos[2] - grain.contact_radius
@@ -151,7 +149,6 @@ for grain in sim.grains
     if grain.lin_pos[2] <= fixed_thickness
         grain.fixed = true  # set x and y acceleration to zero
     end
-end
 end
 
 # Set current time to zero and reset output file counter
@@ -225,7 +222,6 @@ shear_stress = Float64[]
 shear_strain = Float64[]
 dilation = Float64[]
 thickness_initial = sim.walls[1].pos - y_bot
-let
 x_min = +Inf
 x_max = -Inf
 for grain in sim.grains
@@ -237,8 +233,6 @@ for grain in sim.grains
     end
 end
 surface_area = (x_max - x_min)
-end
-let
 shear_force = 0.
 while sim.time < sim.time_total
 
@@ -274,7 +268,6 @@ while sim.time < sim.time_total
     # Determine the current dilation
     append!(dilation, (sim.walls[1].pos - y_bot)/thickness_initial)
 
-end
 end
 
 # Try to render the simulation if `pvpython` is installed on the system
@@ -317,3 +310,4 @@ PyPlot.xlabel("Time [s]")
 PyPlot.ylabel("Shear strain [-]")
 PyPlot.savefig(sim.id * "-time_vs_shear-strain.pdf")
 PyPlot.clf()
+end
