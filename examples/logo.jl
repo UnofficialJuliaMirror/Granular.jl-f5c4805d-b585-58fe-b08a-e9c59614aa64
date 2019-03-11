@@ -3,53 +3,55 @@
 import Granular
 using Random
 
-const verbose = true
+let
 
-const text = "Granular.jl"
+verbose = true
 
-#const forcing = "gyres"
-const forcing = "down"
-#const forcing = "convergent"
+text = "Granular.jl"
 
-# Font created with `figlet` and the font 'pebbles'.  If figlet is not installed 
-# on your system, use the string below:
-#logo_string = 
-#""" .oOOOo.                               o                       o 
-#.O     o                              O                     O O  
-#o                                     o                       o  
-#O                                     O                       O  
-#O   .oOOo `OoOo. .oOoO' 'OoOo. O   o  o  .oOoO' `OoOo.     'o o  
-#o.      O  o     O   o   o   O o   O  O  O   o   o          O O  
-# O.    oO  O     o   O   O   o O   o  o  o   O   O     oO   o o  
-#  `OooO'   o     `OoO'o  o   O `OoO'o Oo `OoO'o  o     Oo   O Oo 
-#                                                            o    
-#                                                          oO'    """
+#forcing = "gyres"
+forcing = "down"
+#forcing = "convergent"
 
-logo_string = read(`figlet -f pebbles "$text"`, String)
+# Font created with `figlet` and the font 'pebbles'.
+#logo_string = read(`figlet -f pebbles "$text"`, String)
 
-const dx = 1.
-const dy = dx
+# If figlet is not installed on your system, use the string below:
+logo_string = 
+""" .oOOOo.                               o                       o 
+.O     o                              O                     O O  
+o                                     o                       o  
+O                                     O                       O  
+O   .oOOo `OoOo. .oOoO' 'OoOo. O   o  o  .oOoO' `OoOo.     'o o  
+o.      O  o     O   o   o   O o   O  O  O   o   o          O O  
+ O.    oO  O     o   O   O   o O   o  o  o   O   O     oO   o o  
+  `OooO'   o     `OoO'o  o   O `OoO'o Oo `OoO'o  o     Oo   O Oo 
+                                                            o    
+                                                          oO'    """
 
-const logo_string_split = split(logo_string, '\n')
+dx = 1.
+dy = dx
 
-const ny = length(logo_string_split)
+logo_string_split = split(logo_string, '\n')
+
+ny = length(logo_string_split)
 maxwidth = 0
 for i=1:ny
     if maxwidth < length(logo_string_split[i])
         maxwidth = length(logo_string_split[i])
     end
 end
-const nx = maxwidth + 1
+nx = maxwidth + 1
 
-const Lx = nx*dx
-const Ly = (ny + 1)*dy
+Lx = nx*dx
+Ly = (ny + 1)*dy
 
 x = 0.
 y = 0.
 r = 0.
 c = ' '
 h = .5
-const youngs_modulus = 2e6
+youngs_modulus = 2e6
 
 sim = Granular.createSimulation(id="logo")
 
@@ -102,32 +104,32 @@ name="logo_ocean")
 if forcing == "gyres"
     epsilon = 0.25  # amplitude of periodic oscillations
     t = 0.
-    a = epsilon*sin(2.*pi*t)
-    b = 1. - 2.*epsilon*sin(2.*pi*t)
+    a = epsilon*sin(2.0*pi*t)
+    b = 1.0 - 2.0*epsilon*sin(2.0*pi*t)
     for i=1:size(sim.ocean.u, 1)
         for j=1:size(sim.ocean.u, 2)
 
             x = sim.ocean.xq[i, j]/(Lx*.5)  # x in [0;2]
             y = sim.ocean.yq[i, j]/Ly       # y in [0;1]
 
-            f = a*x^2. + b*x
-            df_dx = 2.*a*x + b
+            f = a*x^2.0 + b*x
+            df_dx = 2.0*a*x + b
 
-            sim.ocean.u[i, j, 1, 1] = -pi/10.*sin(pi*f)*cos(pi*y) * 2e1
-            sim.ocean.v[i, j, 1, 1] = pi/10.*cos(pi*f)*sin(pi*y)*df_dx * 2e1
+            sim.ocean.u[i, j, 1, 1] = -pi/10.0*sin(pi*f)*cos(pi*y) * 2e1
+            sim.ocean.v[i, j, 1, 1] = pi/10.0*cos(pi*f)*sin(pi*y)*df_dx * 2e1
         end
     end
 
 elseif forcing == "down"
     Random.seed!(1)
-    sim.ocean.u[:, :, 1, 1] = (rand(nx+1, ny+1) - .5)*.1
-    sim.ocean.v[:, :, 1, 1] = -5.
+    sim.ocean.u[:, :, 1, 1] = (rand(nx+1, ny+1) .- 0.5) .* 0.1
+    sim.ocean.v[:, :, 1, 1] .= -5.0
 
 elseif forcing == "convergent"
     Random.seed!(1)
-    sim.ocean.u[:, :, 1, 1] = (rand(nx+1, ny+1) - .5)*.1
+    sim.ocean.u[:, :, 1, 1] = (rand(nx+1, ny+1) .- 0.5) .* 0.1
     for j=1:size(sim.ocean.u, 2)
-        sim.ocean.v[:, j, 1, 1] = -(j/ny - .5)*10.
+        sim.ocean.v[:, j, 1, 1] = -(j/ny - 0.5)*10.0
     end
 
 else
@@ -138,7 +140,7 @@ end
 r = dx/4.
 
 ## N-S wall segments
-for y in range(r, stop=Ly-r, length=Int(round((Ly - 2.*r)/(r*2))))
+for y in range(r, stop=Ly-r, length=Int(round((Ly - 2.0*r)/(r*2))))
     Granular.addGrainCylindrical!(sim, [r, y], r, h, fixed=true,
                                   youngs_modulus=youngs_modulus,
                                   verbose=false)
@@ -148,7 +150,7 @@ for y in range(r, stop=Ly-r, length=Int(round((Ly - 2.*r)/(r*2))))
 end
 
 ## E-W wall segments
-for x in range(3.*r, stop=Lx-3.*r, length=Int(round((Lx - 6.*r)/(r*2))))
+for x in range(3.0*r, stop=Lx-3.0*r, length=Int(round((Lx - 6.0*r)/(r*2))))
     Granular.addGrainCylindrical!(sim, [x, r], r, h, fixed=true,
                                   youngs_modulus=youngs_modulus,
                                   verbose=false)
@@ -167,8 +169,9 @@ Granular.setOutputFileInterval!(sim, .1)
 Granular.removeSimulationFiles(sim)
 Granular.run!(sim, verbose=verbose)
 
-Granular.render(sim, images=true, animation=false, reverse=true)
+# Granular.render(sim, images=true, animation=false, reverse=true)
 
-run(`convert -delay 100 logo/logo.0000.png -delay 10 logo/logo.'*'.png -trim
-    +repage -delay 10 -transparent-color white -quiet -layers OptimizePlus
-    -loop 0 logo.gif`)
+# run(`convert -delay 100 logo/logo.0000.png -delay 10 logo/logo.'*'.png -trim
+#     +repage -delay 10 -transparent-color white -quiet -layers OptimizePlus
+#     -loop 0 logo.gif`)
+end
