@@ -434,8 +434,8 @@ function interactGrains!(simulation::Simulation, i::Int, j::Int, ic::Int)
         simulation.grains[i].torque[3] += -force_t*R_ij + M_t
         simulation.grains[j].torque[3] += -force_t*R_ij - M_t
     else
-        simulation.grains[i].force += force_n*n;
-        simulation.grains[j].force -= force_n*n;
+        simulation.grains[i].force += vecTo3d(force_n.*n);
+        simulation.grains[j].force -= vecTo3d(force_n.*n);
     end
 
     simulation.grains[i].pressure += 
