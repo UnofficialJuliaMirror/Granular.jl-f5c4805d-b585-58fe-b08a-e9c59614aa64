@@ -15,7 +15,7 @@ release can be installed directly from the Julia shell by:
 
 ```julia
 julia> ]
-(v1.0) pkg> add Granular
+(v1.1) pkg> add Granular
 ```
 
 The package contents area installed in the directory 
@@ -25,13 +25,13 @@ repository, instead install the package with:
 
 ```julia
 julia> ]
-(v1.0) pkg> add Granular#master
+(v1.1) pkg> add Granular#master
 ```
 
 You can run the package tests for any version with the following command:
 
 ```julia
-(v1.0) pkg> test Granular
+(v1.1) pkg> test Granular
 ```
 
 For more information on installation and usage, please refer to the 
