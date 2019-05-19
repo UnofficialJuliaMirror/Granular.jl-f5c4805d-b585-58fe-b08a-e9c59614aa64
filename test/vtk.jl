@@ -26,7 +26,7 @@ end
 
 grainpath = "test/test.grains.1.vtu"
 grainchecksum = 
-"a698c24d46d15db97bb4d77d11ef1381d6cdf6536606d5c6482b063f47a20f68  " *
+"b1748cb82e8270d951d9c1acaea0d151f0a5c48a1255e75de350bf9bcbc15fe9  " *
 grainpath * "\n"
 
 graininteractionpath = "test/test.grain-interaction.1.vtp"
@@ -62,7 +62,6 @@ Granular.status()
 Granular.status(colored_output=false)
 dir = "empty_directory"
 isdir(dir) || mkdir(dir)
-#@test_warn "no simulations found in $(pwd())/$(dir)" Granular.status(dir)
 Granular.status(dir)
 rm(dir)
 
