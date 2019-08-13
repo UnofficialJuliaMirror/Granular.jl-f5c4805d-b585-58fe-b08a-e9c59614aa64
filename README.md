@@ -38,5 +38,4 @@ For more information on installation and usage, please refer to the
 [documentation](https://anders-dc.github.io/Granular.jl/latest).
 
 ## Author
-[Anders Damsgaard](https://adamsgaard.dk), Geophysical Fluid Dynamics 
-Laboratory, Princeton University.
+[Anders Damsgaard](https://adamsgaard.dk)
