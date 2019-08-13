@@ -344,7 +344,8 @@ function writeGrainVTK(simulation::Simulation,
     ifarr = convertGrainDataToArrays(simulation)
     
     # add arrays to VTK file
-    vtkfile = WriteVTK.vtk_grid(filename, ifarr.lin_pos, WriteVTK.MeshCell[])
+    vtkfile = WriteVTK.vtk_grid("$filename.vtu", ifarr.lin_pos,
+                                WriteVTK.MeshCell[])
 
     WriteVTK.vtk_point_data(vtkfile, ifarr.density, "Density [kg m^-3]")
 
@@ -763,7 +764,7 @@ function writeGridVTK(grid::Any,
     end
 
     # add arrays to VTK file
-    vtkfile = WriteVTK.vtk_grid(filename, xq, yq, zq)
+    vtkfile = WriteVTK.vtk_grid("$filename.vts", xq, yq, zq)
 
     WriteVTK.vtk_point_data(vtkfile, grid.u[:, :, :, 1],
                             "u: Zonal velocity [m/s]")
@@ -978,15 +979,14 @@ renderView1.Update()
 # create a new 'Glyph'
 glyph1 = Glyph(Input=imagegrains,
     GlyphType='Arrow')
-glyph1.Scalars = ['POINTS', 'Atmosphere drag coefficient (horizontal) [-]']
-glyph1.Vectors = ['POINTS', 'Angular acceleration [rad s^-2]']
+glyph1.add_attribute = ['POINTS', 'Atmosphere drag coefficient (horizontal) [-]']
+glyph1.add_attribute = ['POINTS', 'Angular acceleration [rad s^-2]']
 glyph1.ScaleFactor = 6.050000000000001
 glyph1.GlyphTransform = 'Transform2'
 
 # Properties modified on glyph1
-glyph1.Scalars = ['POINTS', 'Diameter (areal) [m]']
-glyph1.Vectors = ['POINTS', 'Angular position [rad]']
-glyph1.ScaleMode = 'scalar'
+glyph1.add_attribute = ['POINTS', 'Diameter (areal) [m]']
+glyph1.add_attribute = ['POINTS', 'Angular position [rad]']
 glyph1.ScaleFactor = 1.0
 glyph1.GlyphMode = 'All Points'
 
