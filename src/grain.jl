@@ -89,7 +89,7 @@ are optional, and come with default values.  The only required arguments are
     strength is obtained [Pa/s].
 * `fracture_toughness::Float64 = 0.`: fracture toughness which influences the 
     maximum compressive strength on granular contact [m^{1/2}*Pa]. A value
-    of 1.285e3 m^{1/2}*Pa is used for sea ice by Hopkins 2004.
+    of 1.285e6 m^{1/2}*Pa is used for sea ice by Hopkins 2004.
 * `ocean_drag_coeff_vert::Float64 = 0.85`: vertical drag coefficient for ocean
     against grain sides [-].
 * `ocean_drag_coeff_horiz::Float64 = 5e-4`: horizontal drag coefficient for
